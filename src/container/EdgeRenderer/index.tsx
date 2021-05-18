@@ -4,9 +4,8 @@ import { useStoreState } from '../../store/hooks';
 import ConnectionLine from '../../components/ConnectionLine/index';
 import { isEdge } from '../../utils/graph';
 import MarkerDefinitions from './MarkerDefinitions';
-import { getEdgePositions, getHandle, isEdgeVisible, getSourceTargetNodes } from './utils';
+import { getSourceTargetNodes } from './utils';
 import {
-  Position,
   Edge,
   Node,
   Elements,
@@ -57,14 +56,7 @@ const Edgey = ({
   nodes,
   selectedElements,
   elementsSelectable,
-  transform,
-  width,
-  height,
-  onlyRenderVisibleElements,
-  connectionMode,
 }: EdgeWrapperProps) => {
-  const sourceHandleId = edge.sourceHandle || null;
-  const targetHandleId = edge.targetHandle || null;
   const { sourceNode, targetNode } = getSourceTargetNodes(edge, nodes);
 
   const onConnectEdge = useCallback(
@@ -91,49 +83,6 @@ const Edgey = ({
 
   const edgeType = edge.type || 'default';
   const EdgeComponent = props.edgeTypes[edgeType] || props.edgeTypes.default;
-  const targetNodeBounds = targetNode.__rf.handleBounds;
-  // when connection type is loose we can define all handles as sources
-  const targetNodeHandles =
-    connectionMode === ConnectionMode.Strict
-      ? targetNodeBounds.target
-      : targetNodeBounds.target || targetNodeBounds.source;
-  const sourceHandle = getHandle(sourceNode.__rf.handleBounds.source, sourceHandleId);
-  const targetHandle = getHandle(targetNodeHandles, targetHandleId);
-  const sourcePosition = sourceHandle ? sourceHandle.position : Position.Bottom;
-  const targetPosition = targetHandle ? targetHandle.position : Position.Top;
-
-  if (!sourceHandle) {
-    console.warn(`couldn't create edge for source handle id: ${sourceHandleId}; edge id: ${edge.id}`);
-    return null;
-  }
-
-  if (!targetHandle) {
-    console.warn(`couldn't create edge for target handle id: ${targetHandleId}; edge id: ${edge.id}`);
-    return null;
-  }
-
-  const { sourceX, sourceY, targetX, targetY } = getEdgePositions(
-    sourceNode,
-    sourceHandle,
-    sourcePosition,
-    targetNode,
-    targetHandle,
-    targetPosition
-  );
-
-  const isVisible = onlyRenderVisibleElements
-    ? isEdgeVisible({
-        sourcePos: { x: sourceX, y: sourceY },
-        targetPos: { x: targetX, y: targetY },
-        width,
-        height,
-        transform,
-      })
-    : true;
-
-  if (!isVisible) {
-    return null;
-  }
 
   const isSelected = selectedElements?.some((elm) => isEdge(elm) && elm.id === edge.id) || false;
 
@@ -157,14 +106,6 @@ const Edgey = ({
       arrowHeadType={edge.arrowHeadType}
       source={edge.source}
       target={edge.target}
-      sourceHandleId={sourceHandleId}
-      targetHandleId={targetHandleId}
-      sourceX={sourceX}
-      sourceY={sourceY}
-      targetX={targetX}
-      targetY={targetY}
-      sourcePosition={sourcePosition}
-      targetPosition={targetPosition}
       elementsSelectable={elementsSelectable}
       markerEndId={props.markerEndId}
       isHidden={edge.isHidden}

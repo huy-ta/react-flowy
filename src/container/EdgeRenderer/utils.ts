@@ -7,11 +7,8 @@ import { rectToBox } from '../../utils/graph';
 import {
   EdgeTypesType,
   EdgeProps,
-  Position,
   Node,
   XYPosition,
-  ElementId,
-  HandleElement,
   Transform,
   Edge,
 } from '../../types';
@@ -38,79 +35,6 @@ export function createEdgeTypes(edgeTypes: EdgeTypesType): EdgeTypesType {
     ...specialTypes,
   };
 }
-
-export function getHandlePosition(position: Position, node: Node, handle: any | null = null): XYPosition {
-  const x = (handle?.x || 0) + node.__rf.position.x;
-  const y = (handle?.y || 0) + node.__rf.position.y;
-  const width = handle?.width || node.__rf.width;
-  const height = handle?.height || node.__rf.height;
-
-  switch (position) {
-    case Position.Top:
-      return {
-        x: x + width / 2,
-        y,
-      };
-    case Position.Right:
-      return {
-        x: x + width,
-        y: y + height / 2,
-      };
-    case Position.Bottom:
-      return {
-        x: x + width / 2,
-        y: y + height,
-      };
-    case Position.Left:
-      return {
-        x,
-        y: y + height / 2,
-      };
-  }
-}
-
-export function getHandle(bounds: HandleElement[], handleId: ElementId | null): HandleElement | null {
-  if (!bounds) {
-    return null;
-  }
-
-  // there is no handleId when there are no multiple handles/ handles with ids
-  // so we just pick the first one
-  let handle = null;
-  if (bounds.length === 1 || !handleId) {
-    handle = bounds[0];
-  } else if (handleId) {
-    handle = bounds.find((d) => d.id === handleId);
-  }
-
-  return typeof handle === 'undefined' ? null : handle;
-}
-
-interface EdgePositions {
-  sourceX: number;
-  sourceY: number;
-  targetX: number;
-  targetY: number;
-}
-
-export const getEdgePositions = (
-  sourceNode: Node,
-  sourceHandle: HandleElement | unknown,
-  sourcePosition: Position,
-  targetNode: Node,
-  targetHandle: HandleElement | unknown,
-  targetPosition: Position
-): EdgePositions => {
-  const sourceHandlePos = getHandlePosition(sourcePosition, sourceNode, sourceHandle);
-  const targetHandlePos = getHandlePosition(targetPosition, targetNode, targetHandle);
-
-  return {
-    sourceX: sourceHandlePos.x,
-    sourceY: sourceHandlePos.y,
-    targetX: targetHandlePos.x,
-    targetY: targetHandlePos.y,
-  };
-};
 
 interface IsEdgeVisibleParams {
   sourcePos: XYPosition;
