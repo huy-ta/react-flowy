@@ -10,13 +10,6 @@ export type Elements<T = any> = Array<FlowElement<T>>;
 
 export type Transform = [number, number, number];
 
-export enum Position {
-  Left = 'left',
-  Top = 'top',
-  Right = 'right',
-  Bottom = 'bottom',
-}
-
 export interface XYPosition {
   x: number;
   y: number;
@@ -44,8 +37,6 @@ export interface Node<T = any> {
   data?: T;
   style?: CSSProperties;
   className?: string;
-  targetPosition?: Position;
-  sourcePosition?: Position;
   isHidden?: boolean;
   draggable?: boolean;
   connectable?: boolean;
@@ -108,8 +99,6 @@ export interface WrapEdgeProps<T = any> {
   sourceY: number;
   targetX: number;
   targetY: number;
-  sourcePosition: Position;
-  targetPosition: Position;
   markerEndId?: string;
   isHidden?: boolean;
   handleEdgeUpdate: boolean;
@@ -130,8 +119,6 @@ export interface EdgeProps<T = any> {
   targetX: number;
   targetY: number;
   animated?: boolean;
-  sourcePosition: Position;
-  targetPosition: Position;
   label?: string | ReactNode;
   labelStyle?: CSSProperties;
   labelShowBg?: boolean;
@@ -165,8 +152,6 @@ export interface NodeProps<T = any> {
   isConnectable: boolean;
   xPos?: number;
   yPos?: number;
-  targetPosition?: Position;
-  sourcePosition?: Position;
   isDragging?: boolean;
 }
 
@@ -178,8 +163,6 @@ export interface NodeComponentProps<T = any> {
   transform?: Transform;
   xPos?: number;
   yPos?: number;
-  targetPosition?: Position;
-  sourcePosition?: Position;
   onClick?: (node: Node) => void;
   onNodeDoubleClick?: (node: Node) => void;
   onMouseEnter?: (node: Node) => void;
@@ -213,8 +196,6 @@ export interface WrapNodeProps<T = any> {
   onNodeDragStop?: (event: ReactMouseEvent, node: Node) => void;
   style?: CSSProperties;
   className?: string;
-  sourcePosition?: Position;
-  targetPosition?: Position;
   isHidden?: boolean;
   isInitialized?: boolean;
   snapToGrid?: boolean;

@@ -69,8 +69,6 @@ const NodeRenderer = (props: NodeRendererProps) => {
             style={node.style}
             type={nodeType}
             data={node.data}
-            sourcePosition={node.sourcePosition}
-            targetPosition={node.targetPosition}
             isHidden={node.isHidden}
             xPos={node.__rf.position.x}
             yPos={node.__rf.position.y}

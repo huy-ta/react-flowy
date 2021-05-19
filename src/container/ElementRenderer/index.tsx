@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, memo } from 'react';
 
 import { useStoreActions, useStore } from '../../store/hooks';
-import FlowRenderer from '../FlowRenderer';
+import ZoomPaneRenderer from '../ZoomPaneRenderer/ZoomPaneRenderer';
 import NodeRenderer from '../NodeRenderer';
 import EdgeRenderer from '../EdgeRenderer';
 import { onLoadProject, onLoadGetElements, onLoadToObject } from '../../utils/graph';
@@ -11,7 +11,7 @@ import { ReactFlowProps } from '../ReactFlow';
 
 import { NodeTypesType, EdgeTypesType } from '../../types';
 
-export interface GraphViewProps extends Omit<ReactFlowProps, 'elements'> {
+export interface ElementRendererProps extends Omit<ReactFlowProps, 'elements'> {
   nodeTypes: NodeTypesType;
   edgeTypes: EdgeTypesType;
   snapToGrid: boolean;
@@ -22,7 +22,7 @@ export interface GraphViewProps extends Omit<ReactFlowProps, 'elements'> {
   arrowHeadColor: string;
 }
 
-const GraphView = ({
+const ElementRenderer = ({
   nodeTypes,
   edgeTypes,
   onMove,
@@ -69,7 +69,7 @@ const GraphView = ({
   onEdgeMouseMove,
   onEdgeMouseLeave,
   edgeUpdaterRadius,
-}: GraphViewProps) => {
+}: ElementRendererProps) => {
   const isInitialized = useRef<boolean>(false);
   const setSnapGrid = useStoreActions((actions) => actions.setSnapGrid);
   const setSnapToGrid = useStoreActions((actions) => actions.setSnapToGrid);
@@ -153,7 +153,7 @@ const GraphView = ({
   }, [nodeExtent]);
 
   return (
-    <FlowRenderer
+    <ZoomPaneRenderer
       onPaneClick={onPaneClick}
       onPaneContextMenu={onPaneContextMenu}
       onPaneScroll={onPaneScroll}
@@ -201,10 +201,10 @@ const GraphView = ({
         onEdgeMouseLeave={onEdgeMouseLeave}
         edgeUpdaterRadius={edgeUpdaterRadius}
       />
-    </FlowRenderer>
+    </ZoomPaneRenderer>
   );
 };
 
-GraphView.displayName = 'GraphView';
+ElementRenderer.displayName = 'ElementRenderer';
 
-export default memo(GraphView);
+export default memo(ElementRenderer);

@@ -1,7 +1,7 @@
-import React, { useCallback, memo, ReactNode, WheelEvent, MouseEvent } from 'react';
+import React, { useCallback, ReactNode, WheelEvent, MouseEvent } from 'react';
 
 import { GraphViewProps } from '../GraphView';
-import ZoomPane from '../ZoomPane';
+import ZoomPane from './ZoomPane';
 
 interface FlowRendererProps
   extends Omit<
@@ -17,7 +17,7 @@ interface FlowRendererProps
   children: ReactNode;
 }
 
-const FlowRenderer = ({
+const ZoomPaneRenderer = ({
   children,
   onPaneClick,
   onPaneContextMenu,
@@ -81,6 +81,6 @@ const FlowRenderer = ({
   );
 };
 
-FlowRenderer.displayName = 'FlowRenderer';
+ZoomPaneRenderer.displayName = 'ZoomPaneRenderer';
 
-export default memo(FlowRenderer);
+export default React.memo(ZoomPaneRenderer);

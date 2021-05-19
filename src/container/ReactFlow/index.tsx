@@ -1,10 +1,9 @@
 import React, { useMemo, HTMLAttributes, MouseEvent, WheelEvent, forwardRef } from 'react';
 import cc from 'classcat';
 
-import GraphView from '../GraphView';
+import ElementRenderer from '../ElementRenderer';
 import ElementUpdater from '../../components/ElementUpdater';
 import { createNodeTypes } from '../NodeRenderer/utils';
-import { BezierEdge, StepEdge, SmoothStepEdge, StraightEdge } from '../../components/Edges';
 import { createEdgeTypes } from '../EdgeRenderer/utils';
 import Wrapper from './Wrapper';
 import {
@@ -24,13 +23,6 @@ import {
 import '../../style.css';
 import '../../theme-default.css';
 import { DraggableData } from 'react-draggable';
-
-const defaultEdgeTypes = {
-  default: BezierEdge,
-  straight: StraightEdge,
-  step: StepEdge,
-  smoothstep: SmoothStepEdge,
-};
 
 export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onLoad'> {
   elements: Elements;
@@ -52,7 +44,7 @@ export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   onPaneClick?: (event: MouseEvent) => void;
   onPaneContextMenu?: (event: MouseEvent) => void;
   nodeTypes: NodeTypesType;
-  edgeTypes?: EdgeTypesType;
+  edgeTypes: EdgeTypesType;
   zoomActivationKeyCode?: KeyCode;
   snapToGrid?: boolean;
   snapGrid?: [number, number];
@@ -92,7 +84,7 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
       elements = [],
       className,
       nodeTypes,
-      edgeTypes = defaultEdgeTypes,
+      edgeTypes,
       onElementClick,
       onLoad,
       onMove,
@@ -151,7 +143,7 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
     return (
       <div {...rest} ref={ref} className={reactFlowClasses}>
         <Wrapper>
-          <GraphView
+          <ElementRenderer
             onLoad={onLoad}
             onMove={onMove}
             onMoveStart={onMoveStart}

@@ -26,8 +26,6 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
     sourceY,
     targetX,
     targetY,
-    sourcePosition,
-    targetPosition,
     markerEndId,
     isHidden,
     onContextMenu,
@@ -130,8 +128,6 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
           sourceY={sourceY}
           targetX={targetX}
           targetY={targetY}
-          sourcePosition={sourcePosition}
-          targetPosition={targetPosition}
           markerEndId={markerEndId}
         />
       </g>

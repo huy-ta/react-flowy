@@ -37,8 +37,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     className,
     isDraggable,
     isConnectable,
-    sourcePosition,
-    targetPosition,
     isHidden,
     isInitialized,
     snapToGrid,
@@ -169,7 +167,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
       if (nodeElement.current && !isHidden && observerInitialized.current) {
         updateNodeDimensions([{ id, nodeElement: nodeElement.current, forceUpdate: true }]);
       }
-    }, [id, isHidden, sourcePosition, targetPosition]);
+    }, [id, isHidden]);
 
     useEffect(() => {
       if (nodeElement.current) {
@@ -221,8 +219,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
               xPos={xPos}
               yPos={yPos}
               isConnectable={isConnectable}
-              sourcePosition={sourcePosition}
-              targetPosition={targetPosition}
               isDragging={isDragging}
             />
           </Provider>

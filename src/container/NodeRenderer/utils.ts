@@ -5,8 +5,8 @@ import { NodeTypesType, NodeComponentProps } from '../../types';
 
 export function createNodeTypes(nodeTypes: NodeTypesType): NodeTypesType {
   const wrappedTypes = {} as NodeTypesType;
-  const specialTypes: NodeTypesType = Object.keys(nodeTypes)
-    .filter(k => !['input', 'default', 'output'].includes(k))
+
+  return Object.keys(nodeTypes)
     .reduce((res, key) => {
       res[key] = wrapNode((nodeTypes[key]) as ComponentType<
         NodeComponentProps
@@ -14,8 +14,4 @@ export function createNodeTypes(nodeTypes: NodeTypesType): NodeTypesType {
 
       return res;
     }, wrappedTypes);
-
-  return {
-    ...specialTypes,
-  };
 }
