@@ -57,7 +57,7 @@ const Edgey = ({
   selectedElements,
   elementsSelectable,
 }: EdgeWrapperProps) => {
-  const { sourceNode, targetNode } = getSourceTargetNodes(edge, nodes);
+  const { sourceNode } = getSourceTargetNodes(edge, nodes);
 
   const onConnectEdge = useCallback(
     (connection: Connection) => {
@@ -68,16 +68,12 @@ const Edgey = ({
 
   if (!sourceNode) {
     console.warn(`couldn't create edge for source id: ${edge.source}; edge id: ${edge.id}`);
+
     return null;
   }
 
-  if (!targetNode) {
-    console.warn(`couldn't create edge for target id: ${edge.target}; edge id: ${edge.id}`);
-    return null;
-  }
-
-  // source and target node need to be initialized
-  if (!sourceNode.__rf.width || !targetNode.__rf.width) {
+  // The source node needs to be initialized first
+  if (!sourceNode.__rf.width) {
     return null;
   }
 

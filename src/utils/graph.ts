@@ -69,26 +69,29 @@ const connectionExists = (edge: Edge, elements: Elements) => {
 };
 
 export const addEdge = (edgeParams: Edge | Connection, elements: Elements): Elements => {
-  if (!edgeParams.source || !edgeParams.target) {
-    console.warn("Can't create edge. An edge needs a source and a target.");
+  if (!edgeParams.source) {
+    console.warn("Can't create edge. An edge needs a source.");
+
     return elements;
   }
 
-  let edge: Edge;
-  if (isEdge(edgeParams)) {
-    edge = { ...edgeParams };
-  } else {
-    edge = {
-      ...edgeParams,
-      id: getEdgeId(edgeParams),
-    } as Edge;
-  }
+  const edge: Edge = isEdge(edgeParams) ? { ...edgeParams } : { ...edgeParams, id: getEdgeId(edgeParams) } as Edge;
 
   if (connectionExists(edge, elements)) {
     return elements;
   }
 
   return elements.concat(edge);
+};
+
+export const addEdges = (edges: Edge[] | Connection[], elements: Elements): Elements => {
+  let newElements: Elements = elements;
+
+  for (let edge of edges) {
+    newElements = addEdge(edge, newElements);
+  }
+
+  return newElements;
 };
 
 export const updateEdge = (oldEdge: Edge, newConnection: Connection, elements: Elements): Elements => {

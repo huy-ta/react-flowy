@@ -13,6 +13,7 @@ export {
   isEdge,
   removeElements,
   addEdge,
+  addEdges,
   getOutgoers,
   getIncomers,
   getConnectedEdges,

@@ -1,6 +1,6 @@
 {
   "name": "react-flowy",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "dist/ReactFlow.js",
   "module": "dist/ReactFlow.esm.js",
   "types": "dist/index.d.ts",
