@@ -28,5 +28,4 @@ export * from './types';
 
 export { ReactFlowProps } from './container/ReactFlow';
 export { MiniMapProps } from './additional-components/MiniMap';
-export { ControlProps } from './additional-components/Controls';
 export { BackgroundProps } from './additional-components/Background';

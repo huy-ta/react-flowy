@@ -101,22 +101,6 @@
   height: 100%;
 }
 
-.react-flowy__controls {
-  position: absolute;
-  z-index: 5;
-  bottom: 10px;
-  left: 10px;
-
-  &-button {
-    width: 24px;
-    height: 24px;
-
-    svg {
-      width: 100%;
-    }
-  }
-}
-
 .react-flowy__minimap {
   position: absolute;
   z-index: 5;
