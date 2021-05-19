@@ -90,7 +90,7 @@ export default memo(
 
     return (
       <>
-        <path style={style} d={path} className="react-flow__edge-path" markerEnd={markerEnd} />
+        <path style={style} d={path} className="react-flowy__edge-path" markerEnd={markerEnd} />
         {text}
       </>
     );

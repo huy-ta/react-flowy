@@ -1,16 +1,10 @@
-import isEqual from 'fast-deep-equal';
-
 import { clampPosition, getDimensions } from '../utils';
 import {
-  getNodesInside,
-  getConnectedEdges,
-  getRectOfNodes,
   isNode,
   isEdge,
   parseNode,
   parseEdge,
 } from '../utils/graph';
-import { getHandleBounds } from '../components/Nodes/utils';
 
 import { ReactFlowState, Node, XYPosition, Edge } from '../types';
 import * as constants from './contants';
@@ -84,14 +78,11 @@ export default function reactFlowReducer(state = initialState, action: ReactFlow
             (node.__rf.width !== dimensions.width || node.__rf.height !== dimensions.height || update.forceUpdate);
 
           if (doUpdate) {
-            const handleBounds = getHandleBounds(update.nodeElement, state.transform[2]);
-
             return {
               ...node,
               __rf: {
                 ...node.__rf,
                 ...dimensions,
-                handleBounds,
               },
             };
           }
@@ -137,7 +128,7 @@ export default function reactFlowReducer(state = initialState, action: ReactFlow
       const { id, diff, isDragging } = action.payload;
 
       const nextNodes = state.nodes.map((node) => {
-        if (id === node.id || state.selectedElements?.find((sNode) => sNode.id === node.id)) {
+        if (id === node.id) {
           const updatedNode = {
             ...node,
             __rf: {
@@ -160,103 +151,6 @@ export default function reactFlowReducer(state = initialState, action: ReactFlow
       });
 
       return { ...state, nodes: nextNodes };
-    }
-    case constants.SET_USER_SELECTION: {
-      const mousePos = action.payload;
-
-      return {
-        ...state,
-        selectionActive: true,
-        userSelectionRect: {
-          width: 0,
-          height: 0,
-          startX: mousePos.x,
-          startY: mousePos.y,
-          x: mousePos.x,
-          y: mousePos.y,
-          draw: true,
-        },
-      };
-    }
-    case constants.UPDATE_USER_SELECTION: {
-      const mousePos = action.payload;
-      const startX = state.userSelectionRect.startX ?? 0;
-      const startY = state.userSelectionRect.startY ?? 0;
-
-      const nextUserSelectRect = {
-        ...state.userSelectionRect,
-        x: mousePos.x < startX ? mousePos.x : state.userSelectionRect.x,
-        y: mousePos.y < startY ? mousePos.y : state.userSelectionRect.y,
-        width: Math.abs(mousePos.x - startX),
-        height: Math.abs(mousePos.y - startY),
-      };
-
-      const selectedNodes = getNodesInside(state.nodes, nextUserSelectRect, state.transform);
-      const selectedEdges = getConnectedEdges(selectedNodes, state.edges);
-
-      const nextSelectedElements = [...selectedNodes, ...selectedEdges];
-      const selectedElementsChanged = !isEqual(nextSelectedElements, state.selectedElements);
-      const selectedElementsUpdate = selectedElementsChanged
-        ? {
-            selectedElements: nextSelectedElements.length > 0 ? nextSelectedElements : null,
-          }
-        : {};
-
-      return {
-        ...state,
-        ...selectedElementsUpdate,
-        userSelectionRect: nextUserSelectRect,
-      };
-    }
-    case constants.UNSET_USER_SELECTION: {
-      const selectedNodes = state.selectedElements?.filter((node) => isNode(node) && node.__rf) as Node[];
-
-      const stateUpdate = {
-        ...state,
-        selectionActive: false,
-        userSelectionRect: {
-          ...state.userSelectionRect,
-          draw: false,
-        },
-      };
-
-      if (!selectedNodes || selectedNodes.length === 0) {
-        stateUpdate.selectedElements = null;
-        stateUpdate.nodesSelectionActive = false;
-      } else {
-        const selectedNodesBbox = getRectOfNodes(selectedNodes);
-        stateUpdate.selectedNodesBbox = selectedNodesBbox;
-        stateUpdate.nodesSelectionActive = true;
-      }
-
-      return stateUpdate;
-    }
-    case constants.SET_SELECTED_ELEMENTS: {
-      const elements = action.payload;
-      const selectedElementsArr = Array.isArray(elements) ? elements : [elements];
-      const selectedElementsUpdated = !isEqual(selectedElementsArr, state.selectedElements);
-      const selectedElements = selectedElementsUpdated ? selectedElementsArr : state.selectedElements;
-
-      return {
-        ...state,
-        selectedElements,
-      };
-    }
-    case constants.ADD_SELECTED_ELEMENTS: {
-      const { multiSelectionActive, selectedElements } = state;
-      const elements = action.payload;
-      const selectedElementsArr = Array.isArray(elements) ? elements : [elements];
-
-      let nextElements = selectedElementsArr;
-
-      if (multiSelectionActive) {
-        nextElements = selectedElements ? [...selectedElements, ...selectedElementsArr] : selectedElementsArr;
-      }
-
-      const selectedElementsUpdated = !isEqual(nextElements, state.selectedElements);
-      const nextSelectedElements = selectedElementsUpdated ? nextElements : state.selectedElements;
-
-      return { ...state, selectedElements: nextSelectedElements };
     }
     case constants.INIT_D3ZOOM: {
       const { d3Zoom, d3Selection, d3ZoomHandler, transform } = action.payload;
@@ -316,24 +210,13 @@ export default function reactFlowReducer(state = initialState, action: ReactFlow
         }),
       };
     }
-    case constants.SET_ON_CONNECT:
-    case constants.SET_ON_CONNECT_START:
-    case constants.SET_ON_CONNECT_STOP:
-    case constants.SET_ON_CONNECT_END:
-    case constants.RESET_SELECTED_ELEMENTS:
-    case constants.UNSET_NODES_SELECTION:
     case constants.UPDATE_TRANSFORM:
     case constants.UPDATE_SIZE:
-    case constants.SET_CONNECTION_POSITION:
-    case constants.SET_CONNECTION_NODEID:
     case constants.SET_SNAPTOGRID:
     case constants.SET_SNAPGRID:
     case constants.SET_INTERACTIVE:
     case constants.SET_NODES_DRAGGABLE:
     case constants.SET_NODES_CONNECTABLE:
-    case constants.SET_ELEMENTS_SELECTABLE:
-    case constants.SET_MULTI_SELECTION_ACTIVE:
-    case constants.SET_CONNECTION_MODE:
       return { ...state, ...action.payload };
     default:
       return state;

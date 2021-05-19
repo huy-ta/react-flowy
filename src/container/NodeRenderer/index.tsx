@@ -5,7 +5,6 @@ import { Node, NodeTypesType, WrapNodeProps, Edge } from '../../types';
 import { DraggableData } from 'react-draggable';
 interface NodeRendererProps {
   nodeTypes: NodeTypesType;
-  selectNodesOnDrag: boolean;
   onElementClick?: (event: MouseEvent, element: Node | Edge) => void;
   onNodeDoubleClick?: (event: MouseEvent, element: Node) => void;
   onNodeMouseEnter?: (event: MouseEvent, node: Node) => void;
@@ -22,10 +21,8 @@ interface NodeRendererProps {
 
 const NodeRenderer = (props: NodeRendererProps) => {
   const transform = useStoreState((state) => state.transform);
-  const selectedElements = useStoreState((state) => state.selectedElements);
   const nodesDraggable = useStoreState((state) => state.nodesDraggable);
   const nodesConnectable = useStoreState((state) => state.nodesConnectable);
-  const elementsSelectable = useStoreState((state) => state.elementsSelectable);
   const nodes = useStoreState((state) => state.nodes);
   const updateNodeDimensions = useStoreActions((actions) => actions.updateNodeDimensions);
 
@@ -52,7 +49,7 @@ const NodeRenderer = (props: NodeRendererProps) => {
   }, []);
 
   return (
-    <div className="react-flow__nodes" style={transformStyle}>
+    <div className="react-flowy__nodes" style={transformStyle}>
       {nodes.map((node) => {
         const nodeType = node.type || 'default';
         const NodeComponent = (props.nodeTypes[nodeType] || props.nodeTypes.default) as ComponentType<WrapNodeProps>;
@@ -62,7 +59,6 @@ const NodeRenderer = (props: NodeRendererProps) => {
         }
 
         const isDraggable = !!(node.draggable || (nodesDraggable && typeof node.draggable === 'undefined'));
-        const isSelectable = !!(node.selectable || (elementsSelectable && typeof node.selectable === 'undefined'));
         const isConnectable = !!(node.connectable || (nodesConnectable && typeof node.connectable === 'undefined'));
 
         return (
@@ -82,7 +78,6 @@ const NodeRenderer = (props: NodeRendererProps) => {
             isInitialized={node.__rf.width !== null && node.__rf.height !== null}
             snapGrid={props.snapGrid}
             snapToGrid={props.snapToGrid}
-            selectNodesOnDrag={props.selectNodesOnDrag}
             onClick={props.onElementClick}
             onMouseEnter={props.onNodeMouseEnter}
             onMouseMove={props.onNodeMouseMove}
@@ -93,9 +88,7 @@ const NodeRenderer = (props: NodeRendererProps) => {
             onNodeDrag={props.onNodeDrag}
             onNodeDragStop={props.onNodeDragStop}
             scale={transform[2]}
-            selected={selectedElements?.some(({ id }) => id === node.id) || false}
             isDraggable={isDraggable}
-            isSelectable={isSelectable}
             isConnectable={isConnectable}
             resizeObserver={resizeObserver}
           />

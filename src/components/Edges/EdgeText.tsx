@@ -18,7 +18,7 @@ const EdgeText: FC<EdgeTextProps> = ({
 }) => {
   const edgeRef = useRef<SVGTextElement>(null);
   const [edgeTextBbox, setEdgeTextBbox] = useState<Rect>({ x: 0, y: 0, width: 0, height: 0 });
-  const edgeTextClasses = cc(['react-flow__edge-textwrapper', className]);
+  const edgeTextClasses = cc(['react-flowy__edge-textwrapper', className]);
 
   useEffect(() => {
     if (edgeRef.current) {
@@ -49,13 +49,13 @@ const EdgeText: FC<EdgeTextProps> = ({
           x={-labelBgPadding[0]}
           y={-labelBgPadding[1]}
           height={edgeTextBbox.height + 2 * labelBgPadding[1]}
-          className="react-flow__edge-textbg"
+          className="react-flowy__edge-textbg"
           style={labelBgStyle}
           rx={labelBgBorderRadius}
           ry={labelBgBorderRadius}
         />
       )}
-      <text className="react-flow__edge-text" y={edgeTextBbox.height / 2} dy="0.3em" ref={edgeRef} style={labelStyle}>
+      <text className="react-flowy__edge-text" y={edgeTextBbox.height / 2} dy="0.3em" ref={edgeRef} style={labelStyle}>
         {label}
       </text>
       {children}

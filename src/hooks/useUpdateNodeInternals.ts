@@ -7,7 +7,7 @@ function useUpdateNodeInternals(): UpdateNodeInternals {
   const updateNodeDimensions = useStoreActions((actions) => actions.updateNodeDimensions);
 
   return useCallback<UpdateNodeInternals>((id: ElementId) => {
-    const nodeElement = document.querySelector(`.react-flow__node[data-id="${id}"]`);
+    const nodeElement = document.querySelector(`.react-flowy__node[data-id="${id}"]`);
 
     if (nodeElement) {
       updateNodeDimensions([{ id, nodeElement, forceUpdate: true }]);

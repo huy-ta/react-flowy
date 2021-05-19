@@ -48,7 +48,6 @@ export interface Node<T = any> {
   sourcePosition?: Position;
   isHidden?: boolean;
   draggable?: boolean;
-  selectable?: boolean;
   connectable?: boolean;
 }
 
@@ -62,8 +61,6 @@ export interface Edge<T = any> {
   type?: string;
   source: ElementId;
   target: ElementId;
-  sourceHandle?: ElementId | null;
-  targetHandle?: ElementId | null;
   label?: string | ReactNode;
   labelStyle?: CSSProperties;
   labelShowBg?: boolean;
@@ -89,12 +86,6 @@ export type NodeTypesType = { [key: string]: ReactNode };
 
 export type EdgeTypesType = NodeTypesType;
 
-export interface SelectionRect extends Rect {
-  startX: number;
-  startY: number;
-  draw: boolean;
-}
-
 export interface WrapEdgeProps<T = any> {
   id: ElementId;
   className?: string;
@@ -102,7 +93,6 @@ export interface WrapEdgeProps<T = any> {
   data?: T;
   onClick?: (event: React.MouseEvent, edge: Edge) => void;
   onEdgeDoubleClick?: (event: React.MouseEvent, edge: Edge) => void;
-  selected: boolean;
   animated?: boolean;
   label?: string | ReactNode;
   labelStyle?: CSSProperties;
@@ -114,19 +104,15 @@ export interface WrapEdgeProps<T = any> {
   arrowHeadType?: ArrowHeadType;
   source: ElementId;
   target: ElementId;
-  sourceHandleId: ElementId | null;
-  targetHandleId: ElementId | null;
   sourceX: number;
   sourceY: number;
   targetX: number;
   targetY: number;
   sourcePosition: Position;
   targetPosition: Position;
-  elementsSelectable?: boolean;
   markerEndId?: string;
   isHidden?: boolean;
   handleEdgeUpdate: boolean;
-  onConnectEdge: OnConnectFunc;
   onContextMenu?: (event: React.MouseEvent, edge: Edge) => void;
   onMouseEnter?: (event: React.MouseEvent, edge: Edge) => void;
   onMouseMove?: (event: React.MouseEvent, edge: Edge) => void;
@@ -143,7 +129,6 @@ export interface EdgeProps<T = any> {
   sourceY: number;
   targetX: number;
   targetY: number;
-  selected?: boolean;
   animated?: boolean;
   sourcePosition: Position;
   targetPosition: Position;
@@ -157,8 +142,6 @@ export interface EdgeProps<T = any> {
   arrowHeadType?: ArrowHeadType;
   markerEndId?: string;
   data?: T;
-  sourceHandleId?: ElementId | null;
-  targetHandleId?: ElementId | null;
 }
 export interface EdgeSmoothStepProps<T = any> extends EdgeProps<T> {
   borderRadius?: number;
@@ -179,7 +162,6 @@ export interface NodeProps<T = any> {
   id: ElementId;
   type: string;
   data: T;
-  selected: boolean;
   isConnectable: boolean;
   xPos?: number;
   yPos?: number;
@@ -192,7 +174,6 @@ export interface NodeComponentProps<T = any> {
   id: ElementId;
   type: string;
   data: T;
-  selected?: boolean;
   isConnectable: boolean;
   transform?: Transform;
   xPos?: number;
@@ -216,14 +197,11 @@ export interface WrapNodeProps<T = any> {
   id: ElementId;
   type: string;
   data: T;
-  selected: boolean;
   scale: number;
   xPos: number;
   yPos: number;
-  isSelectable: boolean;
   isDraggable: boolean;
   isConnectable: boolean;
-  selectNodesOnDrag: boolean;
   onClick?: (event: ReactMouseEvent, node: Node) => void;
   onNodeDoubleClick?: (event: ReactMouseEvent, node: Node) => void;
   onMouseEnter?: (event: ReactMouseEvent, node: Node) => void;
@@ -273,68 +251,6 @@ export type OnLoadParams<T = any> = {
 
 export type OnLoadFunc<T = any> = (params: OnLoadParams<T>) => void;
 
-export interface Connection {
-  source: ElementId | null;
-  target: ElementId | null;
-  sourceHandle: ElementId | null;
-  targetHandle: ElementId | null;
-}
-
-export enum ConnectionMode {
-  Strict = 'strict',
-  Loose = 'loose',
-}
-
-export enum ConnectionLineType {
-  Bezier = 'default',
-  Straight = 'straight',
-  Step = 'step',
-  SmoothStep = 'smoothstep',
-}
-
-export type ConnectionLineComponentProps = {
-  sourceX: number;
-  sourceY: number;
-  sourcePosition?: Position;
-  targetX: number;
-  targetY: number;
-  targetPosition?: Position;
-  connectionLineStyle?: CSSProperties;
-  connectionLineType: ConnectionLineType;
-};
-
-export type ConnectionLineComponent = React.ComponentType<ConnectionLineComponentProps>;
-
-export type OnConnectFunc = (connection: Connection) => void;
-export type OnConnectStartParams = {
-  nodeId: ElementId | null;
-  handleId: ElementId | null;
-  handleType: HandleType | null;
-};
-export type OnConnectStartFunc = (event: ReactMouseEvent, params: OnConnectStartParams) => void;
-export type OnConnectStopFunc = (event: MouseEvent) => void;
-export type OnConnectEndFunc = (event: MouseEvent) => void;
-
-export type SetConnectionId = {
-  connectionNodeId: ElementId | null;
-  connectionHandleId: ElementId | null;
-  connectionHandleType: HandleType | null;
-};
-
-export interface HandleElement extends XYPosition, Dimensions {
-  id?: ElementId | null;
-  position: Position;
-}
-
-export interface HandleProps {
-  type: HandleType;
-  position: Position;
-  isConnectable?: boolean;
-  onConnect?: OnConnectFunc;
-  isValidConnection?: (connection: Connection) => boolean;
-  id?: ElementId;
-}
-
 export type NodePosUpdate = {
   id: ElementId;
   pos: XYPosition;
@@ -375,8 +291,6 @@ export interface ZoomPanHelperFunctions {
   initialized: boolean;
 }
 
-export type OnEdgeUpdateFunc<T = any> = (oldEdge: Edge<T>, newConnection: Connection) => void;
-
 export type NodeDimensionUpdate = {
   id: ElementId;
   nodeElement: HTMLDivElement;
@@ -396,8 +310,6 @@ export interface ReactFlowState {
   transform: Transform;
   nodes: Node[];
   edges: Edge[];
-  selectedElements: Elements | null;
-  selectedNodesBbox: Rect;
 
   d3Zoom: ZoomBehavior<Element, unknown> | null;
   d3Selection: D3Selection<Element, unknown, null, undefined> | null;
@@ -407,32 +319,13 @@ export interface ReactFlowState {
   translateExtent: TranslateExtent;
   nodeExtent: NodeExtent;
 
-  nodesSelectionActive: boolean;
-  selectionActive: boolean;
-
-  userSelectionRect: SelectionRect;
-
-  connectionNodeId: ElementId | null;
-  connectionHandleId: ElementId | null;
-  connectionHandleType: HandleType | null;
-  connectionPosition: XYPosition;
-  connectionMode: ConnectionMode;
-
   snapToGrid: boolean;
   snapGrid: SnapGrid;
 
   nodesDraggable: boolean;
   nodesConnectable: boolean;
-  elementsSelectable: boolean;
-
-  multiSelectionActive: boolean;
 
   reactFlowVersion: string;
-
-  onConnect?: OnConnectFunc;
-  onConnectStart?: OnConnectStartFunc;
-  onConnectStop?: OnConnectStopFunc;
-  onConnectEnd?: OnConnectEndFunc;
 }
 
 export type UpdateNodeInternals = (nodeId: ElementId) => void;

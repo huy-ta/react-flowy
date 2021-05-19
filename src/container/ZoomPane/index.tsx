@@ -9,8 +9,6 @@ import { useStoreState, useStoreActions, useStore } from '../../store/hooks';
 import { FlowTransform, TranslateExtent, PanOnScrollMode, KeyCode } from '../../types';
 
 interface ZoomPaneProps {
-  selectionKeyPressed: boolean;
-  elementsSelectable?: boolean;
   zoomOnScroll?: boolean;
   zoomOnPinch?: boolean;
   panOnScroll?: boolean;
@@ -49,8 +47,6 @@ const ZoomPane = ({
   panOnScrollSpeed = 0.5,
   panOnScrollMode = PanOnScrollMode.Free,
   zoomOnDoubleClick = true,
-  selectionKeyPressed,
-  elementsSelectable,
   paneMoveable = true,
   defaultPosition = [0, 0],
   defaultZoom = 1,
@@ -138,20 +134,16 @@ const ZoomPane = ({
 
   useEffect(() => {
     if (d3Zoom) {
-      if (selectionKeyPressed) {
-        d3Zoom.on('zoom', null);
-      } else {
-        d3Zoom.on('zoom', (event: any) => {
-          updateTransform([event.transform.x, event.transform.y, event.transform.k]);
+      d3Zoom.on('zoom', (event: any) => {
+        updateTransform([event.transform.x, event.transform.y, event.transform.k]);
 
-          if (onMove) {
-            const flowTransform = eventToFlowTransform(event.transform);
-            onMove(flowTransform);
-          }
-        });
-      }
+        if (onMove) {
+          const flowTransform = eventToFlowTransform(event.transform);
+          onMove(flowTransform);
+        }
+      });
     }
-  }, [selectionKeyPressed, d3Zoom, updateTransform, onMove]);
+  }, [d3Zoom, updateTransform, onMove]);
 
   useEffect(() => {
     if (d3Zoom) {
@@ -198,11 +190,6 @@ const ZoomPane = ({
           return false;
         }
 
-        // during a selection we prevent all other interactions
-        if (selectionKeyPressed) {
-          return false;
-        }
-
         // if zoom on double click is disabled, we prevent the double click event
         if (!zoomOnDoubleClick && event.type === 'dblclick') {
           return false;
@@ -214,14 +201,9 @@ const ZoomPane = ({
 
         // when the target element is a node, we still allow zooming
         if (
-          (event.target.closest('.react-flow__node') || event.target.closest('.react-flow__edge')) &&
+          (event.target.closest('.react-flowy__node') || event.target.closest('.react-flowy__edge')) &&
           event.type !== 'wheel'
         ) {
-          return false;
-        }
-
-        // when the target element is a node selection, we still allow zooming
-        if (event.target.closest('.react-flow__nodesselection') && event.type !== 'wheel') {
           return false;
         }
 
@@ -250,13 +232,11 @@ const ZoomPane = ({
     panOnScroll,
     zoomOnDoubleClick,
     paneMoveable,
-    selectionKeyPressed,
-    elementsSelectable,
     zoomActivationKeyPressed,
   ]);
 
   return (
-    <div className="react-flow__renderer react-flow__zoompane" ref={zoomPane}>
+    <div className="react-flowy__renderer react-flowy__zoompane" ref={zoomPane}>
       {children}
     </div>
   );

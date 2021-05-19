@@ -26,7 +26,7 @@ export interface ControlProps extends HTMLAttributes<HTMLDivElement> {
 export interface ControlButtonProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const ControlButton: FC<ControlButtonProps> = ({ children, className, ...rest }) => (
-  <div className={cc(['react-flow__controls-button', className])} {...rest}>
+  <div className={cc(['react-flowy__controls-button', className])} {...rest}>
     {children}
   </div>
 );
@@ -48,8 +48,8 @@ const Controls: FC<ControlProps> = ({
   const setInteractive = useStoreActions((actions) => actions.setInteractive);
   const { zoomIn, zoomOut, fitView } = useZoomPanHelper();
 
-  const isInteractive = useStoreState((s) => s.nodesDraggable && s.nodesConnectable && s.elementsSelectable);
-  const mapClasses = cc(['react-flow__controls', className]);
+  const isInteractive = useStoreState((s) => s.nodesDraggable && s.nodesConnectable);
+  const mapClasses = cc(['react-flowy__controls', className]);
 
   const onZoomInHandler = useCallback(() => {
     zoomIn?.();
@@ -83,21 +83,21 @@ const Controls: FC<ControlProps> = ({
     <div className={mapClasses} style={style}>
       {showZoom && (
         <>
-          <ControlButton onClick={onZoomInHandler} className="react-flow__controls-zoomin">
+          <ControlButton onClick={onZoomInHandler} className="react-flowy__controls-zoomin">
             <PlusIcon />
           </ControlButton>
-          <ControlButton onClick={onZoomOutHandler} className="react-flow__controls-zoomout">
+          <ControlButton onClick={onZoomOutHandler} className="react-flowy__controls-zoomout">
             <MinusIcon />
           </ControlButton>
         </>
       )}
       {showFitView && (
-        <ControlButton className="react-flow__controls-fitview" onClick={onFitViewHandler}>
+        <ControlButton className="react-flowy__controls-fitview" onClick={onFitViewHandler}>
           <FitviewIcon />
         </ControlButton>
       )}
       {showInteractive && (
-        <ControlButton className="react-flow__controls-interactive" onClick={onInteractiveChangeHandler}>
+        <ControlButton className="react-flowy__controls-interactive" onClick={onInteractiveChangeHandler}>
           {isInteractive ? <UnlockIcon /> : <LockIcon />}
         </ControlButton>
       )}

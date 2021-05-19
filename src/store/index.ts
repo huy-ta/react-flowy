@@ -1,6 +1,6 @@
 import configureStore from './configure-store';
 
-import { ReactFlowState, ConnectionMode } from '../types';
+import { ReactFlowState } from '../types';
 
 export const initialState: ReactFlowState = {
   width: 0,
@@ -8,8 +8,6 @@ export const initialState: ReactFlowState = {
   transform: [0, 0, 1],
   nodes: [],
   edges: [],
-  selectedElements: null,
-  selectedNodesBbox: { x: 0, y: 0, width: 0, height: 0 },
 
   d3Zoom: null,
   d3Selection: null,
@@ -26,32 +24,11 @@ export const initialState: ReactFlowState = {
     [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
   ],
 
-  nodesSelectionActive: false,
-  selectionActive: false,
-
-  userSelectionRect: {
-    startX: 0,
-    startY: 0,
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    draw: false,
-  },
-  connectionNodeId: null,
-  connectionHandleId: null,
-  connectionHandleType: 'source',
-  connectionPosition: { x: 0, y: 0 },
-  connectionMode: ConnectionMode.Strict,
-
   snapGrid: [15, 15],
   snapToGrid: false,
 
   nodesDraggable: true,
   nodesConnectable: true,
-  elementsSelectable: true,
-
-  multiSelectionActive: false,
 
   reactFlowVersion: typeof __REACT_FLOW_VERSION__ !== 'undefined' ? __REACT_FLOW_VERSION__ : '-',
 };

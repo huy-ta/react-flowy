@@ -29,7 +29,7 @@ const Background: FC<BackgroundProps> = ({
   // when there are multiple flows on a page we need to make sure that every background gets its own pattern.
   const patternId = useMemo(() => `pattern-${Math.floor(Math.random() * 100000)}`, []);
 
-  const bgClasses = cc(['react-flow__background', className]);
+  const bgClasses = cc(['react-flowy__background', className]);
   const scaledGap = gap * scale;
   const xOffset = x % scaledGap;
   const yOffset = y % scaledGap;

@@ -7,7 +7,7 @@ interface MarkerProps {
 
 const Marker = ({ id, children }: MarkerProps) => (
   <marker
-    className="react-flow__arrowhead"
+    className="react-flowy__arrowhead"
     id={id}
     markerWidth="12.5"
     markerHeight="12.5"
@@ -27,7 +27,7 @@ interface MarkerDefinitionsProps {
 const MarkerDefinitions = ({ color }: MarkerDefinitionsProps) => {
   return (
     <defs>
-      <Marker id="react-flow__arrowclosed">
+      <Marker id="react-flowy__arrowclosed">
         <polyline
           stroke={color}
           strokeLinecap="round"
@@ -37,7 +37,7 @@ const MarkerDefinitions = ({ color }: MarkerDefinitionsProps) => {
           points="-5,-4 0,0 -5,4 -5,-4"
         />
       </Marker>
-      <Marker id="react-flow__arrow">
+      <Marker id="react-flowy__arrow">
         <polyline
           stroke={color}
           strokeLinecap="round"

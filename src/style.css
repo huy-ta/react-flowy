@@ -1,13 +1,12 @@
-.react-flow {
+.react-flowy {
   width: 100%;
   height: 100%;
   position: relative;
   overflow: hidden;
 }
 
-.react-flow__renderer,
-.react-flow__pane,
-.react-flow__selectionpane {
+.react-flowy__renderer,
+.react-flowy__pane {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -15,25 +14,15 @@
   left: 0;
 }
 
-.react-flow__pane {
+.react-flowy__pane {
   z-index: 1;
 }
 
-.react-flow__renderer {
+.react-flowy__renderer {
   z-index: 4;
 }
 
-.react-flow__selectionpane {
-  z-index: 5;
-}
-
-.react-flow__selection {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.react-flow__edges {
+.react-flowy__edges {
   position: absolute;
   top: 0;
   left: 0;
@@ -41,7 +30,7 @@
   z-index: 2;
 }
 
-.react-flow__edge {
+.react-flowy__edge {
   pointer-events: visibleStroke;
 
   &.inactive {
@@ -55,20 +44,20 @@
   }
 }
 
-.react-flow__edge-path {
+.react-flowy__edge-path {
   fill: none;
 }
 
-.react-flow__edge-textwrapper {
+.react-flowy__edge-textwrapper {
   pointer-events: all;
 }
 
-.react-flow__edge-text {
+.react-flowy__edge-text {
   pointer-events: none;
   user-select: none;
 }
 
-.react-flow__connection {
+.react-flowy__connection {
   pointer-events: none;
 
   .animated {
@@ -77,11 +66,11 @@
   }
 }
 
-.react-flow__connection-path {
+.react-flowy__connection-path {
   fill: none;
 }
 
-.react-flow__nodes {
+.react-flowy__nodes {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -90,71 +79,21 @@
   z-index: 3;
 }
 
-.react-flow__node {
+.react-flowy__node {
   position: absolute;
   user-select: none;
   pointer-events: all;
   transform-origin: 0 0;
 }
 
-.react-flow__nodesselection {
-  z-index: 3;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  transform-origin: left top;
-  pointer-events: none;
-
-  &-rect {
-    position: absolute;
-    pointer-events: all;
-    cursor: grab;
-  }
-}
-
-.react-flow__handle {
-  pointer-events: none;
-
-  &.connectable {
-    pointer-events: all;
-  }
-}
-
-.react-flow__handle-bottom {
-  top: auto;
-  left: 50%;
-  bottom: -4px;
-  transform: translate(-50%, 0);
-}
-
-.react-flow__handle-top {
-  left: 50%;
-  top: -4px;
-  transform: translate(-50%, 0);
-}
-
-.react-flow__handle-left {
-  top: 50%;
-  left: -4px;
-  transform: translate(0, -50%);
-}
-
-.react-flow__handle-right {
-  right: -4px;
-  top: 50%;
-  transform: translate(0, -50%);
-}
-
-.react-flow__edgeupdater {
+.react-flowy__edgeupdater {
   cursor: move;
   pointer-events: all;
 }
 
 /* additional components */
 
-.react-flow__background {
+.react-flowy__background {
   position: absolute;
   top: 0;
   left: 0;
@@ -162,7 +101,7 @@
   height: 100%;
 }
 
-.react-flow__controls {
+.react-flowy__controls {
   position: absolute;
   z-index: 5;
   bottom: 10px;
@@ -178,7 +117,7 @@
   }
 }
 
-.react-flow__minimap {
+.react-flowy__minimap {
   position: absolute;
   z-index: 5;
   bottom: 10px;

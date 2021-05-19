@@ -22,6 +22,7 @@ export function useStoreActions<Action extends ReactFlowAction>(
   actionSelector: ActionCreatorSelector<Action>
 ): ActionCreator<Action>;
 
+// @ts-ignore
 export function useStoreActions<Action extends ReactFlowAction>(
   actionSelector: ActionMapObjectSelector<Action>
 ): ActionCreatorsMapObject<Action>;
@@ -33,7 +34,9 @@ export function useStoreActions<Action extends ReactFlowAction>(actionSelector: 
   const action = useMemo(() => {
     // this looks weird but required if both ActionSelector and ActionMapObjectSelector are supported
     return typeof currAction === 'function'
+    // @ts-ignore
       ? bindActionCreators(currAction, dispatch)
+    // @ts-ignore
       : bindActionCreators(currAction, dispatch);
   }, [dispatch, currAction]);
 

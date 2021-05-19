@@ -11,16 +11,15 @@ import {
   XYPosition,
   Rect,
   Box,
-  Connection,
   FlowExportObject,
   ReactFlowState,
   NodeExtent,
 } from '../types';
 
-export const isEdge = (element: Node | Connection | Edge): element is Edge =>
+export const isEdge = (element: Node | Edge): element is Edge =>
   'id' in element && 'source' in element && 'target' in element;
 
-export const isNode = (element: Node | Connection | Edge): element is Node =>
+export const isNode = (element: Node | Edge): element is Node =>
   'id' in element && !('source' in element) && !('target' in element);
 
 export const getOutgoers = (node: Node, elements: Elements): Node[] => {
@@ -54,37 +53,41 @@ export const removeElements = (elementsToRemove: Elements, elements: Elements): 
   });
 };
 
-const getEdgeId = ({ source, sourceHandle, target, targetHandle }: Connection): ElementId =>
-  `reactflow__edge-${source}${sourceHandle}-${target}${targetHandle}`;
+export const getEdgeId = ({ source, target }: Edge): ElementId =>
+  `reactflow__edge-${source}-${target}}`;
 
-const connectionExists = (edge: Edge, elements: Elements) => {
+const doesEdgeExist = (edge: Edge, elements: Elements) => {
   return elements.some(
     (el) =>
       isEdge(el) &&
       el.source === edge.source &&
-      el.target === edge.target &&
-      (el.sourceHandle === edge.sourceHandle || (!el.sourceHandle && !edge.sourceHandle)) &&
-      (el.targetHandle === edge.targetHandle || (!el.targetHandle && !edge.targetHandle))
+      el.target === edge.target
   );
 };
 
-export const addEdge = (edgeParams: Edge | Connection, elements: Elements): Elements => {
+export const addEdge = (edgeParams: Edge, elements: Elements): Elements => {
   if (!edgeParams.source) {
     console.warn("Can't create edge. An edge needs a source.");
 
     return elements;
   }
 
-  const edge: Edge = isEdge(edgeParams) ? { ...edgeParams } : { ...edgeParams, id: getEdgeId(edgeParams) } as Edge;
+  if (!edgeParams.id) {
+    console.warn("Can't create edge. An edge needs an id");
 
-  if (connectionExists(edge, elements)) {
+    return elements;
+  }
+
+  const edge = { ...edgeParams };
+
+  if (doesEdgeExist(edge, elements)) {
     return elements;
   }
 
   return elements.concat(edge);
 };
 
-export const addEdges = (edges: Edge[] | Connection[], elements: Elements): Elements => {
+export const addEdges = (edges: Edge[], elements: Elements): Elements => {
   let newElements: Elements = elements;
 
   for (let edge of edges) {
@@ -92,32 +95,6 @@ export const addEdges = (edges: Edge[] | Connection[], elements: Elements): Elem
   }
 
   return newElements;
-};
-
-export const updateEdge = (oldEdge: Edge, newConnection: Connection, elements: Elements): Elements => {
-  if (!newConnection.source || !newConnection.target) {
-    console.warn("Can't create new edge. An edge needs a source and a target.");
-    return elements;
-  }
-
-  const foundEdge = elements.find((e) => isEdge(e) && e.id === oldEdge.id) as Edge;
-
-  if (!foundEdge) {
-    console.warn(`The old edge with id=${oldEdge.id} does not exist.`);
-    return elements;
-  }
-
-  // Remove old edge and create the new edge with parameters of old edge.
-  const edge = {
-    ...oldEdge,
-    id: getEdgeId(newConnection),
-    source: newConnection.source,
-    target: newConnection.target,
-    sourceHandle: newConnection.sourceHandle,
-    targetHandle: newConnection.targetHandle,
-  } as Edge;
-
-  return elements.filter((e) => e.id !== oldEdge.id).concat(edge);
 };
 
 export const pointToRendererPoint = (
@@ -158,7 +135,6 @@ export const parseNode = (node: Node, nodeExtent: NodeExtent): Node => {
       position: clampPosition(node.position, nodeExtent),
       width: null,
       height: null,
-      handleBounds: {},
       isDragging: false,
     },
   };
@@ -169,8 +145,6 @@ export const parseEdge = (edge: Edge): Edge => {
     ...edge,
     source: edge.source.toString(),
     target: edge.target.toString(),
-    sourceHandle: edge.sourceHandle ? edge.sourceHandle.toString() : null,
-    targetHandle: edge.targetHandle ? edge.targetHandle.toString() : null,
     id: edge.id.toString(),
     type: edge.type || 'default',
   };

@@ -37,7 +37,7 @@ const MiniMap = ({
   const [tX, tY, tScale] = useStoreState((s) => s.transform);
   const nodes = useStoreState((s) => s.nodes);
 
-  const mapClasses = cc(['react-flow__minimap', className]);
+  const mapClasses = cc(['react-flowy__minimap', className]);
   const elementWidth = (style?.width || defaultWidth)! as number;
   const elementHeight = (style?.height || defaultHeight)! as number;
   const nodeColorFunc = (nodeColor instanceof Function ? nodeColor : () => nodeColor) as StringFunc;
@@ -93,7 +93,7 @@ const MiniMap = ({
           />
         ))}
       <path
-        className="react-flow__minimap-mask"
+        className="react-flowy__minimap-mask"
         d={`M${x - offset},${y - offset}h${width + offset * 2}v${height + offset * 2}h${-width - offset * 2}z
         M${viewBB.x},${viewBB.y}h${viewBB.width}v${viewBB.height}h${-viewBB.width}z`}
         fill={maskColor}

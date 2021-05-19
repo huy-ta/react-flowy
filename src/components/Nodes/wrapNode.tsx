@@ -24,7 +24,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     scale,
     xPos,
     yPos,
-    selected,
     onClick,
     onMouseEnter,
     onMouseMove,
@@ -37,9 +36,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     style,
     className,
     isDraggable,
-    isSelectable,
     isConnectable,
-    selectNodesOnDrag,
     sourcePosition,
     targetPosition,
     isHidden,
@@ -51,9 +48,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
   }: WrapNodeProps) => {
     const observerInitialized = useRef<boolean>(false);
     const updateNodeDimensions = useStoreActions((actions) => actions.updateNodeDimensions);
-    const addSelectedElements = useStoreActions((actions) => actions.addSelectedElements);
     const updateNodePosDiff = useStoreActions((actions) => actions.updateNodePosDiff);
-    const unsetNodesSelection = useStoreActions((actions) => actions.unsetNodesSelection);
 
     const nodeElement = useRef<HTMLDivElement>(null);
 
@@ -62,19 +57,17 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
     const nodeStyle: CSSProperties = useMemo(
       () => ({
-        zIndex: selected ? 10 : 3,
+        zIndex: 3,
         transform: `translate(${xPos}px,${yPos}px)`,
         pointerEvents:
-          isSelectable || isDraggable || onClick || onMouseEnter || onMouseMove || onMouseLeave ? 'all' : 'none',
+          isDraggable || onClick || onMouseEnter || onMouseMove || onMouseLeave ? 'all' : 'none',
         // prevents jumping of nodes on start
         opacity: isInitialized ? 1 : 0,
         ...style,
       }),
       [
-        selected,
         xPos,
         yPos,
-        isSelectable,
         isDraggable,
         onClick,
         isInitialized,
@@ -116,39 +109,11 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
       return (event: MouseEvent) => onContextMenu(event, node);
     }, [onContextMenu, node]);
 
-    const onSelectNodeHandler = useCallback(
-      (event: MouseEvent) => {
-        if (!isDraggable) {
-          if (isSelectable) {
-            unsetNodesSelection();
-
-            if (!selected) {
-              addSelectedElements(node);
-            }
-          }
-
-          onClick?.(event, node);
-        }
-      },
-      [isSelectable, selected, isDraggable, onClick, node]
-    );
-
     const onDragStart = useCallback(
       (event: DraggableEvent) => {
         onNodeDragStart?.(event as MouseEvent, node);
-
-        if (selectNodesOnDrag && isSelectable) {
-          unsetNodesSelection();
-
-          if (!selected) {
-            addSelectedElements(node);
-          }
-        } else if (!selectNodesOnDrag && !selected && isSelectable) {
-          unsetNodesSelection();
-          addSelectedElements([]);
-        }
       },
-      [node, selected, selectNodesOnDrag, isSelectable, onNodeDragStart]
+      [node, onNodeDragStart]
     );
 
     const onDrag = useCallback(
@@ -176,10 +141,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
         // onDragStop also gets called when user just clicks on a node.
         // Because of that we set dragging to true inside the onDrag handler and handle the click here
         if (!isDragging) {
-          if (isSelectable && !selectNodesOnDrag && !selected) {
-            addSelectedElements(node);
-          }
-
           onClick?.(event as MouseEvent, node);
 
           return;
@@ -192,7 +153,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
         onNodeDragStop?.(event as MouseEvent, node);
       },
-      [node, isSelectable, selectNodesOnDrag, onClick, onNodeDragStop, isDragging, selected]
+      [node, onClick, onNodeDragStop, isDragging]
     );
 
     const onNodeDoubleClickHandler = useCallback(
@@ -225,13 +186,9 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     }
 
     const nodeClasses = cc([
-      'react-flow__node',
-      `react-flow__node-${type}`,
+      'react-flowy__node',
+      `react-flowy__node-${type}`,
       className,
-      {
-        selected,
-        selectable: isSelectable,
-      },
     ]);
 
     return (
@@ -244,7 +201,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
         cancel=".nodrag"
         nodeRef={nodeElement}
         grid={grid}
-        enableUserSelectHack={false}
       >
         <div
           className={nodeClasses}
@@ -254,7 +210,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
           onMouseMove={onMouseMoveHandler}
           onMouseLeave={onMouseLeaveHandler}
           onContextMenu={onContextMenuHandler}
-          onClick={onSelectNodeHandler}
           onDoubleClick={onNodeDoubleClickHandler}
           data-id={id}
         >
@@ -265,7 +220,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
               type={type}
               xPos={xPos}
               yPos={yPos}
-              selected={selected}
               isConnectable={isConnectable}
               sourcePosition={sourcePosition}
               targetPosition={targetPosition}

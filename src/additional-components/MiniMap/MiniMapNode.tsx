@@ -33,7 +33,7 @@ const MiniMapNode = ({
 
   return (
     <rect
-      className={cc(['react-flow__minimap-node', className])}
+      className={cc(['react-flowy__minimap-node', className])}
       x={x}
       y={y}
       rx={borderRadius}

@@ -44,7 +44,7 @@ export default memo(
       <>
         <path
           style={style}
-          className="react-flow__edge-path"
+          className="react-flowy__edge-path"
           d={`M ${sourceX},${sourceY}L ${targetX},${targetY}`}
           markerEnd={markerEnd}
         />
