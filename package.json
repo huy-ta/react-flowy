@@ -1,6 +1,6 @@
 {
   "name": "react-flowy",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "main": "dist/ReactFlow.js",
   "module": "dist/ReactFlow.esm.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,8 @@
     "start:examples": "cd example && npm start",
     "build:examples": "cd example && npm run build",
     "start:testserver": "npm run build && npm run start:examples",
-    "build:dev": "npm install && npm run build && cd example && npm install && npm run build"
+    "build:dev": "npm install && npm run build && cd example && npm install && npm run build",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@babel/runtime": "^7.14.0",

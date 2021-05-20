@@ -1,5 +1,3 @@
-import { Store } from 'redux';
-
 import { clampPosition, clamp } from '../utils';
 
 import {
