@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, memo } from 'react';
+import { useSnapshot } from 'valtio';
 
 import ZoomPaneRenderer from '../ZoomPaneRenderer/ZoomPaneRenderer';
 import NodeRenderer from '../NodeRenderer';
@@ -8,8 +9,9 @@ import useZoomPanHelper from '../../hooks/useZoomPanHelper';
 
 import { ReactFlowProps } from '../ReactFlow';
 
-import { NodeTypesType, EdgeTypesType } from '../../types';
+import { NodeTypesType, EdgeTypesType, ReactFlowState } from '../../types';
 import { setMaxZoom, setMinZoom, setNodeExtent, setNodesConnectable, setNodesDraggable, setSnapGrid, setSnapToGrid, setTranslateExtent } from '../../store/actions';
+import { state } from '../../store/state';
 
 export interface ElementRendererProps extends Omit<ReactFlowProps, 'elements'> {
   nodeTypes: NodeTypesType;
@@ -71,6 +73,7 @@ const ElementRenderer = ({
   edgeUpdaterRadius,
 }: ElementRendererProps) => {
   const isInitialized = useRef<boolean>(false);
+  const snap = useSnapshot(state);
   const { zoomIn, zoomOut, zoomTo, transform, fitView, initialized } = useZoomPanHelper();
 
   useEffect(() => {
@@ -82,18 +85,15 @@ const ElementRenderer = ({
           zoomOut,
           zoomTo,
           setTransform: transform,
-          // @ts-ignore
-          project: onLoadProject(currentStore),
-          // @ts-ignore
-          getElements: onLoadGetElements(currentStore),
-          // @ts-ignore
-          toObject: onLoadToObject(currentStore),
+          project: onLoadProject(snap as ReactFlowState),
+          getElements: onLoadGetElements(snap as ReactFlowState),
+          toObject: onLoadToObject(snap as ReactFlowState),
         });
       }
 
       isInitialized.current = true;
     }
-  }, [onLoad, zoomIn, zoomOut, zoomTo, transform, fitView, initialized]);
+  }, [onLoad, zoomIn, zoomOut, zoomTo, transform, fitView, initialized, snap]);
 
   useEffect(() => {
     if (typeof snapToGrid !== 'undefined') {

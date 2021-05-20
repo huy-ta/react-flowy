@@ -33,7 +33,7 @@ interface EdgeWrapperProps {
   height: number;
 }
 
-const Edgey = ({
+const Edgey = React.memo(({
   edge,
   props,
   nodes,
@@ -83,7 +83,7 @@ const Edgey = ({
       onEdgeDoubleClick={props.onEdgeDoubleClick}
     />
   );
-};
+});
 
 const EdgeRenderer = (props: EdgeRendererProps) => {
   const snap = useSnapshot(state);

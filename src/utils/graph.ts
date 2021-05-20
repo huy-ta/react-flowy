@@ -118,9 +118,9 @@ export const pointToRendererPoint = (
   return position;
 };
 
-export const onLoadProject = (currentStore: Store<ReactFlowState>) => {
+export const onLoadProject = (state: ReactFlowState) => {
   return (position: XYPosition): XYPosition => {
-    const { transform, snapToGrid, snapGrid } = currentStore.getState();
+    const { transform, snapToGrid, snapGrid } = state;
 
     return pointToRendererPoint(position, transform, snapToGrid, snapGrid);
   };
@@ -243,17 +243,17 @@ const parseElements = (nodes: Node[], edges: Edge[]): Elements => {
   ];
 };
 
-export const onLoadGetElements = (currentStore: Store<ReactFlowState>) => {
+export const onLoadGetElements = (state: ReactFlowState) => {
   return (): Elements => {
-    const { nodes = [], edges = [] } = currentStore.getState();
+    const { nodes = [], edges = [] } = state;
 
     return parseElements(nodes, edges);
   };
 };
 
-export const onLoadToObject = (currentStore: Store<ReactFlowState>) => {
+export const onLoadToObject = (state: ReactFlowState) => {
   return (): FlowExportObject => {
-    const { nodes = [], edges = [], transform } = currentStore.getState();
+    const { nodes = [], edges = [], transform } = state;
 
     return {
       elements: parseElements(nodes, edges),
