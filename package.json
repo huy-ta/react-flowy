@@ -1,6 +1,6 @@
 {
   "name": "react-flowy",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "dist/ReactFlow.js",
   "module": "dist/ReactFlow.esm.js",
   "types": "dist/index.d.ts",
@@ -63,6 +63,7 @@
     "react-dom": "16 || 17"
   },
   "files": [
-    "dist"
+    "dist",
+    "lib"
   ]
 }
