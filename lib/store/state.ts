@@ -29,6 +29,4 @@ export const state = proxy<ReactFlowState>({
 
   nodesDraggable: true,
   nodesConnectable: true,
-
-  reactFlowVersion: typeof __REACT_FLOW_VERSION__ !== 'undefined' ? __REACT_FLOW_VERSION__ : '-',
 });

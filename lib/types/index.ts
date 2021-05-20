@@ -305,8 +305,6 @@ export interface ReactFlowState {
 
   nodesDraggable: boolean;
   nodesConnectable: boolean;
-
-  reactFlowVersion: string;
 }
 
 export type UpdateNodeInternals = (nodeId: ElementId) => void;

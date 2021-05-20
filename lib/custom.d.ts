@@ -12,5 +12,4 @@ declare module '*.svg' {
   export { svgComponent as ReactComponent };
 }
 
-declare var __REACT_FLOW_VERSION__: string;
 declare var __ENV__: string;

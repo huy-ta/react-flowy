@@ -15,7 +15,7 @@ const isTesting = process.env.NODE_ENV === 'testing';
 const processEnv = isProd || isTesting ? 'production' : 'development';
 
 export const baseConfig = ({ mainFile = pkg.main, moduleFile = pkg.module, injectCSS = true } = {}) => ({
-  input: 'src/index.ts',
+  input: 'lib/index.ts',
   external: ['react', 'react-dom', (id) => id.includes('@babel/runtime')],
   onwarn(warning, rollupWarn) {
     if (warning.code !== 'CIRCULAR_DEPENDENCY') {
@@ -39,7 +39,6 @@ export const baseConfig = ({ mainFile = pkg.main, moduleFile = pkg.module, injec
   plugins: [
     replace({
       __ENV__: JSON.stringify(processEnv),
-      __REACT_FLOW_VERSION__: JSON.stringify(pkg.version),
       preventAssignment: true,
     }),
     bundleSize(),
