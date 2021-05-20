@@ -1,8 +1,10 @@
-import React, { memo, useMemo, ComponentType, MouseEvent } from 'react';
+import React, { memo, useMemo, ComponentType, MouseEvent, CSSProperties } from 'react';
+import { useSnapshot } from 'valtio';
 
-import { useStoreState, useStoreActions } from '../../store/hooks';
 import { Node, NodeTypesType, WrapNodeProps, Edge } from '../../types';
 import { DraggableData } from 'react-draggable';
+import { state } from '../../store/state';
+import { updateNodeDimensions } from '../../store/actions';
 interface NodeRendererProps {
   nodeTypes: NodeTypesType;
   onElementClick?: (event: MouseEvent, element: Node | Edge) => void;
@@ -20,17 +22,13 @@ interface NodeRendererProps {
 }
 
 const NodeRenderer = (props: NodeRendererProps) => {
-  const transform = useStoreState((state) => state.transform);
-  const nodesDraggable = useStoreState((state) => state.nodesDraggable);
-  const nodesConnectable = useStoreState((state) => state.nodesConnectable);
-  const nodes = useStoreState((state) => state.nodes);
-  const updateNodeDimensions = useStoreActions((actions) => actions.updateNodeDimensions);
+  const snap = useSnapshot(state);
 
   const transformStyle = useMemo(
     () => ({
-      transform: `translate(${transform[0]}px,${transform[1]}px) scale(${transform[2]})`,
+      transform: `translate(${snap.transform[0]}px,${snap.transform[1]}px) scale(${snap.transform[2]})`,
     }),
-    [transform[0], transform[1], transform[2]]
+    [snap.transform[0], snap.transform[1], snap.transform[2]]
   );
 
   const resizeObserver = useMemo(() => {
@@ -50,7 +48,7 @@ const NodeRenderer = (props: NodeRendererProps) => {
 
   return (
     <div className="react-flowy__nodes" style={transformStyle}>
-      {nodes.map((node) => {
+      {snap.nodes.map(node => {
         const nodeType = node.type || 'default';
         const NodeComponent = (props.nodeTypes[nodeType] || props.nodeTypes.default) as ComponentType<WrapNodeProps>;
 
@@ -58,15 +56,15 @@ const NodeRenderer = (props: NodeRendererProps) => {
           console.warn(`Node type "${nodeType}" not found. Using fallback type "default".`);
         }
 
-        const isDraggable = !!(node.draggable || (nodesDraggable && typeof node.draggable === 'undefined'));
-        const isConnectable = !!(node.connectable || (nodesConnectable && typeof node.connectable === 'undefined'));
+        const isDraggable = !!(node.draggable || (snap.nodesDraggable && typeof node.draggable === 'undefined'));
+        const isConnectable = !!(node.connectable || (snap.nodesConnectable && typeof node.connectable === 'undefined'));
 
         return (
           <NodeComponent
             key={node.id}
             id={node.id}
             className={node.className}
-            style={node.style}
+            style={node.style as CSSProperties}
             type={nodeType}
             data={node.data}
             isHidden={node.isHidden}
@@ -85,7 +83,7 @@ const NodeRenderer = (props: NodeRendererProps) => {
             onNodeDragStart={props.onNodeDragStart}
             onNodeDrag={props.onNodeDrag}
             onNodeDragStop={props.onNodeDragStop}
-            scale={transform[2]}
+            scale={snap.transform[2]}
             isDraggable={isDraggable}
             isConnectable={isConnectable}
             resizeObserver={resizeObserver}

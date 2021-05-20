@@ -1,8 +1,8 @@
-import configureStore from './configure-store';
+import { proxy } from 'valtio';
 
 import { ReactFlowState } from '../types';
 
-export const initialState: ReactFlowState = {
+export const state = proxy<ReactFlowState>({
   width: 0,
   height: 0,
   transform: [0, 0, 1],
@@ -31,10 +31,4 @@ export const initialState: ReactFlowState = {
   nodesConnectable: true,
 
   reactFlowVersion: typeof __REACT_FLOW_VERSION__ !== 'undefined' ? __REACT_FLOW_VERSION__ : '-',
-};
-
-const store = configureStore(initialState);
-
-export type ReactFlowDispatch = typeof store.dispatch;
-
-export default store;
+});

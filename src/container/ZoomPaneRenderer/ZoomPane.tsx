@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, ReactNode } from 'react';
+import { Selection } from 'd3';
 import { zoom, zoomIdentity } from 'd3-zoom';
 import { select, pointer } from 'd3-selection';
+import { useSnapshot } from 'valtio';
 
 import { clamp } from '../../utils';
 import useKeyPress from '../../hooks/useKeyPress';
 import useResizeHandler from '../../hooks/useResizeHandler';
-import { useStoreState, useStoreActions, useStore } from '../../store/hooks';
 import { FlowTransform, TranslateExtent, PanOnScrollMode, KeyCode } from '../../types';
+import { state } from '../../store/state';
+import { initD3Zoom, updateTransform } from '../../store/actions';
 
 interface ZoomPaneProps {
   zoomOnScroll?: boolean;
@@ -57,13 +60,7 @@ const ZoomPane = ({
   const zoomPane = useRef<HTMLDivElement>(null);
   const prevTransform = useRef<FlowTransform>({ x: 0, y: 0, zoom: 0 });
 
-  const store = useStore();
-  const d3Zoom = useStoreState((s) => s.d3Zoom);
-  const d3Selection = useStoreState((s) => s.d3Selection);
-  const d3ZoomHandler = useStoreState((s) => s.d3ZoomHandler);
-
-  const initD3Zoom = useStoreActions((actions) => actions.initD3Zoom);
-  const updateTransform = useStoreActions((actions) => actions.updateTransform);
+  const snap = useSnapshot(state);
 
   const zoomActivationKeyPressed = useKeyPress(zoomActivationKeyCode);
 
@@ -71,7 +68,6 @@ const ZoomPane = ({
 
   useEffect(() => {
     if (zoomPane.current) {
-      const state = store.getState();
       const currentTranslateExtent = typeof translateExtent !== 'undefined' ? translateExtent : state.translateExtent;
       const d3ZoomInstance = zoom().scaleExtent([state.minZoom, state.maxZoom]).translateExtent(currentTranslateExtent);
       const selection = select(zoomPane.current as Element).call(d3ZoomInstance);
@@ -94,7 +90,10 @@ const ZoomPane = ({
   }, []);
 
   useEffect(() => {
-    if (d3Selection && d3Zoom) {
+    if (snap.d3Selection && snap.d3Zoom) {
+      const d3Selection = snap.d3Selection as Selection<Element, unknown, null, undefined>;
+      const d3Zoom = snap.d3Zoom;
+
       if (panOnScroll && !zoomActivationKeyPressed) {
         d3Selection
           .on('wheel', (event: any) => {
@@ -126,15 +125,15 @@ const ZoomPane = ({
             );
           })
           .on('wheel.zoom', null);
-      } else if (typeof d3ZoomHandler !== 'undefined') {
-        d3Selection.on('wheel', null).on('wheel.zoom', d3ZoomHandler);
+      } else if (typeof snap.d3ZoomHandler !== 'undefined') {
+        d3Selection.on('wheel', null).on('wheel.zoom', snap.d3ZoomHandler);
       }
     }
-  }, [panOnScroll, panOnScrollMode, d3Selection, d3Zoom, d3ZoomHandler, zoomActivationKeyPressed, zoomOnPinch]);
+  }, [panOnScroll, panOnScrollMode, snap.d3Selection, snap.d3Zoom, snap.d3ZoomHandler, zoomActivationKeyPressed, zoomOnPinch]);
 
   useEffect(() => {
-    if (d3Zoom) {
-      d3Zoom.on('zoom', (event: any) => {
+    if (snap.d3Zoom) {
+      snap.d3Zoom.on('zoom', (event: any) => {
         updateTransform([event.transform.x, event.transform.y, event.transform.k]);
 
         if (onMove) {
@@ -143,12 +142,12 @@ const ZoomPane = ({
         }
       });
     }
-  }, [d3Zoom, updateTransform, onMove]);
+  }, [snap.d3Zoom, updateTransform, onMove]);
 
   useEffect(() => {
-    if (d3Zoom) {
+    if (snap.d3Zoom) {
       if (onMoveStart) {
-        d3Zoom.on('start', (event: any) => {
+        snap.d3Zoom.on('start', (event: any) => {
           if (viewChanged(prevTransform.current, event.transform)) {
             const flowTransform = eventToFlowTransform(event.transform);
             prevTransform.current = flowTransform;
@@ -157,15 +156,15 @@ const ZoomPane = ({
           }
         });
       } else {
-        d3Zoom.on('start', null);
+        snap.d3Zoom.on('start', null);
       }
     }
-  }, [d3Zoom, onMoveStart]);
+  }, [snap.d3Zoom, onMoveStart]);
 
   useEffect(() => {
-    if (d3Zoom) {
+    if (snap.d3Zoom) {
       if (onMoveEnd) {
-        d3Zoom.on('end', (event: any) => {
+        snap.d3Zoom.on('end', (event: any) => {
           if (viewChanged(prevTransform.current, event.transform)) {
             const flowTransform = eventToFlowTransform(event.transform);
             prevTransform.current = flowTransform;
@@ -174,14 +173,14 @@ const ZoomPane = ({
           }
         });
       } else {
-        d3Zoom.on('end', null);
+        snap.d3Zoom.on('end', null);
       }
     }
-  }, [d3Zoom, onMoveEnd]);
+  }, [snap.d3Zoom, onMoveEnd]);
 
   useEffect(() => {
-    if (d3Zoom) {
-      d3Zoom.filter((event: any) => {
+    if (snap.d3Zoom) {
+      snap.d3Zoom.filter((event: any) => {
         const zoomScroll = zoomActivationKeyPressed || zoomOnScroll;
         const pinchZoom = zoomOnPinch && event.ctrlKey;
 
@@ -226,7 +225,7 @@ const ZoomPane = ({
       });
     }
   }, [
-    d3Zoom,
+    snap.d3Zoom,
     zoomOnScroll,
     zoomOnPinch,
     panOnScroll,

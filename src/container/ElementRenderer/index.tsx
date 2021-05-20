@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, memo } from 'react';
 
-import { useStoreActions, useStore } from '../../store/hooks';
 import ZoomPaneRenderer from '../ZoomPaneRenderer/ZoomPaneRenderer';
 import NodeRenderer from '../NodeRenderer';
 import EdgeRenderer from '../EdgeRenderer';
@@ -10,6 +9,7 @@ import useZoomPanHelper from '../../hooks/useZoomPanHelper';
 import { ReactFlowProps } from '../ReactFlow';
 
 import { NodeTypesType, EdgeTypesType } from '../../types';
+import { setMaxZoom, setMinZoom, setNodeExtent, setNodesConnectable, setNodesDraggable, setSnapGrid, setSnapToGrid, setTranslateExtent } from '../../store/actions';
 
 export interface ElementRendererProps extends Omit<ReactFlowProps, 'elements'> {
   nodeTypes: NodeTypesType;
@@ -71,15 +71,6 @@ const ElementRenderer = ({
   edgeUpdaterRadius,
 }: ElementRendererProps) => {
   const isInitialized = useRef<boolean>(false);
-  const setSnapGrid = useStoreActions((actions) => actions.setSnapGrid);
-  const setSnapToGrid = useStoreActions((actions) => actions.setSnapToGrid);
-  const setNodesDraggable = useStoreActions((actions) => actions.setNodesDraggable);
-  const setNodesConnectable = useStoreActions((actions) => actions.setNodesConnectable);
-  const setMinZoom = useStoreActions((actions) => actions.setMinZoom);
-  const setMaxZoom = useStoreActions((actions) => actions.setMaxZoom);
-  const setTranslateExtent = useStoreActions((actions) => actions.setTranslateExtent);
-  const setNodeExtent = useStoreActions((actions) => actions.setNodeExtent);
-  const currentStore = useStore();
   const { zoomIn, zoomOut, zoomTo, transform, fitView, initialized } = useZoomPanHelper();
 
   useEffect(() => {

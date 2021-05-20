@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useStoreActions } from '../../store/hooks';
+import { setElements } from '../../store/actions';
 import { Elements } from '../../types';
 
 interface ElementUpdaterProps {
@@ -8,8 +8,6 @@ interface ElementUpdaterProps {
 }
 
 const ElementUpdater = ({ elements }: ElementUpdaterProps) => {
-  const setElements = useStoreActions((actions) => actions.setElements);
-
   useEffect(() => {
     setElements(elements);
   }, [elements]);

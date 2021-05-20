@@ -1,5 +1,5 @@
 import React, { CSSProperties, MouseEvent as ReactMouseEvent, HTMLAttributes, ReactNode } from 'react';
-import { Selection as D3Selection, ZoomBehavior } from 'd3';
+import { Selection, ZoomBehavior } from 'd3';
 import { DraggableData } from 'react-draggable';
 
 export type ElementId = string;
@@ -280,7 +280,7 @@ export type NodeDimensionUpdate = {
 
 export type InitD3ZoomPayload = {
   d3Zoom: ZoomBehavior<Element, unknown>;
-  d3Selection: D3Selection<Element, unknown, null, undefined>;
+  d3Selection: Selection<Element, unknown, null, undefined>;
   d3ZoomHandler: ((this: Element, event: any, d: unknown) => void) | undefined;
   transform: Transform;
 };
@@ -293,7 +293,7 @@ export interface ReactFlowState {
   edges: Edge[];
 
   d3Zoom: ZoomBehavior<Element, unknown> | null;
-  d3Selection: D3Selection<Element, unknown, null, undefined> | null;
+  d3Selection: Selection<Element, unknown, null, undefined> | null;
   d3ZoomHandler: ((this: Element, event: any, d: unknown) => void) | undefined;
   minZoom: number;
   maxZoom: number;

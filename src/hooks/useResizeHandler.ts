@@ -1,11 +1,9 @@
 import { useEffect, MutableRefObject } from 'react';
-import { useStoreActions } from '../store/hooks';
 
+import { updateSize } from '../store/actions';
 import { getDimensions } from '../utils';
 
 export default (rendererNode: MutableRefObject<HTMLDivElement | null>) => {
-  const updateSize = useStoreActions((actions) => actions.updateSize);
-
   useEffect(() => {
     let resizeObserver: ResizeObserver;
 

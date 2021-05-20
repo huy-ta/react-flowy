@@ -12,9 +12,9 @@ import React, {
 import { DraggableCore, DraggableData, DraggableEvent } from 'react-draggable';
 import cc from 'classcat';
 
-import { useStoreActions } from '../../store/hooks';
 import { Provider } from '../../contexts/NodeIdContext';
 import { NodeComponentProps, WrapNodeProps } from '../../types';
+import { updateNodeDimensions, updateNodePosDiff } from '../../store/actions';
 
 export default (NodeComponent: ComponentType<NodeComponentProps>) => {
   const NodeWrapper = ({
@@ -45,8 +45,6 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     resizeObserver,
   }: WrapNodeProps) => {
     const observerInitialized = useRef<boolean>(false);
-    const updateNodeDimensions = useStoreActions((actions) => actions.updateNodeDimensions);
-    const updateNodePosDiff = useStoreActions((actions) => actions.updateNodePosDiff);
 
     const nodeElement = useRef<HTMLDivElement>(null);
 

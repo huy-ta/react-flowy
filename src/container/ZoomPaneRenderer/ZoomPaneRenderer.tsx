@@ -1,11 +1,11 @@
 import React, { useCallback, ReactNode, WheelEvent, MouseEvent } from 'react';
 
-import { GraphViewProps } from '../GraphView';
+import { ElementRendererProps } from '../ElementRenderer';
 import ZoomPane from './ZoomPane';
 
 interface FlowRendererProps
   extends Omit<
-    GraphViewProps,
+    ElementRendererProps,
     | 'elements'
     | 'snapToGrid'
     | 'nodeTypes'

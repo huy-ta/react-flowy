@@ -1,10 +1,11 @@
-import React, { memo, HTMLAttributes } from 'react';
+import React, { memo, HTMLAttributes, CSSProperties } from 'react';
+import { useSnapshot } from 'valtio';
 import cc from 'classcat';
 
-import { useStoreState } from '../../store/hooks';
 import { getRectOfNodes, getBoundsofRects } from '../../utils/graph';
 import { Node, Rect } from '../../types';
 import MiniMapNode from './MiniMapNode';
+import { state } from '../../store/state';
 
 type StringFunc = (node: Node) => string;
 
@@ -32,10 +33,11 @@ const MiniMap = ({
   nodeStrokeWidth = 2,
   maskColor = 'rgb(240, 242, 243, 0.7)',
 }: MiniMapProps) => {
-  const containerWidth = useStoreState((s) => s.width);
-  const containerHeight = useStoreState((s) => s.height);
-  const [tX, tY, tScale] = useStoreState((s) => s.transform);
-  const nodes = useStoreState((s) => s.nodes);
+  const snap = useSnapshot(state);
+  const containerWidth = snap.width;
+  const containerHeight = snap.height;
+  const [tX, tY, tScale] = snap.transform;
+  const nodes = snap.nodes as Node[];
 
   const mapClasses = cc(['react-flowy__minimap', className]);
   const elementWidth = (style?.width || defaultWidth)! as number;
@@ -83,7 +85,7 @@ const MiniMap = ({
             y={node.__rf.position.y}
             width={node.__rf.width}
             height={node.__rf.height}
-            style={node.style}
+            style={node.style as CSSProperties}
             className={nodeClassNameFunc(node)}
             color={nodeColorFunc(node)}
             borderRadius={nodeBorderRadius}

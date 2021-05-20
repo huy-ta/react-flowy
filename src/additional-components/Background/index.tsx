@@ -1,9 +1,10 @@
 import React, { memo, useMemo, FC, HTMLAttributes } from 'react';
+import { useSnapshot } from 'valtio';
 import cc from 'classcat';
 
-import { useStoreState } from '../../store/hooks';
 import { BackgroundVariant } from '../../types';
 import { createGridLinesPath, createGridDotsPath } from './utils';
+import { state } from '../../store/state';
 
 export interface BackgroundProps extends HTMLAttributes<SVGElement> {
   variant?: BackgroundVariant;
@@ -25,7 +26,8 @@ const Background: FC<BackgroundProps> = ({
   style,
   className,
 }) => {
-  const [x, y, scale] = useStoreState((s) => s.transform);
+  const snap = useSnapshot(state);
+  const [x, y, scale] = snap.transform;
   // when there are multiple flows on a page we need to make sure that every background gets its own pattern.
   const patternId = useMemo(() => `pattern-${Math.floor(Math.random() * 100000)}`, []);
 

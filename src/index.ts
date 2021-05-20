@@ -19,8 +19,9 @@ export {
 export { default as useZoomPanHelper } from './hooks/useZoomPanHelper';
 export { default as useUpdateNodeInternals } from './hooks/useUpdateNodeInternals';
 
+export { state as reactFlowyState } from './store/state';
+export * from './store/actions';
 export * from './additional-components';
-export * from './store/hooks';
 export * from './types';
 
 export { ReactFlowProps } from './container/ReactFlow';

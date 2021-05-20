@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
+import { useSnapshot } from 'valtio';
 
-import { useStoreState } from '../../store/hooks';
 import MarkerDefinitions from './MarkerDefinitions';
 import { getSourceTargetNodes } from './utils';
 import {
@@ -8,6 +8,7 @@ import {
   Node,
   Transform,
 } from '../../types';
+import { state } from '../../store/state';
 
 interface EdgeRendererProps {
   edgeTypes: any;
@@ -85,32 +86,28 @@ const Edgey = ({
 };
 
 const EdgeRenderer = (props: EdgeRendererProps) => {
-  const transform = useStoreState((state) => state.transform);
-  const nodes = useStoreState((state) => state.nodes);
-  const edges = useStoreState((state) => state.edges);
-  const width = useStoreState((state) => state.width);
-  const height = useStoreState((state) => state.height);
+  const snap = useSnapshot(state);
 
-  if (!width) {
+  if (!snap.width) {
     return null;
   }
 
   const { arrowHeadColor } = props;
-  const transformStyle = `translate(${transform[0]},${transform[1]}) scale(${transform[2]})`;
+  const transformStyle = `translate(${snap.transform[0]},${snap.transform[1]}) scale(${snap.transform[2]})`;
 
   return (
-    <svg width={width} height={height} className="react-flowy__edges">
+    <svg width={snap.width} height={snap.height} className="react-flowy__edges">
       <MarkerDefinitions color={arrowHeadColor} />
       <g transform={transformStyle}>
-        {edges.map((edge: Edge) => (
+        {(snap.edges as Edge[]).map(edge => (
           <Edgey
             key={edge.id}
             edge={edge}
             props={props}
-            nodes={nodes}
-            transform={transform}
-            width={width}
-            height={height}
+            nodes={snap.nodes as Node[]}
+            transform={snap.transform}
+            width={snap.width}
+            height={snap.height}
           />
         ))}
       </g>

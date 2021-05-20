@@ -5,7 +5,6 @@ import ElementRenderer from '../ElementRenderer';
 import ElementUpdater from '../../components/ElementUpdater';
 import { createNodeTypes } from '../NodeRenderer/utils';
 import { createEdgeTypes } from '../EdgeRenderer/utils';
-import Wrapper from './Wrapper';
 import {
   Elements,
   NodeTypesType,
@@ -142,58 +141,56 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
 
     return (
       <div {...rest} ref={ref} className={reactFlowClasses}>
-        <Wrapper>
-          <ElementRenderer
-            onLoad={onLoad}
-            onMove={onMove}
-            onMoveStart={onMoveStart}
-            onMoveEnd={onMoveEnd}
-            onElementClick={onElementClick}
-            onNodeMouseEnter={onNodeMouseEnter}
-            onNodeMouseMove={onNodeMouseMove}
-            onNodeMouseLeave={onNodeMouseLeave}
-            onNodeContextMenu={onNodeContextMenu}
-            onNodeDoubleClick={onNodeDoubleClick}
-            onNodeDragStart={onNodeDragStart}
-            onNodeDrag={onNodeDrag}
-            onNodeDragStop={onNodeDragStop}
-            nodeTypes={nodeTypesParsed}
-            edgeTypes={edgeTypesParsed}
-            onElementsRemove={onElementsRemove}
-            zoomActivationKeyCode={zoomActivationKeyCode}
-            snapToGrid={snapToGrid}
-            snapGrid={snapGrid}
-            onlyRenderVisibleElements={onlyRenderVisibleElements}
-            nodesDraggable={nodesDraggable}
-            nodesConnectable={nodesConnectable}
-            minZoom={minZoom}
-            maxZoom={maxZoom}
-            defaultZoom={defaultZoom}
-            defaultPosition={defaultPosition}
-            translateExtent={translateExtent}
-            nodeExtent={nodeExtent}
-            arrowHeadColor={arrowHeadColor}
-            markerEndId={markerEndId}
-            zoomOnScroll={zoomOnScroll}
-            zoomOnPinch={zoomOnPinch}
-            zoomOnDoubleClick={zoomOnDoubleClick}
-            panOnScroll={panOnScroll}
-            panOnScrollSpeed={panOnScrollSpeed}
-            panOnScrollMode={panOnScrollMode}
-            paneMoveable={paneMoveable}
-            onPaneClick={onPaneClick}
-            onPaneScroll={onPaneScroll}
-            onPaneContextMenu={onPaneContextMenu}
-            onEdgeContextMenu={onEdgeContextMenu}
-            onEdgeDoubleClick={onEdgeDoubleClick}
-            onEdgeMouseEnter={onEdgeMouseEnter}
-            onEdgeMouseMove={onEdgeMouseMove}
-            onEdgeMouseLeave={onEdgeMouseLeave}
-            edgeUpdaterRadius={edgeUpdaterRadius}
-          />
-          <ElementUpdater elements={elements} />
-          {children}
-        </Wrapper>
+        <ElementRenderer
+          onLoad={onLoad}
+          onMove={onMove}
+          onMoveStart={onMoveStart}
+          onMoveEnd={onMoveEnd}
+          onElementClick={onElementClick}
+          onNodeMouseEnter={onNodeMouseEnter}
+          onNodeMouseMove={onNodeMouseMove}
+          onNodeMouseLeave={onNodeMouseLeave}
+          onNodeContextMenu={onNodeContextMenu}
+          onNodeDoubleClick={onNodeDoubleClick}
+          onNodeDragStart={onNodeDragStart}
+          onNodeDrag={onNodeDrag}
+          onNodeDragStop={onNodeDragStop}
+          nodeTypes={nodeTypesParsed}
+          edgeTypes={edgeTypesParsed}
+          onElementsRemove={onElementsRemove}
+          zoomActivationKeyCode={zoomActivationKeyCode}
+          snapToGrid={snapToGrid}
+          snapGrid={snapGrid}
+          onlyRenderVisibleElements={onlyRenderVisibleElements}
+          nodesDraggable={nodesDraggable}
+          nodesConnectable={nodesConnectable}
+          minZoom={minZoom}
+          maxZoom={maxZoom}
+          defaultZoom={defaultZoom}
+          defaultPosition={defaultPosition}
+          translateExtent={translateExtent}
+          nodeExtent={nodeExtent}
+          arrowHeadColor={arrowHeadColor}
+          markerEndId={markerEndId}
+          zoomOnScroll={zoomOnScroll}
+          zoomOnPinch={zoomOnPinch}
+          zoomOnDoubleClick={zoomOnDoubleClick}
+          panOnScroll={panOnScroll}
+          panOnScrollSpeed={panOnScrollSpeed}
+          panOnScrollMode={panOnScrollMode}
+          paneMoveable={paneMoveable}
+          onPaneClick={onPaneClick}
+          onPaneScroll={onPaneScroll}
+          onPaneContextMenu={onPaneContextMenu}
+          onEdgeContextMenu={onEdgeContextMenu}
+          onEdgeDoubleClick={onEdgeDoubleClick}
+          onEdgeMouseEnter={onEdgeMouseEnter}
+          onEdgeMouseMove={onEdgeMouseMove}
+          onEdgeMouseLeave={onEdgeMouseLeave}
+          edgeUpdaterRadius={edgeUpdaterRadius}
+        />
+        <ElementUpdater elements={elements} />
+        {children}
       </div>
     );
   }

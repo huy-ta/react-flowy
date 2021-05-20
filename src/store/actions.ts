@@ -1,5 +1,3 @@
-import { createAction } from './utils';
-
 import {
   Elements,
   NodeDimensionUpdate,
@@ -11,69 +9,219 @@ import {
   TranslateExtent,
   SnapGrid,
   NodeExtent,
+  XYPosition,
+  Node,
+  Edge,
 } from '../types';
+import { clampPosition, getDimensions } from '../utils';
+import { isEdge, isNode, parseEdge, parseNode } from '../utils/graph';
+import { state } from './state';
 
-import * as constants from './contants';
+type NextElements = {
+  nextNodes: Node[];
+  nextEdges: Edge[];
+};
 
-export const setElements = (elements: Elements) => createAction(constants.SET_ELEMENTS, elements);
+export const setElements = (propElements: Elements) => {
+  const nextElements: NextElements = {
+    nextNodes: [],
+    nextEdges: [],
+  };
+  const { nextNodes, nextEdges } = propElements.reduce((res, propElement): NextElements => {
+    if (isNode(propElement)) {
+      const storeNode = state.nodes.find((node) => node.id === propElement.id);
 
-export const updateNodeDimensions = (updates: NodeDimensionUpdate[]) =>
-  createAction(constants.UPDATE_NODE_DIMENSIONS, updates);
+      if (storeNode) {
+        const updatedNode: Node = {
+          ...storeNode,
+          ...propElement,
+        };
 
-export const updateNodePos = (payload: NodePosUpdate) => createAction(constants.UPDATE_NODE_POS, payload);
+        if (storeNode.position.x !== propElement.position.x || storeNode.position.y !== propElement.position.y) {
+          updatedNode.__rf.position = propElement.position;
+        }
 
-export const updateNodePosDiff = (payload: NodeDiffUpdate) => createAction(constants.UPDATE_NODE_POS_DIFF, payload);
+        if (typeof propElement.type !== 'undefined' && propElement.type !== storeNode.type) {
+          // we reset the elements dimensions here in order to force a re-calculation of the bounds.
+          // When the type of a node changes it is possible that the number or positions of handles changes too.
+          updatedNode.__rf.width = null;
+        }
 
-export const updateTransform = (transform: Transform) => createAction(constants.UPDATE_TRANSFORM, { transform });
+        res.nextNodes.push(updatedNode);
+      } else {
+        res.nextNodes.push(parseNode(propElement, state.nodeExtent));
+      }
+    } else if (isEdge(propElement)) {
+      const storeEdge = state.edges.find(se => se.id === propElement.id);
 
-export const updateSize = (size: Dimensions) =>
-  createAction(constants.UPDATE_SIZE, {
-    width: size.width || 500,
-    height: size.height || 500,
+      if (storeEdge) {
+        res.nextEdges.push({
+          ...storeEdge,
+          ...propElement,
+        });
+      } else {
+        res.nextEdges.push(parseEdge(propElement));
+      }
+    }
+
+    return res;
+  }, nextElements);
+
+  state.nodes = nextNodes;
+  state.edges = nextEdges;
+};
+
+export const updateNodeDimensions = (updates: NodeDimensionUpdate[]) => {
+  const updatedNodes = state.nodes.map((node) => {
+    const update = updates.find(u => u.id === node.id);
+
+    if (update) {
+      const dimensions = getDimensions(update.nodeElement);
+      const doUpdate =
+        dimensions.width &&
+        dimensions.height &&
+        (node.__rf.width !== dimensions.width || node.__rf.height !== dimensions.height || update.forceUpdate);
+
+      if (doUpdate) {
+        return {
+          ...node,
+          __rf: {
+            ...node.__rf,
+            ...dimensions,
+          },
+        };
+      }
+    }
+
+    return node;
   });
 
-export const initD3Zoom = (payload: InitD3ZoomPayload) => createAction(constants.INIT_D3ZOOM, payload);
+  state.nodes = updatedNodes;
+}
 
-export const setMinZoom = (minZoom: number) => createAction(constants.SET_MINZOOM, minZoom);
+export const updateNodePos = (payload: NodePosUpdate) => {
+  const { id, pos } = payload;
+  let position: XYPosition = pos;
 
-export const setMaxZoom = (maxZoom: number) => createAction(constants.SET_MAXZOOM, maxZoom);
+  if (state.snapToGrid) {
+    const [gridSizeX, gridSizeY] = state.snapGrid;
 
-export const setTranslateExtent = (translateExtent: TranslateExtent) =>
-  createAction(constants.SET_TRANSLATEEXTENT, translateExtent);
+    position = {
+      x: gridSizeX * Math.round(pos.x / gridSizeX),
+      y: gridSizeY * Math.round(pos.y / gridSizeY),
+    };
+  }
 
-export const setSnapToGrid = (snapToGrid: boolean) => createAction(constants.SET_SNAPTOGRID, { snapToGrid });
+  const nextNodes = state.nodes.map(node => {
+    if (node.id === id) {
+      return {
+        ...node,
+        __rf: {
+          ...node.__rf,
+          position,
+        },
+      };
+    }
 
-export const setSnapGrid = (snapGrid: SnapGrid) => createAction(constants.SET_SNAPGRID, { snapGrid });
-
-export const setInteractive = (isInteractive: boolean) =>
-  createAction(constants.SET_INTERACTIVE, {
-    nodesDraggable: isInteractive,
-    nodesConnectable: isInteractive,
+    return node;
   });
 
-export const setNodesDraggable = (nodesDraggable: boolean) =>
-  createAction(constants.SET_NODES_DRAGGABLE, { nodesDraggable });
+  state.nodes = nextNodes;
+}
 
-export const setNodesConnectable = (nodesConnectable: boolean) =>
-  createAction(constants.SET_NODES_CONNECTABLE, { nodesConnectable });
+export const updateNodePosDiff = (payload: NodeDiffUpdate) => {
+  const { id, diff, isDragging } = payload;
 
-export const setNodeExtent = (nodeExtent: NodeExtent) => createAction(constants.SET_NODE_EXTENT, nodeExtent);
+  const nextNodes = state.nodes.map(node => {
+    if (id === node.id) {
+      const updatedNode = {
+        ...node,
+        __rf: {
+          ...node.__rf,
+          isDragging,
+        },
+      };
 
-export type ReactFlowAction = ReturnType<
-  | typeof setElements
-  | typeof updateNodeDimensions
-  | typeof updateNodePos
-  | typeof updateNodePosDiff
-  | typeof updateTransform
-  | typeof updateSize
-  | typeof initD3Zoom
-  | typeof setMinZoom
-  | typeof setMaxZoom
-  | typeof setTranslateExtent
-  | typeof setSnapToGrid
-  | typeof setSnapGrid
-  | typeof setInteractive
-  | typeof setNodesDraggable
-  | typeof setNodesConnectable
-  | typeof setNodeExtent
->;
+      if (diff) {
+        updatedNode.__rf.position = {
+          x: node.__rf.position.x + diff.x,
+          y: node.__rf.position.y + diff.y,
+        };
+      }
+
+      return updatedNode;
+    }
+
+    return node;
+  });
+
+  state.nodes = nextNodes;
+}
+
+export const updateTransform = (transform: Transform) => {
+  state.transform = transform;
+}
+
+export const updateSize = (size: Dimensions) => {
+  state.width = size.width || 500;
+  state.height = size.height || 500;
+};
+
+export const initD3Zoom = (payload: InitD3ZoomPayload) => {
+  const { d3Zoom, d3Selection, d3ZoomHandler, transform } = payload;
+
+  state.d3Zoom = d3Zoom;
+  state.d3Selection = d3Selection;
+  state.d3ZoomHandler = d3ZoomHandler;
+  state.transform = transform;
+}
+
+export const setMinZoom = (minZoom: number) => {
+  state.minZoom = minZoom;
+
+  state.d3Zoom?.scaleExtent([minZoom, state.maxZoom]);
+}
+
+export const setMaxZoom = (maxZoom: number) => {
+  state.maxZoom = maxZoom;
+
+  state.d3Zoom?.scaleExtent([state.minZoom, maxZoom]);
+}
+
+export const setTranslateExtent = (translateExtent: TranslateExtent) => {
+  state.translateExtent = translateExtent;
+
+  state.d3Zoom?.translateExtent(translateExtent);
+}
+
+export const setSnapToGrid = (snapToGrid: boolean) => {
+  state.snapToGrid = snapToGrid;
+}
+
+export const setSnapGrid = (snapGrid: SnapGrid) => {
+  state.snapGrid = snapGrid;
+}
+
+export const setInteractive = (isInteractive: boolean) => {
+  state.nodesDraggable = isInteractive;
+  state.nodesConnectable = isInteractive;
+}
+
+export const setNodesDraggable = (nodesDraggable: boolean) => {
+  state.nodesDraggable = nodesDraggable;
+}
+
+export const setNodesConnectable = (nodesConnectable: boolean) => {
+  state.nodesConnectable = nodesConnectable;
+}
+
+export const setNodeExtent = (nodeExtent: NodeExtent) => {
+  state.nodeExtent = nodeExtent;
+  state.nodes = state.nodes.map(node => ({
+    ...node,
+    __rf: {
+      ...node.__rf,
+      position: clampPosition(node.__rf.position, nodeExtent),
+    },
+  }));
+}

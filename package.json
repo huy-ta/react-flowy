@@ -1,6 +1,6 @@
 {
   "name": "react-flowy",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "dist/ReactFlow.js",
   "module": "dist/ReactFlow.esm.js",
   "types": "dist/index.d.ts",
@@ -54,11 +54,13 @@
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-typescript2": "^0.30.0",
     "start-server-and-test": "^1.12.1",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "valtio": "^1.0.5"
   },
   "peerDependencies": {
     "react": "16 || 17",
-    "react-dom": "16 || 17"
+    "react-dom": "16 || 17",
+    "valtio": "> 1"
   },
   "files": [
     "dist"

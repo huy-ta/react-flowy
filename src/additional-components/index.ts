@@ -3,4 +3,3 @@
 
 export { default as MiniMap } from './MiniMap';
 export { default as Background } from './Background';
-export { default as ReactFlowProvider } from './ReactFlowProvider';
