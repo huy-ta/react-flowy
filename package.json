@@ -1,6 +1,6 @@
 {
   "name": "react-flowy",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "dist/ReactFlow.js",
   "module": "dist/ReactFlow.esm.js",
   "types": "dist/index.d.ts",
@@ -60,7 +60,7 @@
   "peerDependencies": {
     "react": "16 || 17",
     "react-dom": "16 || 17",
-    "valtio": "> 1"
+    "valtio": "1"
   },
   "files": [
     "dist"
