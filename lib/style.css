@@ -32,10 +32,10 @@
 
 .react-flowy__edge {
   pointer-events: visibleStroke;
+}
 
-  &.inactive {
-    pointer-events: none;
-  }
+.react-flowy__edge.inactive {
+  pointer-events: none;
 }
 
 @keyframes dashdraw {

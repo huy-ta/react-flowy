@@ -1,9 +1,5 @@
-.react-flowy__edge {
-  &.updating {
-    .react-flowy__edge-path {
-      stroke: #777;
-    }
-  }
+.react-flowy__edge.updating .react-flowy__edge-path {
+  stroke: #777;
 }
 
 .react-flowy__edge-path {
