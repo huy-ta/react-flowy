@@ -231,7 +231,6 @@ const ZoomPane = ({
     panOnScroll,
     zoomOnDoubleClick,
     paneMoveable,
-    zoomActivationKeyPressed,
   ]);
 
   return (

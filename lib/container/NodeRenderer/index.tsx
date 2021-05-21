@@ -1,8 +1,7 @@
 import React, { memo, useMemo, ComponentType, MouseEvent, CSSProperties } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { Node, NodeTypesType, Edge } from '../../types';
-import { DraggableData } from 'react-draggable';
+import { Node, NodeTypesType, Edge, DragDelta } from '../../types';
 import { state } from '../../store/state';
 import { updateNodeDimensions } from '../../store/actions';
 import { WrapNodeProps } from '../../components/Nodes/wrapNode';
@@ -16,7 +15,7 @@ interface NodeRendererProps {
   onNodeMouseLeave?: (event: MouseEvent, node: Node) => void;
   onNodeContextMenu?: (event: MouseEvent, node: Node) => void;
   onNodeDragStart?: (event: MouseEvent, node: Node) => void;
-  onNodeDrag?: (event: MouseEvent, node: Node, draggableData: DraggableData) => void;
+  onNodeDrag?: (event: MouseEvent, node: Node, dragDelta: DragDelta) => void;
   onNodeDragStop?: (event: MouseEvent, node: Node) => void;
   snapToGrid: boolean;
   snapGrid: [number, number];

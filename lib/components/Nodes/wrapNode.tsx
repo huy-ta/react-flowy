@@ -13,7 +13,7 @@ import { DraggableCore, DraggableData, DraggableEvent } from 'react-draggable';
 import cc from 'classcat';
 
 import { Provider } from '../../contexts/NodeIdContext';
-import { Axis, ElementId, Node, SnapGrid, Transform } from '../../types';
+import { Axis, DragDelta, ElementId, Node, SnapGrid, Transform } from '../../types';
 import { updateNodeDimensions, updateNodePosDiff } from '../../store/actions';
 import useKeyPress from '../../hooks/useKeyPress';
 
@@ -54,7 +54,7 @@ export interface WrapNodeProps<T = any> {
   onMouseLeave?: (event: React.MouseEvent, node: Node) => void;
   onContextMenu?: (event: React.MouseEvent, node: Node) => void;
   onNodeDragStart?: (event: React.MouseEvent, node: Node) => void;
-  onNodeDrag?: (event: React.MouseEvent, node: Node, draggableData: DraggableData) => void;
+  onNodeDrag?: (event: React.MouseEvent, node: Node, dragDelta: DragDelta) => void;
   onNodeDragStop?: (event: React.MouseEvent, node: Node) => void;
   style?: CSSProperties;
   className?: string;
@@ -188,7 +188,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
         if (onNodeDrag) {
           node.position.x += deltaX;
           node.position.y += deltaY;
-          onNodeDrag(event as MouseEvent, node, draggableData);
+          onNodeDrag(event as MouseEvent, node, { deltaX, deltaY });
         }
 
         updateNodePosDiff({
@@ -200,7 +200,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
           isDragging: true,
         });
       },
-      [id, node, onNodeDrag, isShiftPressed, draggingAxis]
+      [id, node, onNodeDrag]
     );
 
     const onDragStop = useCallback(

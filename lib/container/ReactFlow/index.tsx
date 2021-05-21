@@ -17,11 +17,11 @@ import {
   KeyCode,
   PanOnScrollMode,
   NodeExtent,
+  DragDelta,
 } from '../../types';
 
 import '../../style.css';
 import '../../theme-default.css';
-import { DraggableData } from 'react-draggable';
 import { FitViewFunc } from '../../hooks/useZoomPanHelper';
 
 export type FlowyExportObject<T = any> = {
@@ -56,7 +56,7 @@ export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   onNodeMouseLeave?: (event: MouseEvent, node: Node) => void;
   onNodeContextMenu?: (event: MouseEvent, node: Node) => void;
   onNodeDragStart?: (event: MouseEvent, node: Node) => void;
-  onNodeDrag?: (event: MouseEvent, node: Node, draggableData: DraggableData) => void;
+  onNodeDrag?: (event: MouseEvent, node: Node, dragDelta: DragDelta) => void;
   onNodeDragStop?: (event: MouseEvent, node: Node) => void;
   onLoad?: OnLoadFunc;
   onMove?: (flowTransform?: FlowTransform) => void;

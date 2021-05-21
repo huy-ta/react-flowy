@@ -232,3 +232,8 @@ export interface Intersection {
    */
   t2: number;
 }
+
+export interface DragDelta {
+  deltaX: number;
+  deltaY: number;
+}
