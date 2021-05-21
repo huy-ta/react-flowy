@@ -3,11 +3,32 @@ import { zoomIdentity } from 'd3-zoom';
 import { useSnapshot } from 'valtio';
 import { Selection } from 'd3';
 
-import { state } from '../store/state';
-import { getRectOfNodes, pointToRendererPoint, getTransformForBounds } from '../utils/graph';
-import { FitViewParams, FlowTransform, ZoomPanHelperFunctions, Rect, Node, XYPosition, ReactFlowState } from '../types';
+import { ReactFlowState, state } from '../store/state';
+import { getTransformForBounds } from '../utils/graph';
+import { getRectOfNodes } from '../utils/node';
+import { FlowTransform, Node, Rectangle, Point } from '../types';
+import { pointToCanvasCoordinates } from '../utils/coordinates';
 
 const DEFAULT_PADDING = 0.1;
+
+export type FitViewParams = {
+  padding?: number;
+  includeHiddenNodes?: boolean;
+};
+
+export type FitViewFunc = (fitViewOptions?: FitViewParams) => void;
+
+export interface ZoomPanHelperFunctions {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  zoomTo: (zoomLevel: number) => void;
+  transform: (transform: FlowTransform) => void;
+  fitView: FitViewFunc;
+  setCenter: (x: number, y: number, zoom?: number) => void;
+  fitBounds: (bounds: Rectangle, padding?: number) => void;
+  project: (point: Point) => Point;
+  initialized: boolean;
+}
 
 const initialZoomPanHelper: ZoomPanHelperFunctions = {
   zoomIn: () => {},
@@ -16,8 +37,8 @@ const initialZoomPanHelper: ZoomPanHelperFunctions = {
   transform: (_: FlowTransform) => {},
   fitView: (_: FitViewParams = { padding: DEFAULT_PADDING, includeHiddenNodes: false }) => {},
   setCenter: (_: number, __: number) => {},
-  fitBounds: (_: Rect) => {},
-  project: (position: XYPosition) => position,
+  fitBounds: (_: Rectangle) => {},
+  project: (position: Point) => position,
   initialized: false,
 };
 
@@ -69,17 +90,17 @@ const useZoomPanHelper = (): ZoomPanHelperFunctions => {
 
           snap.d3Zoom!.transform(d3Selection, transform);
         },
-        fitBounds: (bounds: Rect, padding = DEFAULT_PADDING) => {
+        fitBounds: (bounds: Rectangle, padding = DEFAULT_PADDING) => {
           const { width, height, minZoom, maxZoom } = snap;
           const [x, y, zoom] = getTransformForBounds(bounds, width, height, minZoom, maxZoom, padding);
           const transform = zoomIdentity.translate(x, y).scale(zoom);
 
           snap.d3Zoom!.transform(d3Selection, transform);
         },
-        project: (position: XYPosition) => {
+        project: (position: Point) => {
           const { transform, snapToGrid, snapGrid } = snap;
 
-          return pointToRendererPoint(position, transform, snapToGrid, snapGrid);
+          return pointToCanvasCoordinates(position, transform, snapToGrid, snapGrid);
         },
         initialized: true,
       };

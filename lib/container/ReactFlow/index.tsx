@@ -9,9 +9,9 @@ import {
   Elements,
   NodeTypesType,
   EdgeTypesType,
-  OnLoadFunc,
   Node,
   Edge,
+  Point,
   FlowTransform,
   TranslateExtent,
   KeyCode,
@@ -22,6 +22,29 @@ import {
 import '../../style.css';
 import '../../theme-default.css';
 import { DraggableData } from 'react-draggable';
+import { FitViewFunc } from '../../hooks/useZoomPanHelper';
+
+export type FlowyExportObject<T = any> = {
+  elements: Elements<T>;
+  position: [number, number];
+  zoom: number;
+};
+
+export type ProjectFunc = (point: Point) => Point;
+export type ToObjectFunc<T = any> = () => FlowyExportObject<T>;
+
+export type OnLoadParams<T = any> = {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  zoomTo: (zoomLevel: number) => void;
+  fitView: FitViewFunc;
+  project: ProjectFunc;
+  getElements: () => Elements<T>;
+  setTransform: (transform: FlowTransform) => void;
+  toObject: ToObjectFunc<T>;
+};
+
+export type OnLoadFunc<T = any> = (params: OnLoadParams<T>) => void;
 
 export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onLoad'> {
   elements: Elements;

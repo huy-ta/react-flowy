@@ -1,10 +1,12 @@
 import React, { memo, useMemo, ComponentType, MouseEvent, CSSProperties } from 'react';
 import { useSnapshot } from 'valtio';
 
-import { Node, NodeTypesType, WrapNodeProps, Edge } from '../../types';
+import { Node, NodeTypesType, Edge } from '../../types';
 import { DraggableData } from 'react-draggable';
 import { state } from '../../store/state';
 import { updateNodeDimensions } from '../../store/actions';
+import { WrapNodeProps } from '../../components/Nodes/wrapNode';
+
 interface NodeRendererProps {
   nodeTypes: NodeTypesType;
   onElementClick?: (event: MouseEvent, element: Node | Edge) => void;

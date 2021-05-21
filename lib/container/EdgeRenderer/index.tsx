@@ -33,7 +33,7 @@ interface EdgeWrapperProps {
   height: number;
 }
 
-const Edgey = React.memo(({
+const EdgeWrapper = React.memo(({
   edge,
   props,
   nodes,
@@ -51,7 +51,7 @@ const Edgey = React.memo(({
     return null;
   }
 
-  const edgeType = edge.type || 'default';
+  const edgeType = edge.type || 'standardEdge';
   const EdgeComponent = props.edgeTypes[edgeType] || props.edgeTypes.default;
 
   return (
@@ -62,17 +62,12 @@ const Edgey = React.memo(({
       type={edge.type}
       data={edge.data}
       onClick={props.onElementClick}
-      animated={edge.animated}
-      label={edge.label}
-      labelStyle={edge.labelStyle}
-      labelShowBg={edge.labelShowBg}
-      labelBgStyle={edge.labelBgStyle}
-      labelBgPadding={edge.labelBgPadding}
-      labelBgBorderRadius={edge.labelBgBorderRadius}
       style={edge.style}
       arrowHeadType={edge.arrowHeadType}
       source={edge.source}
       target={edge.target}
+      waypoints={edge.waypoints}
+      isForming={edge.isForming}
       markerEndId={props.markerEndId}
       isHidden={edge.isHidden}
       onContextMenu={props.onEdgeContextMenu}
@@ -100,7 +95,7 @@ const EdgeRenderer = (props: EdgeRendererProps) => {
       <MarkerDefinitions color={arrowHeadColor} />
       <g transform={transformStyle}>
         {(snap.edges as Edge[]).map(edge => (
-          <Edgey
+          <EdgeWrapper
             key={edge.id}
             edge={edge}
             props={props}

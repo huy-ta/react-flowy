@@ -1,15 +1,15 @@
 import { ComponentType } from 'react';
 
 import wrapEdge from '../../components/Edges/wrapEdge';
-import { rectToBox } from '../../utils/graph';
+import { rectToBox } from '../../utils/node';
 
 import {
   EdgeTypesType,
   EdgeProps,
   Node,
-  XYPosition,
   Transform,
   Edge,
+  Point,
 } from '../../types';
 
 export function createEdgeTypes(edgeTypes: EdgeTypesType): EdgeTypesType {
@@ -24,8 +24,8 @@ export function createEdgeTypes(edgeTypes: EdgeTypesType): EdgeTypesType {
 }
 
 interface IsEdgeVisibleParams {
-  sourcePos: XYPosition;
-  targetPos: XYPosition;
+  sourcePos: Point;
+  targetPos: Point;
   width: number;
   height: number;
   transform: Transform;

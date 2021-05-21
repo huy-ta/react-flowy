@@ -1,25 +1,50 @@
+import { Selection } from 'd3-selection';
+import { ZoomBehavior } from 'd3-zoom';
 import {
   Elements,
-  NodeDimensionUpdate,
-  NodePosUpdate,
-  NodeDiffUpdate,
+  ElementId,
   Transform,
   Dimensions,
-  InitD3ZoomPayload,
   TranslateExtent,
   SnapGrid,
   NodeExtent,
-  XYPosition,
   Node,
   Edge,
+  Point,
 } from '../types';
 import { clampPosition, getDimensions } from '../utils';
-import { isEdge, isNode, parseEdge, parseNode } from '../utils/graph';
+import { isEdge } from '../utils/edge';
+import { isNode } from '../utils/node';
+import { parseEdge, parseNode } from '../utils/parse';
 import { state } from './state';
 
 type NextElements = {
   nextNodes: Node[];
   nextEdges: Edge[];
+};
+
+export type NodePosUpdate = {
+  id: ElementId;
+  pos: Point;
+};
+
+export type NodeDiffUpdate = {
+  id?: ElementId;
+  diff?: Point;
+  isDragging?: boolean;
+};
+
+export type NodeDimensionUpdate = {
+  id: ElementId;
+  nodeElement: HTMLDivElement;
+  forceUpdate?: boolean;
+};
+
+export type InitD3ZoomPayload = {
+  d3Zoom: ZoomBehavior<Element, unknown>;
+  d3Selection: Selection<Element, unknown, null, undefined>;
+  d3ZoomHandler: ((this: Element, event: any, d: unknown) => void) | undefined;
+  transform: Transform;
 };
 
 export const setElements = (propElements: Elements) => {
@@ -71,6 +96,24 @@ export const setElements = (propElements: Elements) => {
   state.edges = nextEdges;
 };
 
+export const upsertEdge = (edge: Edge) => {
+  const existingEdge = state.edges.find(e => e.id === edge.id);
+
+  if (!existingEdge) {
+    state.edges = [...state.edges, edge];
+  }
+
+  state.edges = state.edges.map(e => {
+    if (e.id !== edge.id) return e;
+
+    return edge;
+  });
+}
+
+export const setEdges = (edges: Edge[]) => {
+  state.edges = edges;
+}
+
 export const updateNodeDimensions = (updates: NodeDimensionUpdate[]) => {
   const updatedNodes = state.nodes.map((node) => {
     const update = updates.find(u => u.id === node.id);
@@ -101,7 +144,7 @@ export const updateNodeDimensions = (updates: NodeDimensionUpdate[]) => {
 
 export const updateNodePos = (payload: NodePosUpdate) => {
   const { id, pos } = payload;
-  let position: XYPosition = pos;
+  let position: Point = pos;
 
   if (state.snapToGrid) {
     const [gridSizeX, gridSizeY] = state.snapGrid;

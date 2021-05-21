@@ -13,8 +13,58 @@ import { DraggableCore, DraggableData, DraggableEvent } from 'react-draggable';
 import cc from 'classcat';
 
 import { Provider } from '../../contexts/NodeIdContext';
-import { NodeComponentProps, WrapNodeProps } from '../../types';
+import { Axis, ElementId, Node, SnapGrid, Transform } from '../../types';
 import { updateNodeDimensions, updateNodePosDiff } from '../../store/actions';
+import useKeyPress from '../../hooks/useKeyPress';
+
+export interface NodeComponentProps<T = any> {
+  id: ElementId;
+  type: string;
+  data: T;
+  isConnectable: boolean;
+  transform?: Transform;
+  xPos?: number;
+  yPos?: number;
+  onClick?: (node: Node) => void;
+  onNodeDoubleClick?: (node: Node) => void;
+  onMouseEnter?: (node: Node) => void;
+  onMouseMove?: (node: Node) => void;
+  onMouseLeave?: (node: Node) => void;
+  onContextMenu?: (node: Node) => void;
+  onNodeDragStart?: (node: Node) => void;
+  onNodeDrag?: (node: Node) => void;
+  onNodeDragStop?: (node: Node) => void;
+  style?: CSSProperties;
+  isDragging?: boolean;
+}
+
+export interface WrapNodeProps<T = any> {
+  id: ElementId;
+  type: string;
+  data: T;
+  scale: number;
+  xPos: number;
+  yPos: number;
+  isDraggable: boolean;
+  isConnectable: boolean;
+  onClick?: (event: React.MouseEvent, node: Node) => void;
+  onNodeDoubleClick?: (event: React.MouseEvent, node: Node) => void;
+  onMouseEnter?: (event: React.MouseEvent, node: Node) => void;
+  onMouseMove?: (event: React.MouseEvent, node: Node) => void;
+  onMouseLeave?: (event: React.MouseEvent, node: Node) => void;
+  onContextMenu?: (event: React.MouseEvent, node: Node) => void;
+  onNodeDragStart?: (event: React.MouseEvent, node: Node) => void;
+  onNodeDrag?: (event: React.MouseEvent, node: Node, draggableData: DraggableData) => void;
+  onNodeDragStop?: (event: React.MouseEvent, node: Node) => void;
+  style?: CSSProperties;
+  className?: string;
+  isHidden?: boolean;
+  isInitialized?: boolean;
+  snapToGrid?: boolean;
+  snapGrid?: SnapGrid;
+  isDragging?: boolean;
+  resizeObserver: ResizeObserver | null;
+}
 
 export default (NodeComponent: ComponentType<NodeComponentProps>) => {
   const NodeWrapper = ({
@@ -45,6 +95,8 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     resizeObserver,
   }: WrapNodeProps) => {
     const observerInitialized = useRef<boolean>(false);
+    const isShiftPressed = useKeyPress('Shift');
+    const draggingAxis = useRef<Axis>();
 
     const nodeElement = useRef<HTMLDivElement>(null);
 
@@ -107,6 +159,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
     const onDragStart = useCallback(
       (event: DraggableEvent) => {
+        draggingAxis.current = undefined;
         onNodeDragStart?.(event as MouseEvent, node);
       },
       [node, onNodeDragStart]
@@ -114,22 +167,40 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
     const onDrag = useCallback(
       (event: DraggableEvent, draggableData: DraggableData) => {
+        let deltaX = draggableData.deltaX;
+        let deltaY = draggableData.deltaY;
+
+        if (isShiftPressed.current && !draggingAxis.current) {
+          if (Math.abs(deltaX) > Math.abs(deltaY)) draggingAxis.current = Axis.X;
+          else if (Math.abs(deltaY) > Math.abs(deltaX)) draggingAxis.current = Axis.Y;
+        }
+
+        if (draggingAxis.current === Axis.X) {
+          deltaY = 0;
+
+          if (deltaX === 0) return;
+        } else if (draggingAxis.current === Axis.Y) {
+          deltaX = 0;
+
+          if (deltaY === 0) return;
+        }
+
         if (onNodeDrag) {
-          node.position.x += draggableData.deltaX;
-          node.position.y += draggableData.deltaY;
+          node.position.x += deltaX;
+          node.position.y += deltaY;
           onNodeDrag(event as MouseEvent, node, draggableData);
         }
 
         updateNodePosDiff({
           id,
           diff: {
-            x: draggableData.deltaX,
-            y: draggableData.deltaY,
+            x: deltaX,
+            y: deltaY,
           },
           isDragging: true,
         });
       },
-      [id, node, onNodeDrag]
+      [id, node, onNodeDrag, isShiftPressed, draggingAxis]
     );
 
     const onDragStop = useCallback(

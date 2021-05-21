@@ -1,7 +1,7 @@
 import { ComponentType } from 'react';
 
-import wrapNode from '../../components/Nodes/wrapNode';
-import { NodeTypesType, NodeComponentProps } from '../../types';
+import wrapNode, { NodeComponentProps } from '../../components/Nodes/wrapNode';
+import { NodeTypesType } from '../../types';
 
 export function createNodeTypes(nodeTypes: NodeTypesType): NodeTypesType {
   const wrappedTypes = {} as NodeTypesType;

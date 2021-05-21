@@ -2,8 +2,8 @@ import React, { memo, HTMLAttributes, CSSProperties } from 'react';
 import { useSnapshot } from 'valtio';
 import cc from 'classcat';
 
-import { getRectOfNodes, getBoundsofRects } from '../../utils/graph';
-import { Node, Rect } from '../../types';
+import { getRectOfNodes, getBoundsOfRects } from '../../utils/node';
+import { Node, Rectangle } from '../../types';
 import MiniMapNode from './MiniMapNode';
 import { state } from '../../store/state';
 
@@ -49,13 +49,13 @@ const MiniMap = ({
   const nodeClassNameFunc = (nodeClassName instanceof Function ? nodeClassName : () => nodeClassName) as StringFunc;
   const hasNodes = nodes && nodes.length;
   const bb = getRectOfNodes(nodes);
-  const viewBB: Rect = {
+  const viewBB: Rectangle = {
     x: -tX / tScale,
     y: -tY / tScale,
     width: containerWidth / tScale,
     height: containerHeight / tScale,
   };
-  const boundingRect = hasNodes ? getBoundsofRects(bb, viewBB) : viewBB;
+  const boundingRect = hasNodes ? getBoundsOfRects(bb, viewBB) : viewBB;
   const scaledWidth = boundingRect.width / elementWidth;
   const scaledHeight = boundingRect.height / elementHeight;
   const viewScale = Math.max(scaledWidth, scaledHeight);

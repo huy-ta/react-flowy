@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 import { updateNodeDimensions } from '../store/actions';
 
-import { ElementId, UpdateNodeInternals } from '../types';
+import { ElementId } from '../types';
+
+export type UpdateNodeInternals = (nodeId: ElementId) => void;
 
 function useUpdateNodeInternals(): UpdateNodeInternals {
   return useCallback<UpdateNodeInternals>((id: ElementId) => {

@@ -1,40 +1,40 @@
-import { useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 
 import { isInputDOMNode } from '../utils';
 import { KeyCode } from '../types';
 
-export default (keyCode?: KeyCode): boolean => {
-  const [keyPressed, setKeyPressed] = useState(false);
+export default (keyCode?: KeyCode) => {
+  const isKeyPressed = useRef(false);
 
   useEffect(() => {
-    if (typeof keyCode !== 'undefined') {
-      const downHandler = (event: KeyboardEvent) => {
-        if (!isInputDOMNode(event) && (event.key === keyCode || event.keyCode === keyCode)) {
-          event.preventDefault();
+    if (typeof keyCode === 'undefined') return;
 
-          setKeyPressed(true);
-        }
-      };
+    const downHandler = (event: KeyboardEvent) => {
+      if (!isInputDOMNode(event) && (event.key === keyCode || event.keyCode === keyCode)) {
+        event.preventDefault();
 
-      const upHandler = (event: KeyboardEvent) => {
-        if (!isInputDOMNode(event) && (event.key === keyCode || event.keyCode === keyCode)) {
-          setKeyPressed(false);
-        }
-      };
+        isKeyPressed.current = true;
+      }
+    };
 
-      const resetHandler = () => setKeyPressed(false);
+    const upHandler = (event: KeyboardEvent) => {
+      if (!isInputDOMNode(event) && (event.key === keyCode || event.keyCode === keyCode)) {
+        isKeyPressed.current = false;
+      }
+    };
 
-      window.addEventListener('keydown', downHandler);
-      window.addEventListener('keyup', upHandler);
-      window.addEventListener('blur', resetHandler);
+    const resetHandler = () => isKeyPressed.current = false;
 
-      return () => {
-        window.removeEventListener('keydown', downHandler);
-        window.removeEventListener('keyup', upHandler);
-        window.removeEventListener('blur', resetHandler);
-      };
-    }
-  }, [keyCode, setKeyPressed]);
+    window.addEventListener('keydown', downHandler);
+    window.addEventListener('keyup', upHandler);
+    window.addEventListener('blur', resetHandler);
 
-  return keyPressed;
+    return () => {
+      window.removeEventListener('keydown', downHandler);
+      window.removeEventListener('keyup', upHandler);
+      window.removeEventListener('blur', resetHandler);
+    };
+  }, [keyCode, isKeyPressed]);
+
+  return isKeyPressed;
 };

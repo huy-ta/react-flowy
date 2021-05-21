@@ -1,6 +1,31 @@
-import { proxy } from 'valtio';
+import { Selection } from 'd3-selection';
+import { ZoomBehavior } from 'd3-zoom';
+import { useSnapshot, proxy } from 'valtio';
+import { Node, Edge, NodeExtent, SnapGrid, Transform, TranslateExtent } from '../types';
 
-import { ReactFlowState } from '../types';
+export { useSnapshot };
+
+export interface ReactFlowState {
+  width: number;
+  height: number;
+  transform: Transform;
+  nodes: Node[];
+  edges: Edge[];
+
+  d3Zoom: ZoomBehavior<Element, unknown> | null;
+  d3Selection: Selection<Element, unknown, null, undefined> | null;
+  d3ZoomHandler: ((this: Element, event: any, d: unknown) => void) | undefined;
+  minZoom: number;
+  maxZoom: number;
+  translateExtent: TranslateExtent;
+  nodeExtent: NodeExtent;
+
+  snapToGrid: boolean;
+  snapGrid: SnapGrid;
+
+  nodesDraggable: boolean;
+  nodesConnectable: boolean;
+}
 
 export const state = proxy<ReactFlowState>({
   width: 0,

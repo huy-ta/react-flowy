@@ -1,7 +1,31 @@
-import React, { memo, ComponentType, useCallback, useMemo } from 'react';
+import React, { memo, ComponentType, useCallback, useMemo, CSSProperties } from 'react';
 import cc from 'classcat';
 
-import { Edge, EdgeProps, WrapEdgeProps } from '../../types';
+import { ArrowHeadType, Edge, EdgeProps, ElementId, Point } from '../../types';
+
+export interface WrapEdgeProps<T = any> {
+  id: ElementId;
+  className?: string;
+  type: string;
+  data?: T;
+  onClick?: (event: React.MouseEvent, edge: Edge) => void;
+  onEdgeDoubleClick?: (event: React.MouseEvent, edge: Edge) => void;
+  style?: CSSProperties;
+  arrowHeadType?: ArrowHeadType;
+  source: ElementId;
+  target: ElementId;
+  waypoints: Point[];
+  isForming?: boolean;
+  markerEndId?: string;
+  isHidden?: boolean;
+  handleEdgeUpdate: boolean;
+  onContextMenu?: (event: React.MouseEvent, edge: Edge) => void;
+  onMouseEnter?: (event: React.MouseEvent, edge: Edge) => void;
+  onMouseMove?: (event: React.MouseEvent, edge: Edge) => void;
+  onMouseLeave?: (event: React.MouseEvent, edge: Edge) => void;
+  edgeUpdaterRadius?: number;
+  onEdgeUpdateStart?: (event: React.MouseEvent, edge: Edge) => void;
+}
 
 export default (EdgeComponent: ComponentType<EdgeProps>) => {
   const EdgeWrapper = ({
@@ -11,21 +35,12 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
     data,
     onClick,
     onEdgeDoubleClick,
-    animated,
-    label,
-    labelStyle,
-    labelShowBg,
-    labelBgStyle,
-    labelBgPadding,
-    labelBgBorderRadius,
     style,
     arrowHeadType,
     source,
     target,
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
+    waypoints,
+    isForming,
     markerEndId,
     isHidden,
     onContextMenu,
@@ -44,6 +59,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
         id,
         source,
         target,
+        waypoints,
         type,
       };
 
@@ -114,20 +130,11 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
           id={id}
           source={source}
           target={target}
-          animated={animated}
-          label={label}
-          labelStyle={labelStyle}
-          labelShowBg={labelShowBg}
-          labelBgStyle={labelBgStyle}
-          labelBgPadding={labelBgPadding}
-          labelBgBorderRadius={labelBgBorderRadius}
+          waypoints={waypoints}
+          isForming={isForming}
           data={data}
           style={style}
           arrowHeadType={arrowHeadType}
-          sourceX={sourceX}
-          sourceY={sourceY}
-          targetX={targetX}
-          targetY={targetY}
           markerEndId={markerEndId}
         />
       </g>

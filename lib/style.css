@@ -59,11 +59,6 @@
 
 .react-flowy__connection {
   pointer-events: none;
-
-  .animated {
-    stroke-dasharray: 5;
-    animation: dashdraw 0.5s linear infinite;
-  }
 }
 
 .react-flowy__connection-path {
@@ -91,7 +86,7 @@
   pointer-events: all;
 }
 
-/* additional components */
+/* premade components */
 
 .react-flowy__background {
   position: absolute;
@@ -106,4 +101,54 @@
   z-index: 5;
   bottom: 10px;
   right: 10px;
+}
+
+.react-flowy__standard-handles__arrow {
+  position: absolute;
+  cursor: copy;
+}
+
+.react-flowy__standard-handles__arrow .react-flowy__standard-handles__arrow__svg-path {
+  fill: #a0a0a0;
+  opacity: 0.5;
+}
+
+.react-flowy__standard-handles__arrow:hover .react-flowy__standard-handles__arrow__svg-path {
+  fill: #253134;
+  opacity: 1;
+}
+
+.react-flowy__standard-handles__arrow--hidden {
+  visibility: hidden;
+  user-select: none;
+}
+
+.react-flowy__standard-handles__arrow--up {
+  left: calc(50% - 12px);
+  top: -36px;
+}
+
+.react-flowy__standard-handles__arrow--right {
+  top: calc(50% - 12px);
+  right: -36px;
+}
+
+.react-flowy__standard-handles__arrow--down {
+  left: calc(50% - 12px);
+  bottom: -42px;
+}
+
+.react-flowy__standard-handles__arrow--left {
+  top: calc(50% - 12px);
+  left: -36px;
+}
+
+.react-flowy__node-container-with-standard-handles {
+  position: relative;
+}
+
+path.react-flowy__edge-path--is-forming {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+  opacity: 0.8;
 }

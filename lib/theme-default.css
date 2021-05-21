@@ -1,15 +1,4 @@
 .react-flowy__edge {
-  &.selected {
-    .react-flowy__edge-path {
-      stroke: #555;
-    }
-  }
-
-  &.animated path {
-    stroke-dasharray: 5;
-    animation: dashdraw 0.5s linear infinite;
-  }
-
   &.updating {
     .react-flowy__edge-path {
       stroke: #777;

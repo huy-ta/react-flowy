@@ -4,14 +4,43 @@ import { useSnapshot } from 'valtio';
 import ZoomPaneRenderer from '../ZoomPaneRenderer/ZoomPaneRenderer';
 import NodeRenderer from '../NodeRenderer';
 import EdgeRenderer from '../EdgeRenderer';
-import { onLoadProject, onLoadGetElements, onLoadToObject } from '../../utils/graph';
 import useZoomPanHelper from '../../hooks/useZoomPanHelper';
 
-import { ReactFlowProps } from '../ReactFlow';
+import { FlowyExportObject, ReactFlowProps } from '../ReactFlow';
 
-import { NodeTypesType, EdgeTypesType, ReactFlowState } from '../../types';
+import { NodeTypesType, EdgeTypesType, Elements, Point } from '../../types';
 import { setMaxZoom, setMinZoom, setNodeExtent, setNodesConnectable, setNodesDraggable, setSnapGrid, setSnapToGrid, setTranslateExtent } from '../../store/actions';
-import { state } from '../../store/state';
+import { ReactFlowState, state } from '../../store/state';
+import { pointToCanvasCoordinates } from '../../utils/coordinates';
+import { parseElements } from '../../utils/parse';
+
+export const onLoadProject = (state: ReactFlowState) => {
+  return (position: Point): Point => {
+    const { transform, snapToGrid, snapGrid } = state;
+
+    return pointToCanvasCoordinates(position, transform, snapToGrid, snapGrid);
+  };
+};
+
+export const onLoadGetElements = (state: ReactFlowState) => {
+  return (): Elements => {
+    const { nodes = [], edges = [] } = state;
+
+    return parseElements(nodes, edges);
+  };
+};
+
+export const onLoadToObject = (state: ReactFlowState) => {
+  return (): FlowyExportObject => {
+    const { nodes = [], edges = [], transform } = state;
+
+    return {
+      elements: parseElements(nodes, edges),
+      position: [transform[0], transform[1]],
+      zoom: transform[2],
+    };
+  };
+};
 
 export interface ElementRendererProps extends Omit<ReactFlowProps, 'elements'> {
   nodeTypes: NodeTypesType;

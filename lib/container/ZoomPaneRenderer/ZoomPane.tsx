@@ -94,7 +94,7 @@ const ZoomPane = ({
       const d3Selection = snap.d3Selection as Selection<Element, unknown, null, undefined>;
       const d3Zoom = snap.d3Zoom;
 
-      if (panOnScroll && !zoomActivationKeyPressed) {
+      if (panOnScroll && !zoomActivationKeyPressed.current) {
         d3Selection
           .on('wheel', (event: any) => {
             event.preventDefault();
@@ -181,7 +181,7 @@ const ZoomPane = ({
   useEffect(() => {
     if (snap.d3Zoom) {
       snap.d3Zoom.filter((event: any) => {
-        const zoomScroll = zoomActivationKeyPressed || zoomOnScroll;
+        const zoomScroll = zoomActivationKeyPressed.current || zoomOnScroll;
         const pinchZoom = zoomOnPinch && event.ctrlKey;
 
         // if all interactions are disabled, we prevent all zoom events
