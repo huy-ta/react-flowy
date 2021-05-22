@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import cc from 'classcat';
 import { getNodeElementById } from '../../utils/node';
 import { ArrowHeadType, Node, Edge, Point, Rectangle, LayoutType } from '../../types';
-import { getCanvasFromTransform } from '../../utils/graph';
+import { getCanvas } from '../../utils/graph';
 import { reactFlowyState } from '../..';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
 import { isPointInRect } from '../../utils/geometry';
@@ -10,9 +11,10 @@ import { setEdges, upsertEdge } from '../../store/actions';
 
 export interface HandleProps {
   node: Node;
+  shouldShowHandle: boolean;
 }
 
-const Handle: React.FC<HandleProps> = React.memo(({ node, children }) => {
+const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle }) => {
   const [isMouseDowned, setIsMouseDowned] = useState(false);
   const [isAddingEdge, setIsAddingEdge] = useState(false);
 
@@ -46,7 +48,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ node, children }) => {
       height: nodeElement.offsetHeight,
     };
 
-    const canvas = getCanvasFromTransform(reactFlowyState.transform);
+    const canvas = getCanvas(reactFlowyState.transform);
 
     const cursorPosition = eventPointToCanvasCoordinates(e)(canvas);
 
@@ -77,10 +79,18 @@ const Handle: React.FC<HandleProps> = React.memo(({ node, children }) => {
     };
 
     if (targetNode) {
-      // @ts-ignore
-      waypoints = connectRectangles(sourceRectangle, targetRectangle, undefined, cursorPosition, { preferredLayouts: [LayoutType.VERTICAL_VERTICAL] });
+      waypoints = connectRectangles(sourceRectangle, targetRectangle!, undefined, cursorPosition, { preferredLayouts: [LayoutType.VERTICAL_VERTICAL] });
       newEdge.target = targetNode.id;
       newEdge.waypoints = waypoints;
+
+      const targetNodeValidator = reactFlowyState.nodeValidators[node.type || 'standardNode'];
+
+      if (typeof targetNodeValidator === 'function') {
+        const { isValid } = targetNodeValidator(node, targetNode, newEdge as Edge);
+
+        if (!isValid) newEdge.isInvalid = true;
+        else delete newEdge.isInvalid;
+      }
     } else {
       waypoints = connectRectangleToPoint(sourceRectangle, cursorPosition);
       newEdge.target = '?';
@@ -96,7 +106,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ node, children }) => {
 
   const handleMouseUp = () => {
     let newEdges = reactFlowyState.edges.map(edge => {
-      if (edge.target === '?') return;
+      if (edge.target === '?' || edge.isInvalid) return;
 
       if (edge.source !== node.id) return edge;
 
@@ -119,7 +129,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ node, children }) => {
   }
 
   return (
-    <div className="react-flowy__handle" onMouseDown={handleMouseDown}>
+    <div className={cc(['react-flowy__handle', { 'react-flowy__handle--hidden': !shouldShowHandle }])} onMouseDown={handleMouseDown}>
       {children}
     </div>
   )

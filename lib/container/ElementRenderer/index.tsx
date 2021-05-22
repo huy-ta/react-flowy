@@ -6,7 +6,7 @@ import NodeRenderer from '../NodeRenderer';
 import EdgeRenderer from '../EdgeRenderer';
 import useZoomPanHelper from '../../hooks/useZoomPanHelper';
 
-import { FlowyExportObject, ReactFlowProps } from '../ReactFlow';
+import { FlowyExportObject, ReactFlowProps } from '../ReactFlowy';
 
 import { NodeTypesType, EdgeTypesType, Elements, Point } from '../../types';
 import { setMaxZoom, setMinZoom, setNodeExtent, setNodesConnectable, setNodesDraggable, setSnapGrid, setSnapToGrid, setTranslateExtent } from '../../store/actions';

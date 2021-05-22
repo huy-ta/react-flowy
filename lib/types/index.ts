@@ -62,6 +62,7 @@ export interface Node<T = any> {
   style?: CSSProperties;
   className?: string;
   isHidden?: boolean;
+  isSelected?: boolean;
   draggable?: boolean;
   connectable?: boolean;
 }
@@ -69,6 +70,7 @@ export interface Node<T = any> {
 export enum ArrowHeadType {
   Arrow = 'arrow',
   ArrowClosed = 'arrowclosed',
+  ErrorArrowClosed = 'arrowclosed--error'
 }
 
 export interface Edge<T = any> {
@@ -81,6 +83,8 @@ export interface Edge<T = any> {
   style?: CSSProperties;
   arrowHeadType?: ArrowHeadType;
   isHidden?: boolean;
+  isSelected?: boolean;
+  isInvalid?: boolean;
   data?: T;
   className?: string;
 }
@@ -102,6 +106,8 @@ export interface EdgeProps<T = any> {
   target: ElementId;
   waypoints: Point[];
   isForming?: boolean;
+  isSelected?: boolean;
+  isInvalid?: boolean;
   style?: CSSProperties;
   arrowHeadType?: ArrowHeadType;
   markerEndId?: string;
@@ -115,6 +121,10 @@ export type FlowTransform = {
 };
 
 export interface Canvas {
+  offset: {
+    x: number;
+    y: number;
+  };
   position: {
     x: number;
     y: number;

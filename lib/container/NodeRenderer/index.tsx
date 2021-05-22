@@ -69,8 +69,8 @@ const NodeRenderer = (props: NodeRendererProps) => {
             type={nodeType}
             data={node.data}
             isHidden={node.isHidden}
-            xPos={node.__rf.position.x}
-            yPos={node.__rf.position.y}
+            isSelected={node.isSelected}
+            position={{ x: node.__rf.position.x, y: node.__rf.position.y }}
             isDragging={node.__rf.isDragging}
             isInitialized={node.__rf.width !== null && node.__rf.height !== null}
             snapGrid={props.snapGrid}

@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 import { Connection, ApproxIntersection, Axis, EdgeProps } from '../../types';
 import { state as reactFlowyState } from '../../store/state';
-import { getCanvasFromTransform } from '../../utils/graph';
+import { getCanvas } from '../../utils/graph';
 import { isPrimaryButton } from '../../utils/mouse';
 import { getRectangleByNodeId } from '../../utils/node';
 import { getApproxIntersection } from '../../utils/intersection';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
 import { Context, activateBendpointMove, handleMouseMoveEndWithContext, handleMouseMoveWithContext } from '../../features/bendpoints/connectionSegmentMove';
-import { setEdges } from '../../store/actions';
+import { setEdges, setSelectedElementById } from '../../store/actions';
 
 export interface EdgeWaypoint {
   x: number;
@@ -62,7 +62,7 @@ export default React.memo(
     const handleMouseDown = (e: React.MouseEvent) => {
       if (!isPrimaryButton(e.nativeEvent)) return;
 
-      const canvas = getCanvasFromTransform(reactFlowyState.transform);
+      const canvas = getCanvas(reactFlowyState.transform);
       const connection: Connection = {
         waypoints,
         source: getRectangleByNodeId(reactFlowyState.nodes)(source),
@@ -120,6 +120,12 @@ export default React.memo(
       updateEdgesAndContext(newConnection, newContext);
     }
 
+    const handleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+
+      setSelectedElementById(id);
+    }
+
     return (
       <>
         {segments.map(segment => (
@@ -128,6 +134,7 @@ export default React.memo(
             style={{ fill: 'none', strokeOpacity: 0, stroke: 'white', strokeWidth: 15, cursor: segment.sourceX === segment.targetX ? 'ew-resize' : 'ns-resize' }}
             points={`${segment.sourceX} ${segment.sourceY}, ${segment.targetX} ${segment.targetY}`}
             onMouseDown={handleMouseDown}
+            onClick={handleClick}
           />
         ))}
       </>

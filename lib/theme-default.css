@@ -1,23 +1,12 @@
-.react-flowy__edge.updating .react-flowy__edge-path {
-  stroke: #777;
-}
-
 .react-flowy__edge-path {
-  stroke: #b1b1b7;
-  stroke-width: 1;
+  stroke: var(--black);
+  stroke-width: 2;
+  fill: transparent;
 }
 
-.react-flowy__edge-text {
-  font-size: 10px;
-}
-
-.react-flowy__edge-textbg {
-  fill: white;
-}
-
-.react-flowy__connection-path {
-  stroke: #b1b1b7;
-  stroke-width: 1;
+.react-flowy__arrowhead polyline {
+  stroke: var(--black);
+  fill: var(--black);
 }
 
 .react-flowy__node {

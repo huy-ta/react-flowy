@@ -18,6 +18,8 @@ export interface WrapEdgeProps<T = any> {
   isForming?: boolean;
   markerEndId?: string;
   isHidden?: boolean;
+  isSelected?: boolean;
+  isInvalid?: boolean;
   handleEdgeUpdate: boolean;
   onContextMenu?: (event: React.MouseEvent, edge: Edge) => void;
   onMouseEnter?: (event: React.MouseEvent, edge: Edge) => void;
@@ -43,6 +45,8 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
     isForming,
     markerEndId,
     isHidden,
+    isSelected,
+    isInvalid,
     onContextMenu,
     onMouseEnter,
     onMouseMove,
@@ -132,6 +136,8 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
           target={target}
           waypoints={waypoints}
           isForming={isForming}
+          isSelected={isSelected}
+          isInvalid={isInvalid}
           data={data}
           style={style}
           arrowHeadType={arrowHeadType}

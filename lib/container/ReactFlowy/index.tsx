@@ -1,4 +1,4 @@
-import React, { useMemo, HTMLAttributes, MouseEvent, WheelEvent, forwardRef } from 'react';
+import React, { useMemo, useCallback, HTMLAttributes, MouseEvent, WheelEvent, forwardRef } from 'react';
 import cc from 'classcat';
 
 import ElementRenderer from '../ElementRenderer';
@@ -48,6 +48,7 @@ export type OnLoadFunc<T = any> = (params: OnLoadParams<T>) => void;
 
 export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onLoad'> {
   elements: Elements;
+  onBackgroundClick?: (event: MouseEvent) => void;
   onElementClick?: (event: MouseEvent, element: Node | Edge) => void;
   onElementsRemove?: (elements: Elements) => void;
   onNodeDoubleClick?: (event: MouseEvent, node: Node) => void;
@@ -107,6 +108,7 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
       className,
       nodeTypes,
       edgeTypes,
+      onBackgroundClick,
       onElementClick,
       onLoad,
       onMove,
@@ -162,8 +164,12 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
     const edgeTypesParsed = useMemo(() => createEdgeTypes(edgeTypes), [edgeTypesId]);
     const reactFlowClasses = cc(['react-flowy', className]);
 
+    const handleClick = useCallback((e: MouseEvent) => {
+      if (typeof onBackgroundClick === 'function') onBackgroundClick(e);
+    }, []);
+
     return (
-      <div {...rest} ref={ref} className={reactFlowClasses}>
+      <div {...rest} ref={ref} className={reactFlowClasses} onClick={handleClick}>
         <ElementRenderer
           onLoad={onLoad}
           onMove={onMove}

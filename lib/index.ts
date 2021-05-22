@@ -1,6 +1,6 @@
-import ReactFlow from './container/ReactFlow';
+import ReactFlowy from './container/ReactFlowy';
 
-export default ReactFlow;
+export default ReactFlowy;
 
 export * from './utils';
 export * from './utils/coordinates';
@@ -25,9 +25,10 @@ export { default as useUpdateNodeInternals } from './hooks/useUpdateNodeInternal
 export { useSnapshot } from './store/state';
 export { state as reactFlowyState } from './store/state';
 export * from './store/actions';
+export * from './store/getters';
 export * from './premade-components';
 export * from './types';
 
-export type { ReactFlowProps } from './container/ReactFlow';
+export type { ReactFlowProps } from './container/ReactFlowy';
 export type { MiniMapProps } from './premade-components/MiniMap';
 export type { BackgroundProps } from './premade-components/Background';

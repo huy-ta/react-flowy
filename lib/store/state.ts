@@ -5,6 +5,8 @@ import { Node, Edge, NodeExtent, SnapGrid, Transform, TranslateExtent } from '..
 
 export { useSnapshot };
 
+export type NodeValidator = (sourceNode: Node, targetNode: Node, connectingEdge: Edge) => { isValid: boolean, reason?: string };
+
 export interface ReactFlowState {
   width: number;
   height: number;
@@ -25,6 +27,8 @@ export interface ReactFlowState {
 
   nodesDraggable: boolean;
   nodesConnectable: boolean;
+
+  nodeValidators: Record<string, NodeValidator>;
 }
 
 export const state = proxy<ReactFlowState>({
@@ -54,4 +58,6 @@ export const state = proxy<ReactFlowState>({
 
   nodesDraggable: true,
   nodesConnectable: true,
+
+  nodeValidators: {},
 });

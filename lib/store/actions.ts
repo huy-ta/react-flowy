@@ -16,7 +16,7 @@ import { clampPosition, getDimensions } from '../utils';
 import { isEdge } from '../utils/edge';
 import { isNode } from '../utils/node';
 import { parseEdge, parseNode } from '../utils/parse';
-import { state } from './state';
+import { NodeValidator, state } from './state';
 
 type NextElements = {
   nextNodes: Node[];
@@ -96,11 +96,29 @@ export const setElements = (propElements: Elements) => {
   state.edges = nextEdges;
 };
 
+export const upsertNode = (node: Node) => {
+  const existingNode = state.nodes.find(n => n.id === node.id);
+  
+  if (!existingNode) {
+    state.nodes.push(node);
+
+    return;
+  }
+
+  state.nodes = state.nodes.map(n => {
+    if (n.id !== node.id) return n;
+
+    return node;
+  });
+}
+
 export const upsertEdge = (edge: Edge) => {
   const existingEdge = state.edges.find(e => e.id === edge.id);
 
   if (!existingEdge) {
     state.edges = [...state.edges, edge];
+
+    return;
   }
 
   state.edges = state.edges.map(e => {
@@ -112,6 +130,48 @@ export const upsertEdge = (edge: Edge) => {
 
 export const setEdges = (edges: Edge[]) => {
   state.edges = edges;
+}
+
+export const setSelectedElementById = (id: string) => {
+  state.nodes = state.nodes.map(node => {
+    if (node.id !== id) {
+      if (node.isSelected) node.isSelected = false;
+
+      return node;
+    }
+
+    node.isSelected = true;
+
+    return node;
+  });
+
+  state.edges = state.edges.map(edge => {
+    if (edge.id !== id) {
+      if (edge.isSelected) edge.isSelected = false;
+
+      return edge;
+    }
+
+    edge.isSelected = true;
+
+    return edge;
+  })
+}
+
+export const unselectAllElements = () => {
+  setSelectedElementById('');
+}
+
+export const deleteElementById = (id: string) => {
+  state.nodes = state.nodes.filter(node => {
+    if (node.id !== id) return true;
+
+    state.edges = state.edges.filter(edge => edge.source !== node.id && edge.target !== node.id);
+
+    return false;
+  });
+
+  state.edges = state.edges.filter(edge => edge.id !== id);
 }
 
 export const updateNodeDimensions = (updates: NodeDimensionUpdate[]) => {
@@ -267,4 +327,8 @@ export const setNodeExtent = (nodeExtent: NodeExtent) => {
       position: clampPosition(node.__rf.position, nodeExtent),
     },
   }));
+}
+
+export const registerNodeValidator = (nodeType: string) => (validator: NodeValidator) => {
+  state.nodeValidators[nodeType] = validator;
 }

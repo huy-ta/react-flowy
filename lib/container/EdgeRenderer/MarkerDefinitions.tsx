@@ -47,6 +47,17 @@ const MarkerDefinitions = ({ color }: MarkerDefinitionsProps) => {
           points="-5,-4 0,0 -5,4"
         />
       </Marker>
+      <Marker id="react-flowy__arrowclosed--error">
+        <polyline
+          style={{ stroke: '#ef4a3c', fill: '#ef4a3c' }}
+          stroke="#ef4a3c"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="1"
+          fill="#ef4a3c"
+          points="-5,-4 0,0 -5,4 -5,-4"
+        />
+      </Marker>
     </defs>
   );
 };

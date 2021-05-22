@@ -1,19 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
+import cc from 'classcat';
+
 import StandardHandles, { ARROW_DISTANCE } from '../Handles/StandardHandles';
 import { Node } from '../../types';
 import { isPointInRect } from '../../utils/geometry';
+import { setSelectedElementById } from '../../store/actions';
 
 export interface NodeContainerWithStandardHandlesProps {
   node: Node;
+  isHandleDisabled?: boolean;
   TopHandleIndicator?: React.FC;
   RightHandleIndicator?: React.FC;
   BottomHandleIndicator?: React.FC;
   LeftHandleIndicator?: React.FC;
 }
 
-const NodeContainerWithStandardHandles: React.FC<NodeContainerWithStandardHandlesProps> = React.memo(({
+const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.memo(({
   children,
   node,
+  isHandleDisabled,
   TopHandleIndicator = React.Fragment,
   RightHandleIndicator = React.Fragment,
   BottomHandleIndicator = React.Fragment,
@@ -78,19 +83,36 @@ const NodeContainerWithStandardHandles: React.FC<NodeContainerWithStandardHandle
     setIsMouseDowned(false);
   }
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    setSelectedElementById(node.id);
+  }
+
   return (
-    <div ref={containerRef} className="react-flowy__node-container-with-standard-handles" onMouseEnter={handleMouseEnter} onMouseDown={handleMouseDown}>
-      <StandardHandles
+    <div
+      ref={containerRef}
+      className={cc([
+        'react-flowy__node-container-with-standard-handles',
+        {
+          'react-flowy__node-container-with-standard-handles--selected': node.isSelected
+        }
+      ])} 
+      onMouseEnter={handleMouseEnter}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
+    >
+      {!isHandleDisabled && <StandardHandles
         node={node}
         shouldShowHandles={shouldShowHandles}
         TopHandleIndicator={TopHandleIndicator}
         RightHandleIndicator={RightHandleIndicator}
         BottomHandleIndicator={BottomHandleIndicator}
         LeftHandleIndicator={LeftHandleIndicator}
-      />
+      />}
       {children}
     </div>
   );
 });
 
-export default NodeContainerWithStandardHandles;
+export default NodeContainer;

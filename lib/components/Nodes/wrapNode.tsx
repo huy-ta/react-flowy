@@ -13,7 +13,7 @@ import { DraggableCore, DraggableData, DraggableEvent } from 'react-draggable';
 import cc from 'classcat';
 
 import { Provider } from '../../contexts/NodeIdContext';
-import { Axis, DragDelta, ElementId, Node, SnapGrid, Transform } from '../../types';
+import { Axis, DragDelta, ElementId, Node, Point, SnapGrid, Transform } from '../../types';
 import { updateNodeDimensions, updateNodePosDiff } from '../../store/actions';
 import useKeyPress from '../../hooks/useKeyPress';
 
@@ -23,8 +23,7 @@ export interface NodeComponentProps<T = any> {
   data: T;
   isConnectable: boolean;
   transform?: Transform;
-  xPos?: number;
-  yPos?: number;
+  position: Point;
   onClick?: (node: Node) => void;
   onNodeDoubleClick?: (node: Node) => void;
   onMouseEnter?: (node: Node) => void;
@@ -36,6 +35,7 @@ export interface NodeComponentProps<T = any> {
   onNodeDragStop?: (node: Node) => void;
   style?: CSSProperties;
   isDragging?: boolean;
+  isSelected?: boolean;
 }
 
 export interface WrapNodeProps<T = any> {
@@ -43,8 +43,7 @@ export interface WrapNodeProps<T = any> {
   type: string;
   data: T;
   scale: number;
-  xPos: number;
-  yPos: number;
+  position: Point;
   isDraggable: boolean;
   isConnectable: boolean;
   onClick?: (event: React.MouseEvent, node: Node) => void;
@@ -59,6 +58,7 @@ export interface WrapNodeProps<T = any> {
   style?: CSSProperties;
   className?: string;
   isHidden?: boolean;
+  isSelected?: boolean;
   isInitialized?: boolean;
   snapToGrid?: boolean;
   snapGrid?: SnapGrid;
@@ -72,8 +72,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     type,
     data,
     scale,
-    xPos,
-    yPos,
+    position,
     onClick,
     onMouseEnter,
     onMouseMove,
@@ -88,6 +87,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     isDraggable,
     isConnectable,
     isHidden,
+    isSelected,
     isInitialized,
     snapToGrid,
     snapGrid,
@@ -100,13 +100,13 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
     const nodeElement = useRef<HTMLDivElement>(null);
 
-    const node = useMemo(() => ({ id, type, position: { x: xPos, y: yPos }, data }), [id, type, xPos, yPos, data]);
+    const node = useMemo(() => ({ id, type, position, data }), [id, type, position, data]);
     const grid = useMemo(() => (snapToGrid ? snapGrid : [1, 1])! as [number, number], [snapToGrid, snapGrid]);
 
     const nodeStyle: CSSProperties = useMemo(
       () => ({
         zIndex: 3,
-        transform: `translate(${xPos}px,${yPos}px)`,
+        transform: `translate(${position.x}px,${position.y}px)`,
         pointerEvents:
           isDraggable || onClick || onMouseEnter || onMouseMove || onMouseLeave ? 'all' : 'none',
         // prevents jumping of nodes on start
@@ -114,8 +114,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
         ...style,
       }),
       [
-        xPos,
-        yPos,
+        position,
         isDraggable,
         onClick,
         isInitialized,
@@ -285,10 +284,10 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
               id={id}
               data={data}
               type={type}
-              xPos={xPos}
-              yPos={yPos}
+              position={position}
               isConnectable={isConnectable}
               isDragging={isDragging}
+              isSelected={isSelected}
             />
           </Provider>
         </div>

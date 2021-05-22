@@ -2,9 +2,9 @@ import React from 'react';
 import cc from 'classcat';
 
 import { getMarkerEnd } from '../../utils/edge';
-import { EdgeProps } from '../../types';
+import { ArrowHeadType, EdgeProps } from '../../types';
 import { getConnectionPath } from '../../utils/path';
-import StandardEdgeMovements from './StandardEdgeMovements';
+import StandardEdgeController from './StandardEdgeController';
 
 export default React.memo(
   ({
@@ -15,19 +15,28 @@ export default React.memo(
     target,
     waypoints,
     isForming,
-    markerEndId,
+    isSelected,
+    isInvalid,
   }: EdgeProps) => {
-    const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
+    const markerEnd = getMarkerEnd(arrowHeadType);
+    const errorMarkerEnd = getMarkerEnd(`${arrowHeadType}--error` as ArrowHeadType);
 
     return (
       <>
         <path
           style={style}
-          className={cc(['react-flowy__edge-path', { 'react-flowy__edge-path--is-forming': isForming }])}
+          className={cc([
+            'react-flowy__edge-path',
+            {
+              'react-flowy__edge-path--forming': isForming,
+              'react-flowy__edge-path--selected': isSelected,
+              'react-flowy__edge-path--invalid': isInvalid,
+            }
+          ])}
           d={getConnectionPath({ waypoints }) as string}
-          markerEnd={markerEnd}
+          markerEnd={isInvalid ? errorMarkerEnd : markerEnd}
         />
-        {!isForming && <StandardEdgeMovements id={id} source={source} target={target} waypoints={waypoints} />}
+        {!isForming && <StandardEdgeController id={id} source={source} target={target} waypoints={waypoints} />}
       </>
     );
   }

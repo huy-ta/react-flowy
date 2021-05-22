@@ -59,28 +59,28 @@ const StandardHandles: React.FC<FourSideHandlesProps> = React.memo(({
 
   return (
     <>
-      <Handle node={node}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--up'])}>
           <TopHandleIndicator>
             <UpArrow />
           </TopHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--right'])}>
           <RightHandleIndicator>
             <RightArrow />
           </RightHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--down'])}>
           <BottomHandleIndicator>
             <DownArrow />
           </BottomHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--left'])}>
           <LeftHandleIndicator>
             <LeftArrow />

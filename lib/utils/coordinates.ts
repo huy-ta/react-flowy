@@ -15,8 +15,8 @@ export const eventPointToCanvasCoordinates = (event: MouseEvent | TouchEvent) =>
   }
 
   return {
-    x: (clientX - canvas.position.x) / canvas.scale,
-    y: (clientY - canvas.position.y) / canvas.scale,
+    x: (clientX - canvas.offset.x - canvas.position.x) / canvas.scale,
+    y: (clientY - canvas.offset.y - canvas.position.y) / canvas.scale,
   }
 };
 
