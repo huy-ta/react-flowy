@@ -96,7 +96,7 @@ const ZoomPane = ({
 
       if (panOnScroll && !zoomActivationKeyPressed.current) {
         d3Selection
-          .on('wheel', (event: any) => {
+          .on('wheel', (event: WheelEvent) => {
             event.preventDefault();
             event.stopImmediatePropagation();
 

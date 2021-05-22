@@ -6,7 +6,7 @@ export const eventPointToCanvasCoordinates = (event: MouseEvent | TouchEvent) =>
 
   const touchEvent = event as TouchEvent;
 
-  if (Array.isArray(touchEvent.touches)) {
+  if (touchEvent.touches?.length) {
     clientX = touchEvent.touches[0].clientX;
     clientY = touchEvent.touches[0].clientY;
   } else {

@@ -21,10 +21,12 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
   useEffect(() => {
     if (!isMouseDowned) return;
 
-    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mousemove', handleCursorMove);
+    document.addEventListener('touchmove', handleCursorMove);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleCursorMove);
+      document.removeEventListener('touchmove', handleCursorMove);
     }
   }, [isMouseDowned, isAddingEdge]);
 
@@ -32,13 +34,15 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
     if (!isMouseDowned) return;
 
     document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchend', handleMouseUp);
 
     return () => {
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchend', handleMouseUp);
     }
   }, [isMouseDowned]);
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleCursorMove = (e: MouseEvent | TouchEvent) => {
     const nodeElement = getNodeElementById(node.id)! as HTMLElement;
 
     const sourceRectangle: Rectangle = {
@@ -122,14 +126,14 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
     setIsAddingEdge(false);
   }
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
 
     setIsMouseDowned(true);
   }
 
   return (
-    <div className={cc(['react-flowy__handle', { 'react-flowy__handle--hidden': !shouldShowHandle }])} onMouseDown={handleMouseDown}>
+    <div className={cc(['react-flowy__handle', { 'react-flowy__handle--hidden': !shouldShowHandle }])} onMouseDown={handleMouseDown} onTouchStartCapture={handleMouseDown}>
       {children}
     </div>
   )
