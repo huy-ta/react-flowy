@@ -15,34 +15,37 @@ export interface HandleProps {
 }
 
 const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle }) => {
-  const [isMouseDowned, setIsMouseDowned] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
   const [isAddingEdge, setIsAddingEdge] = useState(false);
 
   useEffect(() => {
-    if (!isMouseDowned) return;
+    if (!isPressed) return;
 
-    document.addEventListener('mousemove', handleCursorMove);
-    document.addEventListener('touchmove', handleCursorMove);
+    document.addEventListener('mousemove', handleDrag);
+    document.addEventListener('touchmove', handleDrag);
 
     return () => {
-      document.removeEventListener('mousemove', handleCursorMove);
-      document.removeEventListener('touchmove', handleCursorMove);
+      document.removeEventListener('mousemove', handleDrag);
+      document.removeEventListener('touchmove', handleDrag);
     }
-  }, [isMouseDowned, isAddingEdge]);
+  }, [isPressed, isAddingEdge]);
 
   useEffect(() => {
-    if (!isMouseDowned) return;
+    if (!isPressed) return;
 
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('touchend', handleMouseUp);
+    document.addEventListener('mouseup', handleDragStop);
+    document.addEventListener('touchend', handleDragStop);
 
     return () => {
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchend', handleMouseUp);
+      document.removeEventListener('mouseup', handleDragStop);
+      document.removeEventListener('touchend', handleDragStop);
     }
-  }, [isMouseDowned]);
+  }, [isPressed]);
 
-  const handleCursorMove = (e: MouseEvent | TouchEvent) => {
+  const handleDrag = (e: MouseEvent | TouchEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
     const nodeElement = getNodeElementById(node.id)! as HTMLElement;
 
     const sourceRectangle: Rectangle = {
@@ -108,7 +111,9 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
     }
   }
 
-  const handleMouseUp = () => {
+  const handleDragStop = () => {
+    document.body.style.overscrollBehavior = 'unset';
+
     let newEdges = reactFlowyState.edges.map(edge => {
       if (edge.target === '?' || edge.isInvalid) return;
 
@@ -122,18 +127,19 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
 
     setEdges(newEdges);
 
-    setIsMouseDowned(false);
+    setIsPressed(false);
     setIsAddingEdge(false);
   }
 
-  const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
-
-    setIsMouseDowned(true);
+    document.body.style.overscrollBehavior = 'none';
+  
+    setIsPressed(true);
   }
 
   return (
-    <div className={cc(['react-flowy__handle', { 'react-flowy__handle--hidden': !shouldShowHandle }])} onMouseDown={handleMouseDown} onTouchStartCapture={handleMouseDown}>
+    <div className={cc(['react-flowy__handle', { 'react-flowy__handle--hidden': !shouldShowHandle }])} onMouseDown={handleDragStart} onTouchStartCapture={handleDragStart}>
       {children}
     </div>
   )

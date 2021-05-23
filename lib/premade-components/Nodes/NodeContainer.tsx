@@ -27,7 +27,8 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isMouseDowned, setIsMouseDowned] = useState(false);
   const [shouldShowHandles, setShouldShowHandles] = useState(false);
-  const touchTimeout = useRef<NodeJS.Timeout>();
+  const touchTimeout = useRef<number>();
+  const initialTouch = useRef<React.Touch>();
 
   const handleMouseEnter = () => {
     setShouldShowHandles(true);
@@ -90,8 +91,10 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     setSelectedElementById(node.id);
   }
 
-  const handleTouchStart = () => {
-    touchTimeout.current = setTimeout(() => {
+  const handleTouchStart = (e: React.TouchEvent) => {
+    initialTouch.current = e.touches[0];
+
+    touchTimeout.current = window.setTimeout(() => {
       setShouldShowHandles(true);
     }, 250);
   }
@@ -100,7 +103,11 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     if (touchTimeout.current) clearTimeout(touchTimeout.current);
   }
 
-  const handleTouchMove = () => {
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches[0].clientX - initialTouch.current!.clientX < 20 && e.touches[0].clientY - initialTouch.current!.clientY < 20) {
+      return;
+    }
+
     if (touchTimeout.current) clearTimeout(touchTimeout.current);
   }
 

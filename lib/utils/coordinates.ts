@@ -1,6 +1,6 @@
 import { SnapGrid, Transform, Canvas, Point } from '../types';
 
-export const eventPointToCanvasCoordinates = (event: MouseEvent | TouchEvent) => (canvas: Canvas) => {
+export const eventPointToCanvasCoordinates = (event: MouseEvent | TouchEvent | Event) => (canvas: Canvas) => {
   let clientX: number;
   let clientY: number;
 

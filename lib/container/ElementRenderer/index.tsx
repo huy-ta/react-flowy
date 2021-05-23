@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, memo } from 'react';
-import { useSnapshot } from 'valtio';
+import React, { useEffect, useRef } from 'react';
 
 import ZoomPaneRenderer from '../ZoomPaneRenderer/ZoomPaneRenderer';
 import NodeRenderer from '../NodeRenderer';
@@ -102,7 +101,6 @@ const ElementRenderer = ({
   edgeUpdaterRadius,
 }: ElementRendererProps) => {
   const isInitialized = useRef<boolean>(false);
-  const snap = useSnapshot(state);
   const { zoomIn, zoomOut, zoomTo, transform, fitView, initialized } = useZoomPanHelper();
 
   useEffect(() => {
@@ -114,15 +112,15 @@ const ElementRenderer = ({
           zoomOut,
           zoomTo,
           setTransform: transform,
-          project: onLoadProject(snap as ReactFlowState),
-          getElements: onLoadGetElements(snap as ReactFlowState),
-          toObject: onLoadToObject(snap as ReactFlowState),
+          project: onLoadProject(state),
+          getElements: onLoadGetElements(state),
+          toObject: onLoadToObject(state),
         });
       }
 
       isInitialized.current = true;
     }
-  }, [onLoad, zoomIn, zoomOut, zoomTo, transform, fitView, initialized, snap]);
+  }, [onLoad, zoomIn, zoomOut, zoomTo, transform, fitView, initialized, state]);
 
   useEffect(() => {
     if (typeof snapToGrid !== 'undefined') {
@@ -227,4 +225,4 @@ const ElementRenderer = ({
 
 ElementRenderer.displayName = 'ElementRenderer';
 
-export default memo(ElementRenderer);
+export default React.memo(ElementRenderer);

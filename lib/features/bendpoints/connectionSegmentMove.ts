@@ -162,13 +162,13 @@ function filterRedundantWaypoints(waypoints: Point[], segmentStartIndex: number,
   };
 }
 
-export const handleMouseMoveWithContext = (event: MouseEvent) => (context: Context) => {
-  const getMouseEventDelta = (axis: Axis): 'movementX' | 'movementY' => axis === Axis.X ? 'movementX' : 'movementY';
+export const calculateNewConnectionOnDragging = (movementX: number, movementY: number) => (context: Context) => {
+  const getMovement = (axis: Axis): number => axis === Axis.X ? movementX : movementY;
 
   const { connection, segmentStartIndex, segmentEndIndex, segmentStart, segmentEnd, axis, originalWaypoints } = context;
   const newWaypoints = originalWaypoints.slice();
-  const newSegmentStart = axisAdd(segmentStart, axis, event[getMouseEventDelta(axis)]);
-  const newSegmentEnd = axisAdd(segmentEnd, axis, event[getMouseEventDelta(axis)]);
+  const newSegmentStart = axisAdd(segmentStart, axis, getMovement(axis));
+  const newSegmentEnd = axisAdd(segmentEnd, axis, getMovement(axis));
   // original waypoint count and added / removed
   // from start waypoint delta. We use the later
   // to retrieve the updated segmentStartIndex / segmentEndIndex

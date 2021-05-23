@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-import { Connection, ApproxIntersection, Axis, EdgeProps } from '../../types';
+import { Connection, ApproxIntersection, Axis, EdgeProps, Edge } from '../../types';
 import { state as reactFlowyState } from '../../store/state';
 import { getCanvas } from '../../utils/graph';
 import { isPrimaryButton } from '../../utils/mouse';
 import { getRectangleByNodeId } from '../../utils/node';
 import { getApproxIntersection } from '../../utils/intersection';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
-import { Context, activateBendpointMove, handleMouseMoveEndWithContext, handleMouseMoveWithContext } from '../../features/bendpoints/connectionSegmentMove';
-import { setEdges, setSelectedElementById } from '../../store/actions';
+import { Context, activateBendpointMove, handleMouseMoveEndWithContext, calculateNewConnectionOnDragging } from '../../features/bendpoints/connectionSegmentMove';
+import { setSelectedElementById, upsertEdge } from '../../store/actions';
 
 export interface EdgeWaypoint {
   x: number;
@@ -40,26 +40,26 @@ export default React.memo(
     waypoints,
   }: EdgeProps) => {
     const segments = getEdgeSegmentsFromWaypoints(waypoints as EdgeWaypoint[]);
-    const [context, setContext] = useState<Context>();
-    const [isBendpointMoveActive, setIsBendpointMoveActive] = useState(false);
+    const context = useRef<Context>();
+    const isBendpointMoveActive = useRef<boolean>(false);
 
     useEffect(() => {
-      if (!isBendpointMoveActive) return;
+      document.addEventListener('mouseup', handleDragStop);
 
-      document.addEventListener('mouseup', handleMouseUp);
-
-      return () => document.removeEventListener('mouseup', handleMouseUp);
-    }, [context, isBendpointMoveActive]);
+      return () => {
+        document.removeEventListener('mouseup', handleDragStop);
+      }
+    }, []);
 
     useEffect(() => {
-      if (!isBendpointMoveActive) return;
+      document.addEventListener('mousemove', handleDrag);
 
-      document.addEventListener('mousemove', handleMouseMove);
+      return () => {
+        document.removeEventListener('mousemove', handleDrag);
+      }
+    }, []);
 
-      return () => document.removeEventListener('mousemove', handleMouseMove);
-    }, [context, isBendpointMoveActive]);
-
-    const handleMouseDown = (e: React.MouseEvent) => {
+    const handleDragStart = (e: React.MouseEvent) => {
       if (!isPrimaryButton(e.nativeEvent)) return;
 
       const canvas = getCanvas(reactFlowyState.transform);
@@ -73,69 +73,67 @@ export default React.memo(
 
       eventDelta = { x: 0, y: 0 };
 
-      setContext(newContext);
-      setIsBendpointMoveActive(true);
+      context.current = newContext;
+      isBendpointMoveActive.current = true;
+    };
+
+    const updateEdgeAndContext = (newConnection: Connection, newContext: Context) => {
+      upsertEdge(
+        { ...reactFlowyState.edges.find(edge => edge.id === id) as Edge, waypoints: newConnection.waypoints }
+      );
+
+      context.current = newContext;
     }
 
-    const updateEdgesAndContext = (newConnection: Connection, newContext: Context) => {
-      const newEdges = reactFlowyState.edges.map(edge => {
-        if (edge.id !== id) return edge;
+    const handleDragStop = () => {
+      if (!isBendpointMoveActive.current) return;
 
-        edge.waypoints = newConnection.waypoints;
+      isBendpointMoveActive.current = false;
 
-        return edge;
-      });
+      const { newConnection, newContext } = handleMouseMoveEndWithContext(context.current!);
 
-      setEdges(newEdges);
+      updateEdgeAndContext(newConnection, newContext);
+    };
 
-      setContext(newContext);
-    }
+    const handleDrag = (event: MouseEvent) => {
+      if (!context.current || !isBendpointMoveActive.current) return;
 
-    const handleMouseUp = () => {
-      if (!isBendpointMoveActive) return;
+      let movementX: number = event.movementX;
+      let movementY: number = event.movementY;
 
-      setIsBendpointMoveActive(false);
-
-      const { newConnection, newContext } = handleMouseMoveEndWithContext(context!);
-
-      updateEdgesAndContext(newConnection, newContext);
-    }
-
-    const handleMouseMove = (event: MouseEvent) => {
-      if (!context || !isBendpointMoveActive) return;
-
-      if (context.axis === Axis.X) {
-        eventDelta.x += Math.round(event.movementX / reactFlowyState.transform[2]);
-      } else if (context.axis === Axis.Y) {
-        eventDelta.y += Math.round(event.movementY / reactFlowyState.transform[2]);
+      if (context.current!.axis === Axis.X) {
+        eventDelta.x += Math.round(movementX / reactFlowyState.transform[2]);
+      } else if (context.current!.axis === Axis.Y) {
+        eventDelta.y += Math.round(movementY / reactFlowyState.transform[2]);
       }
 
-      const modifiedEvent = { ...event };
+      movementX = eventDelta.x;
+      movementY = eventDelta.y;
 
-      modifiedEvent.movementX = eventDelta.x;
-      modifiedEvent.movementY = eventDelta.y;
+      const { newConnection, newContext } = calculateNewConnectionOnDragging(movementX, movementY)(context.current as Context);
 
-      const { newConnection, newContext } = handleMouseMoveWithContext(modifiedEvent)(context as Context);
+      updateEdgeAndContext(newConnection, newContext);
+    };
 
-      updateEdgesAndContext(newConnection, newContext);
-    }
-
-    const handleClick = (e: React.MouseEvent) => {
+    const handleSelect = (e: React.MouseEvent) => {
       e.stopPropagation();
 
-      setSelectedElementById(id);
+      setSelectedElementById(id); 
     }
 
     return (
       <>
         {segments.map(segment => (
-          <polyline
+          <React.Fragment
             key={JSON.stringify(segment)}
-            style={{ fill: 'none', strokeOpacity: 0, stroke: 'white', strokeWidth: 15, cursor: segment.sourceX === segment.targetX ? 'ew-resize' : 'ns-resize' }}
-            points={`${segment.sourceX} ${segment.sourceY}, ${segment.targetX} ${segment.targetY}`}
-            onMouseDown={handleMouseDown}
-            onClick={handleClick}
-          />
+          >
+            <polyline
+              style={{ fill: 'none', strokeOpacity: 0, stroke: 'white', strokeWidth: 15, cursor: segment.sourceX === segment.targetX ? 'ew-resize' : 'ns-resize' }}
+              points={`${segment.sourceX} ${segment.sourceY}, ${segment.targetX} ${segment.targetY}`}
+              onMouseDown={handleDragStart}
+              onClick={handleSelect}
+            />
+          </React.Fragment>
         ))}
       </>
     );
