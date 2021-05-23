@@ -8,12 +8,11 @@ import useZoomPanHelper from '../../hooks/useZoomPanHelper';
 import { FlowyExportObject, ReactFlowProps } from '../ReactFlowy';
 
 import { NodeTypesType, EdgeTypesType, Elements, Point } from '../../types';
-import { setMaxZoom, setMinZoom, setNodeExtent, setNodesConnectable, setNodesDraggable, setSnapGrid, setSnapToGrid, setTranslateExtent } from '../../store/actions';
-import { ReactFlowState, state } from '../../store/state';
+import { ReactFlowyState, useStore } from '../../store/state';
 import { pointToCanvasCoordinates } from '../../utils/coordinates';
 import { parseElements } from '../../utils/parse';
 
-export const onLoadProject = (state: ReactFlowState) => {
+export const onLoadProject = (state: ReactFlowyState) => {
   return (position: Point): Point => {
     const { transform, snapToGrid, snapGrid } = state;
 
@@ -21,7 +20,7 @@ export const onLoadProject = (state: ReactFlowState) => {
   };
 };
 
-export const onLoadGetElements = (state: ReactFlowState) => {
+export const onLoadGetElements = (state: ReactFlowyState) => {
   return (): Elements => {
     const { nodes = [], edges = [] } = state;
 
@@ -29,7 +28,7 @@ export const onLoadGetElements = (state: ReactFlowState) => {
   };
 };
 
-export const onLoadToObject = (state: ReactFlowState) => {
+export const onLoadToObject = (state: ReactFlowyState) => {
   return (): FlowyExportObject => {
     const { nodes = [], edges = [], transform } = state;
 
@@ -46,7 +45,6 @@ export interface ElementRendererProps extends Omit<ReactFlowProps, 'elements'> {
   edgeTypes: EdgeTypesType;
   snapToGrid: boolean;
   snapGrid: [number, number];
-  onlyRenderVisibleElements: boolean;
   defaultZoom: number;
   defaultPosition: [number, number];
   arrowHeadColor: string;
@@ -73,7 +71,6 @@ const ElementRenderer = ({
   onElementsRemove,
   snapToGrid,
   snapGrid,
-  onlyRenderVisibleElements,
   nodesDraggable,
   nodesConnectable,
   minZoom,
@@ -100,6 +97,14 @@ const ElementRenderer = ({
   onEdgeMouseLeave,
   edgeUpdaterRadius,
 }: ElementRendererProps) => {
+  const setMaxZoom = useStore(state => state.setMaxZoom);
+  const setMinZoom = useStore(state => state.setMinZoom);
+  const setNodeExtent = useStore(state => state.setNodeExtent);
+  const setNodesConnectable = useStore(state => state.setNodesConnectable);
+  const setNodesDraggable = useStore(state => state.setNodesDraggable);
+  const setSnapGrid = useStore(state => state.setSnapGrid);
+  const setSnapToGrid = useStore(state => state.setSnapToGrid);
+  const setTranslateExtent = useStore(state => state.setTranslateExtent);
   const isInitialized = useRef<boolean>(false);
   const { zoomIn, zoomOut, zoomTo, transform, fitView, initialized } = useZoomPanHelper();
 
@@ -112,15 +117,15 @@ const ElementRenderer = ({
           zoomOut,
           zoomTo,
           setTransform: transform,
-          project: onLoadProject(state),
-          getElements: onLoadGetElements(state),
-          toObject: onLoadToObject(state),
+          project: onLoadProject(useStore.getState()),
+          getElements: onLoadGetElements(useStore.getState()),
+          toObject: onLoadToObject(useStore.getState()),
         });
       }
 
       isInitialized.current = true;
     }
-  }, [onLoad, zoomIn, zoomOut, zoomTo, transform, fitView, initialized, state]);
+  }, [onLoad, zoomIn, zoomOut, zoomTo, transform, fitView, initialized]);
 
   useEffect(() => {
     if (typeof snapToGrid !== 'undefined') {
@@ -204,7 +209,6 @@ const ElementRenderer = ({
         onNodeDragStart={onNodeDragStart}
         snapToGrid={snapToGrid}
         snapGrid={snapGrid}
-        onlyRenderVisibleElements={onlyRenderVisibleElements}
       />
       <EdgeRenderer
         edgeTypes={edgeTypes}
@@ -212,7 +216,6 @@ const ElementRenderer = ({
         onEdgeDoubleClick={onEdgeDoubleClick}
         arrowHeadColor={arrowHeadColor}
         markerEndId={markerEndId}
-        onlyRenderVisibleElements={onlyRenderVisibleElements}
         onEdgeContextMenu={onEdgeContextMenu}
         onEdgeMouseEnter={onEdgeMouseEnter}
         onEdgeMouseMove={onEdgeMouseMove}

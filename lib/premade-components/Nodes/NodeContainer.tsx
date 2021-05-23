@@ -4,7 +4,7 @@ import cc from 'classcat';
 import StandardHandles, { ARROW_DISTANCE } from '../Handles/StandardHandles';
 import { Node } from '../../types';
 import { isPointInRect } from '../../utils/geometry';
-import { setSelectedElementById } from '../../store/actions';
+import { useStore } from '../../store/state';
 
 export interface NodeContainerWithStandardHandlesProps {
   node: Node;
@@ -24,6 +24,7 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
   BottomHandleIndicator = React.Fragment,
   LeftHandleIndicator = React.Fragment,
 }) => {
+  const setSelectedElementById = useStore(state => state.setSelectedElementById);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isMouseDowned, setIsMouseDowned] = useState(false);
   const [shouldShowHandles, setShouldShowHandles] = useState(false);

@@ -1,5 +1,4 @@
 import React, { memo } from 'react';
-import { useSnapshot } from 'valtio';
 
 import MarkerDefinitions from './MarkerDefinitions';
 import { getSourceTargetNodes } from './utils';
@@ -8,7 +7,8 @@ import {
   Node,
   Transform,
 } from '../../types';
-import { state } from '../../store/state';
+import { useStore } from '../../store/state';
+import { heightSelector, nodesSelector, transformSelector, widthSelector, edgesSelector } from '../../store/selectors';
 
 interface EdgeRendererProps {
   edgeTypes: any;
@@ -16,7 +16,6 @@ interface EdgeRendererProps {
   onEdgeDoubleClick?: (event: React.MouseEvent, edge: Edge) => void;
   arrowHeadColor: string;
   markerEndId?: string;
-  onlyRenderVisibleElements: boolean;
   onEdgeContextMenu?: (event: React.MouseEvent, edge: Edge) => void;
   onEdgeMouseEnter?: (event: React.MouseEvent, edge: Edge) => void;
   onEdgeMouseMove?: (event: React.MouseEvent, edge: Edge) => void;
@@ -83,28 +82,32 @@ const EdgeWrapper = React.memo(({
 });
 
 const EdgeRenderer = (props: EdgeRendererProps) => {
-  const snap = useSnapshot(state);
+  const width = useStore(widthSelector);
+  const height = useStore(heightSelector);
+  const transform = useStore(transformSelector);
+  const nodes = useStore(nodesSelector);
+  const edges = useStore(edgesSelector);
 
-  if (!snap.width) {
+  if (!width) {
     return null;
   }
 
   const { arrowHeadColor } = props;
-  const transformStyle = `translate(${snap.transform[0]},${snap.transform[1]}) scale(${snap.transform[2]})`;
+  const transformStyle = `translate(${transform[0]},${transform[1]}) scale(${transform[2]})`;
 
   return (
-    <svg width={snap.width} height={snap.height} className="react-flowy__edges">
+    <svg width={width} height={height} className="react-flowy__edges">
       <MarkerDefinitions color={arrowHeadColor} />
       <g transform={transformStyle}>
-        {(snap.edges as Edge[]).map(edge => (
+        {edges.map(edge => (
           <EdgeWrapper
             key={edge.id}
             edge={edge}
             props={props}
-            nodes={snap.nodes as Node[]}
-            transform={snap.transform}
-            width={snap.width}
-            height={snap.height}
+            nodes={nodes as Node[]}
+            transform={transform}
+            width={width}
+            height={height}
           />
         ))}
       </g>

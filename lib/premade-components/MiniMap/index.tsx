@@ -1,11 +1,11 @@
 import React, { memo, HTMLAttributes, CSSProperties } from 'react';
-import { useSnapshot } from 'valtio';
 import cc from 'classcat';
 
 import { getRectOfNodes, getBoundsOfRects } from '../../utils/node';
 import { Node, Rectangle } from '../../types';
 import MiniMapNode from './MiniMapNode';
-import { state } from '../../store/state';
+import { useStore } from '../../store/state';
+import { heightSelector, nodesSelector, transformSelector, widthSelector } from '../../store/selectors';
 
 type StringFunc = (node: Node) => string;
 
@@ -33,11 +33,10 @@ const MiniMap = ({
   nodeStrokeWidth = 2,
   maskColor = 'rgb(240, 242, 243, 0.7)',
 }: MiniMapProps) => {
-  const snap = useSnapshot(state);
-  const containerWidth = snap.width;
-  const containerHeight = snap.height;
-  const [tX, tY, tScale] = snap.transform;
-  const nodes = snap.nodes as Node[];
+  const containerWidth = useStore(widthSelector);
+  const containerHeight = useStore(heightSelector);
+  const [tX, tY, tScale] = useStore(transformSelector);
+  const nodes = useStore(nodesSelector);
 
   const mapClasses = cc(['react-flowy__minimap', className]);
   const elementWidth = (style?.width || defaultWidth)! as number;

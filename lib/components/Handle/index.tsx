@@ -3,11 +3,11 @@ import cc from 'classcat';
 import { getNodeElementById } from '../../utils/node';
 import { ArrowHeadType, Node, Edge, Point, Rectangle, LayoutType } from '../../types';
 import { getCanvas } from '../../utils/graph';
-import { reactFlowyState } from '../..';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
 import { isPointInRect } from '../../utils/geometry';
 import { connectRectangles, connectRectangleToPoint } from '../../features/layout/manhattanLayout';
-import { setEdges, upsertEdge } from '../../store/actions';
+import { useStore } from '../../store/state';
+import { edgesSelector, nodesSelector, nodeValidatorsSelector, transformSelector } from '../../store/selectors';
 
 export interface HandleProps {
   node: Node;
@@ -15,6 +15,12 @@ export interface HandleProps {
 }
 
 const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle }) => {
+  const nodes = useStore(nodesSelector);
+  const edges = useStore(edgesSelector);
+  const transform = useStore(transformSelector);
+  const nodeValidators = useStore(nodeValidatorsSelector);
+  const upsertEdge = useStore(state => state.upsertEdge);
+  const setEdges = useStore(state => state.setEdges);
   const [isPressed, setIsPressed] = useState(false);
   const [isAddingEdge, setIsAddingEdge] = useState(false);
 
@@ -28,7 +34,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
       document.removeEventListener('mousemove', handleDrag);
       document.removeEventListener('touchmove', handleDrag);
     }
-  }, [isPressed, isAddingEdge]);
+  }, [isPressed, isAddingEdge, transform, nodes, nodeValidators]);
 
   useEffect(() => {
     if (!isPressed) return;
@@ -40,7 +46,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
       document.removeEventListener('mouseup', handleDragStop);
       document.removeEventListener('touchend', handleDragStop);
     }
-  }, [isPressed]);
+  }, [isPressed, edges]);
 
   const handleDrag = (e: MouseEvent | TouchEvent) => {
     e.stopPropagation();
@@ -55,14 +61,14 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
       height: nodeElement.offsetHeight,
     };
 
-    const canvas = getCanvas(reactFlowyState.transform);
+    const canvas = getCanvas(transform);
 
     const cursorPosition = eventPointToCanvasCoordinates(e)(canvas);
 
     let targetNodeElement: HTMLElement;
     let targetRectangle: Rectangle;
 
-    const targetNode = reactFlowyState.nodes.find(node => {
+    const targetNode = nodes.find(node => {
       targetNodeElement = getNodeElementById(node.id)! as HTMLElement;
 
       targetRectangle = {
@@ -90,10 +96,10 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
       newEdge.target = targetNode.id;
       newEdge.waypoints = waypoints;
 
-      const targetNodeValidator = reactFlowyState.nodeValidators[node.type || 'standardNode'];
+      const nodeValidator = nodeValidators[node.type || 'standardNode'];
 
-      if (typeof targetNodeValidator === 'function') {
-        const { isValid } = targetNodeValidator(node, targetNode, newEdge as Edge);
+      if (typeof nodeValidator === 'function') {
+        const { isValid } = nodeValidator(node, targetNode, newEdge as Edge);
 
         if (!isValid) newEdge.isInvalid = true;
         else delete newEdge.isInvalid;
@@ -114,7 +120,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
   const handleDragStop = () => {
     document.body.style.overscrollBehavior = 'unset';
 
-    let newEdges = reactFlowyState.edges.map(edge => {
+    let newEdges = edges.map(edge => {
       if (edge.target === '?' || edge.isInvalid) return;
 
       if (edge.source !== node.id) return edge;

@@ -1,6 +1,6 @@
 {
   "name": "react-flowy",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "main": "dist/ReactFlow.js",
   "module": "dist/ReactFlow.esm.js",
   "types": "dist/index.d.ts",
@@ -23,7 +23,7 @@
     "min-dash": "^3.7.0",
     "path-intersection": "^2.2.1",
     "react-draggable": "^4.4.3",
-    "valtio": "^1.0.5"
+    "zustand": "^3.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.14.0",

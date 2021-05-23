@@ -22,10 +22,9 @@ export * from './features/layout/utils';
 export { default as useZoomPanHelper } from './hooks/useZoomPanHelper';
 export { default as useUpdateNodeInternals } from './hooks/useUpdateNodeInternals';
 
-export { useSnapshot } from './store/state';
-export { state as reactFlowyState } from './store/state';
-export * from './store/actions';
+export { useStore as useReactFlowyStore } from './store/state';
 export * from './store/getters';
+export * from './store/selectors';
 export * from './premade-components';
 export * from './types';
 

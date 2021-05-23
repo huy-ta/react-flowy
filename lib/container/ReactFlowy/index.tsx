@@ -71,7 +71,6 @@ export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
   zoomActivationKeyCode?: KeyCode;
   snapToGrid?: boolean;
   snapGrid?: [number, number];
-  onlyRenderVisibleElements?: boolean;
   nodesDraggable?: boolean;
   nodesConnectable?: boolean;
   paneMoveable?: boolean;
@@ -126,7 +125,6 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
       zoomActivationKeyCode = 'Meta',
       snapToGrid = false,
       snapGrid = [15, 15],
-      onlyRenderVisibleElements = false,
       nodesDraggable,
       nodesConnectable,
       minZoom,
@@ -190,7 +188,6 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
           zoomActivationKeyCode={zoomActivationKeyCode}
           snapToGrid={snapToGrid}
           snapGrid={snapGrid}
-          onlyRenderVisibleElements={onlyRenderVisibleElements}
           nodesDraggable={nodesDraggable}
           nodesConnectable={nodesConnectable}
           minZoom={minZoom}
@@ -227,4 +224,4 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
 
 ReactFlow.displayName = 'ReactFlow';
 
-export default ReactFlow;
+export default React.memo(ReactFlow);

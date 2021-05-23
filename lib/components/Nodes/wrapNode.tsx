@@ -2,7 +2,6 @@ import React, {
   useEffect,
   useLayoutEffect,
   useRef,
-  memo,
   ComponentType,
   CSSProperties,
   useMemo,
@@ -12,10 +11,9 @@ import React, {
 import { DraggableCore, DraggableData, DraggableEvent } from 'react-draggable';
 import cc from 'classcat';
 
-import { Provider } from '../../contexts/NodeIdContext';
 import { Axis, DragDelta, ElementId, Node, Point, SnapGrid, Transform } from '../../types';
-import { updateNodeDimensions, updateNodePosDiff } from '../../store/actions';
 import useKeyPress from '../../hooks/useKeyPress';
+import { useStore } from '../../store/state';
 
 export interface NodeComponentProps<T = any> {
   id: ElementId;
@@ -94,6 +92,8 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     isDragging,
     resizeObserver,
   }: WrapNodeProps) => {
+    const updateNodeDimensions = useStore(state => state.updateNodeDimensions);
+    const updateNodePosDiff = useStore(state => state.updateNodePosDiff);
     const observerInitialized = useRef<boolean>(false);
     const isShiftPressed = useKeyPress('Shift');
     const draggingAxis = useRef<Axis>();
@@ -279,17 +279,15 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
           onDoubleClick={onNodeDoubleClickHandler}
           data-id={id}
         >
-          <Provider value={id}>
-            <NodeComponent
-              id={id}
-              data={data}
-              type={type}
-              position={position}
-              isConnectable={isConnectable}
-              isDragging={isDragging}
-              isSelected={isSelected}
-            />
-          </Provider>
+          <NodeComponent
+            id={id}
+            data={data}
+            type={type}
+            position={position}
+            isConnectable={isConnectable}
+            isDragging={isDragging}
+            isSelected={isSelected}
+          />
         </div>
       </DraggableCore>
     );
@@ -297,5 +295,5 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
   NodeWrapper.displayName = 'NodeWrapper';
 
-  return memo(NodeWrapper);
+  return React.memo(NodeWrapper);
 };

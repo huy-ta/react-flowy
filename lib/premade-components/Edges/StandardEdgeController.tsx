@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 
 import { Connection, ApproxIntersection, Axis, EdgeProps, Edge } from '../../types';
-import { state as reactFlowyState } from '../../store/state';
+import { useStore } from '../../store/state';
 import { getCanvas } from '../../utils/graph';
 import { isPrimaryButton } from '../../utils/mouse';
 import { getRectangleByNodeId } from '../../utils/node';
 import { getApproxIntersection } from '../../utils/intersection';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
 import { Context, activateBendpointMove, handleMouseMoveEndWithContext, calculateNewConnectionOnDragging } from '../../features/bendpoints/connectionSegmentMove';
-import { setSelectedElementById, upsertEdge } from '../../store/actions';
+import { edgesSelector, nodesSelector, transformSelector } from '../../store/selectors';
 
 export interface EdgeWaypoint {
   x: number;
@@ -39,6 +39,11 @@ export default React.memo(
     target,
     waypoints,
   }: EdgeProps) => {
+    const transform = useStore(transformSelector);
+    const nodes = useStore(nodesSelector);
+    const edges = useStore(edgesSelector);
+    const upsertEdge = useStore(state => state.upsertEdge);
+    const setSelectedElementById = useStore(state => state.setSelectedElementById);
     const segments = getEdgeSegmentsFromWaypoints(waypoints as EdgeWaypoint[]);
     const context = useRef<Context>();
     const isBendpointMoveActive = useRef<boolean>(false);
@@ -62,11 +67,11 @@ export default React.memo(
     const handleDragStart = (e: React.MouseEvent) => {
       if (!isPrimaryButton(e.nativeEvent)) return;
 
-      const canvas = getCanvas(reactFlowyState.transform);
+      const canvas = getCanvas(transform);
       const connection: Connection = {
         waypoints,
-        source: getRectangleByNodeId(reactFlowyState.nodes)(source),
-        target: getRectangleByNodeId(reactFlowyState.nodes)(target),
+        source: getRectangleByNodeId(nodes)(source),
+        target: getRectangleByNodeId(nodes)(target),
       };
       const intersection = getApproxIntersection(waypoints, eventPointToCanvasCoordinates(e.nativeEvent)(canvas)) as ApproxIntersection;
       const newContext = activateBendpointMove(connection, intersection);
@@ -79,7 +84,7 @@ export default React.memo(
 
     const updateEdgeAndContext = (newConnection: Connection, newContext: Context) => {
       upsertEdge(
-        { ...reactFlowyState.edges.find(edge => edge.id === id) as Edge, waypoints: newConnection.waypoints }
+        { ...edges.find(edge => edge.id === id) as Edge, waypoints: newConnection.waypoints }
       );
 
       context.current = newContext;
@@ -102,9 +107,9 @@ export default React.memo(
       let movementY: number = event.movementY;
 
       if (context.current!.axis === Axis.X) {
-        eventDelta.x += Math.round(movementX / reactFlowyState.transform[2]);
+        eventDelta.x += Math.round(movementX / transform[2]);
       } else if (context.current!.axis === Axis.Y) {
-        eventDelta.y += Math.round(movementY / reactFlowyState.transform[2]);
+        eventDelta.y += Math.round(movementY / transform[2]);
       }
 
       movementX = eventDelta.x;
