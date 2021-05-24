@@ -238,13 +238,13 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     }, [id, isHidden]);
 
     useEffect(() => {
-      if (nodeElement.current) {
-        observerInitialized.current = true;
-        const currNode = nodeElement.current;
-        resizeObserver?.observe(currNode);
+      if (!nodeElement.current) return;
 
-        return () => resizeObserver?.unobserve(currNode);
-      }
+      observerInitialized.current = true;
+      const currNode = nodeElement.current;
+      resizeObserver?.observe(currNode);
+
+      return () => resizeObserver?.unobserve(currNode);
     }, []);
 
     if (isHidden) {

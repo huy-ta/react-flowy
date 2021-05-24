@@ -80,10 +80,10 @@ const MiniMap = ({
         .map((node) => (
           <MiniMapNode
             key={node.id}
-            x={node.__rf.position.x}
-            y={node.__rf.position.y}
-            width={node.__rf.width}
-            height={node.__rf.height}
+            x={node.position.x}
+            y={node.position.y}
+            width={node.width!}
+            height={node.height!}
             style={node.style as CSSProperties}
             className={nodeClassNameFunc(node)}
             color={nodeColorFunc(node)}

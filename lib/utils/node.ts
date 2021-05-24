@@ -12,18 +12,27 @@ export const getNodeById = (elements: Elements) => (id: string) => {
   return elements.find(element => element.id === id && isNode(element)) as Node | undefined;
 }
 
-export const getRectangleByNodeId = (elements: Elements) => (nodeId: string): Rectangle => {
-  const node = getNodeById(elements)(nodeId);
+export const getRectangleByNodeId = (nodes: Elements | Node[]) => (nodeId: string): Rectangle => {
+  const node = getNodeById(nodes)(nodeId);
 
   if (!node) {
     throw new Error(`There is no node with id = ${nodeId}`);
   }
 
+  if (node.width && node.height) {
+    return {
+      x: node.position.x,
+      y: node.position.y,
+      width: node.width,
+      height: node.height,
+    };
+  }
+
   const nodeElement = getNodeElementById(nodeId) as HTMLElement;
 
   return {
-    x: node.__rf?.position.x || node.position.x,
-    y: node.__rf?.position.y || node.position.y,
+    x: node.position.x,
+    y: node.position.y,
     width: nodeElement.offsetWidth,
     height: nodeElement.offsetHeight
   }
@@ -55,8 +64,8 @@ export const getBoundsOfRects = (rect1: Rectangle, rect2: Rectangle): Rectangle 
 
 export const getRectOfNodes = (nodes: Node[]): Rectangle => {
   const box = nodes.reduce(
-    (currBox, { __rf: { position, width, height } = {} }) =>
-      getBoundsOfBoxes(currBox, rectToBox({ ...position, width, height })),
+    (currBox, { position, width, height }) =>
+      getBoundsOfBoxes(currBox, rectToBox({ ...position, width: width!, height: height! })),
     { x: Infinity, y: Infinity, x2: -Infinity, y2: -Infinity }
   );
 
@@ -76,8 +85,8 @@ export const getNodesInside = (
     height: rect.height / tScale,
   });
 
-  return nodes.filter(({ __rf: { position, width, height, isDragging } }) => {
-    const nBox = rectToBox({ ...position, width, height });
+  return nodes.filter(({ position, width, height, isDragging }) => {
+    const nBox = rectToBox({ ...position, width: width!, height: height! });
     const xOverlap = Math.max(0, Math.min(rBox.x2, nBox.x2) - Math.max(rBox.x, nBox.x));
     const yOverlap = Math.max(0, Math.min(rBox.y2, nBox.y2) - Math.max(rBox.y, nBox.y));
     const overlappingArea = Math.ceil(xOverlap * yOverlap);
@@ -91,7 +100,7 @@ export const getNodesInside = (
       return overlappingArea > 0;
     }
 
-    const area = width * height;
+    const area = width! * height!;
 
     return overlappingArea >= area;
   });

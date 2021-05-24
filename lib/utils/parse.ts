@@ -2,17 +2,18 @@ import { clampPosition } from '.';
 import { Edge, Elements, Node, NodeExtent } from '../types';
 
 export const parseNode = (node: Node, nodeExtent: NodeExtent): Node => {
-  return {
+  const parsedNode = {
     ...node,
     id: node.id.toString(),
     type: node.type || 'default',
-    __rf: {
-      position: clampPosition(node.position, nodeExtent),
-      width: null,
-      height: null,
-      isDragging: false,
-    },
+    position: clampPosition(node.position, nodeExtent),
+    isDragging: false,
   };
+
+  delete parsedNode.width;
+  delete parsedNode.height;
+
+  return parsedNode;
 };
 
 export const parseEdge = (edge: Edge): Edge => {
@@ -28,14 +29,7 @@ export const parseEdge = (edge: Edge): Edge => {
 
 export const parseElements = (nodes: Node[], edges: Edge[]): Elements => {
   return [
-    ...nodes.map((node) => {
-      const n = { ...node };
-
-      n.position = n.__rf.position;
-
-      delete n.__rf;
-      return n;
-    }),
-    ...edges.map((e) => ({ ...e })),
+    ...nodes.map(node => ({ ...node })),
+    ...edges.map(edge => ({ ...edge })),
   ];
 };

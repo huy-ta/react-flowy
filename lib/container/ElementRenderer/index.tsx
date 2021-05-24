@@ -5,7 +5,7 @@ import NodeRenderer from '../NodeRenderer';
 import EdgeRenderer from '../EdgeRenderer';
 import useZoomPanHelper from '../../hooks/useZoomPanHelper';
 
-import { FlowyExportObject, ReactFlowProps } from '../ReactFlowy';
+import { FlowyExportObject, ReactFlowyProps } from '../ReactFlowy';
 
 import { NodeTypesType, EdgeTypesType, Elements, Point } from '../../types';
 import { ReactFlowyState, useStore } from '../../store/state';
@@ -40,7 +40,7 @@ export const onLoadToObject = (state: ReactFlowyState) => {
   };
 };
 
-export interface ElementRendererProps extends Omit<ReactFlowProps, 'elements'> {
+export interface ElementRendererProps extends Omit<ReactFlowyProps, 'elements'> {
   nodeTypes: NodeTypesType;
   edgeTypes: EdgeTypesType;
   snapToGrid: boolean;

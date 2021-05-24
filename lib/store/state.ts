@@ -140,13 +140,13 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
           };
   
           if (storeNode.position.x !== propElement.position.x || storeNode.position.y !== propElement.position.y) {
-            updatedNode.__rf.position = propElement.position;
+            updatedNode.position = propElement.position;
           }
   
           if (typeof propElement.type !== 'undefined' && propElement.type !== storeNode.type) {
             // we reset the elements dimensions here in order to force a re-calculation of the bounds.
             // When the type of a node changes it is possible that the number or positions of handles changes too.
-            updatedNode.__rf.width = null;
+            delete updatedNode.width;
           }
   
           res.nextNodes.push(updatedNode);
@@ -215,11 +215,15 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
   },
 
   setSelectedElementById: (id: string) => {
+    let isAnElementUnselected = false;
     const state = get();
 
     const newNodes = state.nodes.map(node => {
       if (node.id !== id) {
-        if (node.isSelected) node.isSelected = false;
+        if (node.isSelected) {
+          node.isSelected = false;
+          isAnElementUnselected = true;
+        }
   
         return node;
       }
@@ -231,7 +235,10 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
   
     const newEdges = state.edges.map(edge => {
       if (edge.id !== id) {
-        if (edge.isSelected) edge.isSelected = false;
+        if (edge.isSelected) {
+          edge.isSelected = false;
+          isAnElementUnselected = true;
+        }
   
         return edge;
       }
@@ -240,6 +247,8 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
   
       return edge;
     })
+
+    if (id === '' && !isAnElementUnselected) return;
 
     set(state => ({ ...state, nodes: newNodes, edges: newEdges }));
   },
@@ -271,15 +280,12 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
         const doUpdate =
           dimensions.width &&
           dimensions.height &&
-          (node.__rf.width !== dimensions.width || node.__rf.height !== dimensions.height || update.forceUpdate);
+          (node.width !== dimensions.width || node.height !== dimensions.height || update.forceUpdate);
   
         if (doUpdate) {
           return {
             ...node,
-            __rf: {
-              ...node.__rf,
-              ...dimensions,
-            },
+            ...dimensions,
           };
         }
       }
@@ -307,10 +313,7 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
       if (node.id === id) {
         return {
           ...node,
-          __rf: {
-            ...node.__rf,
-            position,
-          },
+          position,
         };
       }
   
@@ -325,16 +328,13 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
       if (id === node.id) {
         const updatedNode = {
           ...node,
-          __rf: {
-            ...node.__rf,
-            isDragging,
-          },
+          isDragging,
         };
   
         if (diff) {
-          updatedNode.__rf.position = {
-            x: node.__rf.position.x + diff.x,
-            y: node.__rf.position.y + diff.y,
+          updatedNode.position = {
+            x: node.position.x + diff.x,
+            y: node.position.y + diff.y,
           };
         }
   
@@ -352,10 +352,7 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
       nodeExtent,
       nodes: state.nodes.map(node => ({
         ...node,
-        __rf: {
-          ...node.__rf,
-          position: clampPosition(node.__rf.position, nodeExtent),
-        },
+        position: clampPosition(node.position, nodeExtent),
       })),
     }))
   },  

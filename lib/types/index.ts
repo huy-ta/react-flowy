@@ -56,13 +56,15 @@ export type SnapGrid = [number, number];
 export interface Node<T = any> {
   id: ElementId;
   position: Point;
+  width?: number;
+  height?: number;
   type?: string;
-  __rf?: any;
   data?: T;
   style?: CSSProperties;
   className?: string;
   isHidden?: boolean;
   isSelected?: boolean;
+  isDragging?: boolean;
   draggable?: boolean;
   connectable?: boolean;
 }

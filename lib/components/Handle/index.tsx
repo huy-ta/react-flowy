@@ -72,8 +72,8 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
       targetNodeElement = getNodeElementById(node.id)! as HTMLElement;
 
       targetRectangle = {
-        x: node.__rf.position.x,
-        y: node.__rf.position.y,
+        x: node.position.x,
+        y: node.position.y,
         width: targetNodeElement.offsetWidth,
         height: targetNodeElement.offsetHeight,
       };

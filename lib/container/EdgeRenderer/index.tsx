@@ -46,7 +46,7 @@ const EdgeWrapper = React.memo(({
   }
 
   // The source node needs to be initialized first
-  if (!sourceNode.__rf.width) {
+  if (!sourceNode.width) {
     return null;
   }
 
