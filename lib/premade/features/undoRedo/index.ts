@@ -19,8 +19,6 @@ export const useUndoRedoStore = create<UndoRedoStore>(set => ({
 
 export const initializeUndoRedo = () => {
   let skipSubscription = false;
-  let isMouseMoving = false;
-  let mouseUpCallback: Function | null;
 
   let previousElements: Elements = [];
 
@@ -32,25 +30,21 @@ export const initializeUndoRedo = () => {
   };
 
   const normalizeUnstablePropertiesFromElements = (elements: Node[] | Edge[] | Elements) => {
-    const elementsWithUnstablePropertiesExcluded = (elements as Node[]).map(({ width, height, ...node }) => node).filter(node => !node.isDragging);
+    const elementsWithUnstablePropertiesExcluded = (elements as Node[]).map(({ width, height, ...node }) => node).filter(node => !node.isDragging && !node.isSelected);
 
-    return (elementsWithUnstablePropertiesExcluded as unknown as Edge[]).filter(edge => !edge.isDragging);
+    return (elementsWithUnstablePropertiesExcluded as unknown as Edge[]).filter(edge => !edge.isDragging && !edge.isSelected);
   };
+
+  let batchUpdateTimeout: number;
 
   useStore.subscribe((elements: Elements | undefined) => {
     if (!elements) return;
 
-    const save = () => {
+    batchUpdateTimeout = window.setTimeout(() => {
       undoRedo.save(elements);
-
-      return updateUndoRedoStore();
-    }
-
-    if (!isMouseMoving) {
-      save();
-    }
-
-    mouseUpCallback = save;
+  
+      updateUndoRedoStore();
+    }, 100);
   }, state => {
     const edges = state.edges.filter(edge => edge.target !== '?' && !edge.isForming);
     const elements = [...state.nodes, ...edges];
@@ -70,6 +64,10 @@ export const initializeUndoRedo = () => {
       return;
     }
 
+    if (batchUpdateTimeout) clearTimeout(batchUpdateTimeout);
+
+    previousElements = elements;
+
     if (skipSubscription) {
       window.setTimeout(() => {
         skipSubscription = false;
@@ -78,23 +76,9 @@ export const initializeUndoRedo = () => {
       return;
     }
 
-    previousElements = elements;
-
     return elements;
   });
 
-  document.addEventListener('mousemove', () => {
-    isMouseMoving = true;
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (isMouseMoving) isMouseMoving = false;
-
-    if (typeof mouseUpCallback === 'function') {
-      mouseUpCallback();
-      mouseUpCallback = null;
-    }
-  })
 
   let isCtrlJustPressed = false;
 
