@@ -1,10 +1,10 @@
 import React, { memo, useMemo, FC, HTMLAttributes } from 'react';
 import cc from 'classcat';
 
-import { BackgroundVariant } from '../../types';
+import { BackgroundVariant } from '../../../types';
 import { createGridLinesPath, createGridDotsPath } from './utils';
-import { useStore } from '../../store/state';
-import { transformSelector } from '../../store/selectors';
+import { useStore } from '../../../store/state';
+import { transformSelector } from '../../../store/selectors';
 
 export interface BackgroundProps extends HTMLAttributes<SVGElement> {
   variant?: BackgroundVariant;

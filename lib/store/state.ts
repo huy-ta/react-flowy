@@ -197,8 +197,6 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
   
     if (!existingEdge) {
       return set(state => ({ ...state, edges: [...state.edges, edge] }));
-  
-      return;
     }
   
     set(state => ({ ...state, edges: state.edges.map(e => {

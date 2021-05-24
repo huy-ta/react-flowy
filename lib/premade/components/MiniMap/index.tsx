@@ -1,11 +1,11 @@
 import React, { memo, HTMLAttributes, CSSProperties } from 'react';
 import cc from 'classcat';
 
-import { getRectOfNodes, getBoundsOfRects } from '../../utils/node';
-import { Node, Rectangle } from '../../types';
+import { getRectOfNodes, getBoundsOfRects } from '../../../utils/node';
+import { Node, Rectangle } from '../../../types';
 import MiniMapNode from './MiniMapNode';
-import { useStore } from '../../store/state';
-import { heightSelector, nodesSelector, transformSelector, widthSelector } from '../../store/selectors';
+import { useStore } from '../../../store/state';
+import { heightSelector, nodesSelector, transformSelector, widthSelector } from '../../../store/selectors';
 
 type StringFunc = (node: Node) => string;
 

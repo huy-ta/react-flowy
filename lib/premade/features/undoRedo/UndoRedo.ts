@@ -1,13 +1,11 @@
 export class UndoRedo<T> {
-  stackLength: number;
-  initialValue: T;
+  #previousValue: T | null;
   undoStack: T[];
   redoStack: T[];
 
-  constructor({ stackLength = 20, initialValue }: { stackLength: number, initialValue: T }) {
-    this.stackLength = stackLength;
-    this.initialValue = initialValue;
-    this.undoStack = [this.initialValue];
+  constructor() {
+    this.#previousValue = null;
+    this.undoStack = [];
     this.redoStack = [];
   }
 
@@ -20,7 +18,8 @@ export class UndoRedo<T> {
 
     if (!undoValue) return;
 
-    this.redoStack.push(undoValue);
+    this.#previousValue && this.redoStack.push(this.#previousValue);
+    this.#previousValue = undoValue;
 
     return undoValue;
   }
@@ -30,12 +29,15 @@ export class UndoRedo<T> {
 
     if (!redoValue) return;
 
-    this.undoStack.push(redoValue);
+    this.#previousValue && this.undoStack.push(this.#previousValue);
+    this.#previousValue = redoValue;
 
     return redoValue;
   }
 
   public save(value: T) {
-    this.undoStack.push(value);
+    this.#previousValue && this.undoStack.push(this.#previousValue);
+
+    this.#previousValue = value;
   }
 };

@@ -25,9 +25,7 @@ export { default as useUpdateNodeInternals } from './hooks/useUpdateNodeInternal
 export { useStore as useReactFlowyStore } from './store/state';
 export * from './store/getters';
 export * from './store/selectors';
-export * from './premade-components';
+export * from './premade';
 export * from './types';
 
-export type { ReactFlowProps } from './container/ReactFlowy';
-export type { MiniMapProps } from './premade-components/MiniMap';
-export type { BackgroundProps } from './premade-components/Background';
+export type { ReactFlowyProps } from './container/ReactFlowy';

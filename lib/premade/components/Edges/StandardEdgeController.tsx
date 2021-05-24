@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 
-import { Connection, ApproxIntersection, Axis, EdgeProps, Edge } from '../../types';
-import { useStore } from '../../store/state';
-import { getCanvas } from '../../utils/graph';
-import { isPrimaryButton } from '../../utils/mouse';
-import { getRectangleByNodeId } from '../../utils/node';
-import { getApproxIntersection } from '../../utils/intersection';
-import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
-import { Context, activateBendpointMove, handleMouseMoveEndWithContext, calculateNewConnectionOnDragging } from '../../features/bendpoints/connectionSegmentMove';
-import { edgesSelector, nodesSelector, transformSelector } from '../../store/selectors';
+import { Connection, ApproxIntersection, Axis, EdgeProps, Edge } from '../../../types';
+import { useStore } from '../../../store/state';
+import { getCanvas } from '../../../utils/graph';
+import { isPrimaryButton } from '../../../utils/mouse';
+import { getRectangleByNodeId } from '../../../utils/node';
+import { getApproxIntersection } from '../../../utils/intersection';
+import { eventPointToCanvasCoordinates } from '../../../utils/coordinates';
+import { Context, activateBendpointMove, handleMouseMoveEndWithContext, calculateNewConnectionOnDragging } from '../../../features/bendpoints/connectionSegmentMove';
+import { edgesSelector, nodesSelector, transformSelector } from '../../../store/selectors';
 
 export interface EdgeWaypoint {
   x: number;

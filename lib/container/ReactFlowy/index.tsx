@@ -2,7 +2,6 @@ import React, { useMemo, useCallback, HTMLAttributes, MouseEvent, WheelEvent, fo
 import cc from 'classcat';
 
 import ElementRenderer from '../ElementRenderer';
-import ElementUpdater from '../../components/ElementUpdater';
 import { createNodeTypes } from '../NodeRenderer/utils';
 import { createEdgeTypes } from '../EdgeRenderer/utils';
 import {
@@ -46,8 +45,7 @@ export type OnLoadParams<T = any> = {
 
 export type OnLoadFunc<T = any> = (params: OnLoadParams<T>) => void;
 
-export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onLoad'> {
-  elements: Elements;
+export interface ReactFlowyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onLoad'> {
   onBackgroundClick?: (event: MouseEvent) => void;
   onElementClick?: (event: MouseEvent, element: Node | Edge) => void;
   onElementsRemove?: (elements: Elements) => void;
@@ -100,10 +98,9 @@ export interface ReactFlowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'on
 
 export type ReactFlowRefType = HTMLDivElement;
 
-const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
+const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowyProps>(
   (
     {
-      elements = [],
       className,
       nodeTypes,
       edgeTypes,
@@ -215,7 +212,6 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowProps>(
           onEdgeMouseLeave={onEdgeMouseLeave}
           edgeUpdaterRadius={edgeUpdaterRadius}
         />
-        <ElementUpdater elements={elements} />
         {children}
       </div>
     );

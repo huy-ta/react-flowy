@@ -2,9 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import cc from 'classcat';
 
 import StandardHandles, { ARROW_DISTANCE } from '../Handles/StandardHandles';
-import { Node } from '../../types';
-import { isPointInRect } from '../../utils/geometry';
-import { useStore } from '../../store/state';
+import { Node } from '../../../types';
+import { isPointInRect } from '../../../utils/geometry';
+import { useStore } from '../../../store/state';
 
 export interface NodeContainerWithStandardHandlesProps {
   node: Node;

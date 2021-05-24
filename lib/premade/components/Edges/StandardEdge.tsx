@@ -1,9 +1,9 @@
 import React from 'react';
 import cc from 'classcat';
 
-import { getMarkerEnd } from '../../utils/edge';
-import { ArrowHeadType, EdgeProps } from '../../types';
-import { getConnectionPath } from '../../utils/path';
+import { getMarkerEnd } from '../../../utils/edge';
+import { ArrowHeadType, EdgeProps } from '../../../types';
+import { getConnectionPath } from '../../../utils/path';
 import StandardEdgeController from './StandardEdgeController';
 
 export default React.memo(

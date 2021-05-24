@@ -1,8 +1,8 @@
 import React from 'react';
 import cc from 'classcat';
 
-import { Node } from '../../types';
-import Handle from '../../components/Handle';
+import { Node } from '../../../types';
+import Handle from '../../../components/Handle';
 
 export const ARROW_DISTANCE = 12 + 24;
 
