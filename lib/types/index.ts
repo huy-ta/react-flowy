@@ -87,6 +87,7 @@ export interface Edge<T = any> {
   isHidden?: boolean;
   isSelected?: boolean;
   isInvalid?: boolean;
+  isDragging?: boolean;
   data?: T;
   className?: string;
 }
@@ -110,6 +111,7 @@ export interface EdgeProps<T = any> {
   isForming?: boolean;
   isSelected?: boolean;
   isInvalid?: boolean;
+  isDragging?: boolean;
   style?: CSSProperties;
   arrowHeadType?: ArrowHeadType;
   markerEndId?: string;

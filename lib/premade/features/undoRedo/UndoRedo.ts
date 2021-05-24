@@ -13,6 +13,14 @@ export class UndoRedo<T> {
     return { undoStack: this.undoStack, redoStack: this.redoStack };
   }
 
+  public isUndoable() {
+    return this.undoStack.length > 0;
+  }
+
+  public isRedoable() {
+    return this.redoStack.length > 0;
+  }
+
   public undo() {
     const undoValue = this.undoStack.pop();
 
@@ -39,5 +47,7 @@ export class UndoRedo<T> {
     this.#previousValue && this.undoStack.push(this.#previousValue);
 
     this.#previousValue = value;
+
+    this.redoStack = [];
   }
 };

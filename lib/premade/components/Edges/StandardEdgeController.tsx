@@ -82,9 +82,9 @@ export default React.memo(
       isBendpointMoveActive.current = true;
     };
 
-    const updateEdgeAndContext = (newConnection: Connection, newContext: Context) => {
+    const updateEdgeAndContext = (newConnection: Connection, newContext: Context, isDragging: boolean) => {
       upsertEdge(
-        { ...edges.find(edge => edge.id === id) as Edge, waypoints: newConnection.waypoints }
+        { ...edges.find(edge => edge.id === id) as Edge, waypoints: newConnection.waypoints, isDragging }
       );
 
       context.current = newContext;
@@ -97,7 +97,7 @@ export default React.memo(
 
       const { newConnection, newContext } = handleMouseMoveEndWithContext(context.current!);
 
-      updateEdgeAndContext(newConnection, newContext);
+      updateEdgeAndContext(newConnection, newContext, false);
     };
 
     const handleDrag = (event: MouseEvent) => {
@@ -117,7 +117,7 @@ export default React.memo(
 
       const { newConnection, newContext } = calculateNewConnectionOnDragging(movementX, movementY)(context.current as Context);
 
-      updateEdgeAndContext(newConnection, newContext);
+      updateEdgeAndContext(newConnection, newContext, true);
     };
 
     const handleSelect = (e: React.MouseEvent) => {

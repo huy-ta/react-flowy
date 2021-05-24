@@ -96,41 +96,41 @@ const ZoomPane = ({
   }, []);
 
   useEffect(() => {
-    if (d3Selection && d3Zoom) {
-      if (panOnScroll && !zoomActivationKeyPressed.current) {
-        d3Selection
-          .on('wheel', (event: WheelEvent) => {
-            event.preventDefault();
-            event.stopImmediatePropagation();
+    if (!d3Selection || !d3Zoom) return;
 
-            const currentZoom = d3Selection.property('__zoom').k || 1;
+    if (panOnScroll && !zoomActivationKeyPressed.current) {
+      d3Selection
+        .on('wheel', (event: WheelEvent) => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
 
-            if (event.ctrlKey && zoomOnPinch) {
-              const point = pointer(event);
-              // taken from https://github.com/d3/d3-zoom/blob/master/src/zoom.js
-              const pinchDelta = -event.deltaY * (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002) * 10;
-              const zoom = currentZoom * Math.pow(2, pinchDelta);
-              d3Zoom.scaleTo(d3Selection, zoom, point);
+          const currentZoom = d3Selection.property('__zoom').k || 1;
 
-              return;
-            }
+          if (event.ctrlKey && zoomOnPinch) {
+            const point = pointer(event);
+            // taken from https://github.com/d3/d3-zoom/blob/master/src/zoom.js
+            const pinchDelta = -event.deltaY * (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002) * 10;
+            const zoom = currentZoom * Math.pow(2, pinchDelta);
+            d3Zoom.scaleTo(d3Selection, zoom, point);
 
-            // increase scroll speed in firefox
-            // firefox: deltaMode === 1; chrome: deltaMode === 0
-            const deltaNormalize = event.deltaMode === 1 ? 20 : 1;
-            const deltaX = panOnScrollMode === PanOnScrollMode.Vertical ? 0 : event.deltaX * deltaNormalize;
-            const deltaY = panOnScrollMode === PanOnScrollMode.Horizontal ? 0 : event.deltaY * deltaNormalize;
+            return;
+          }
 
-            d3Zoom.translateBy(
-              d3Selection,
-              -(deltaX / currentZoom) * panOnScrollSpeed,
-              -(deltaY / currentZoom) * panOnScrollSpeed
-            );
-          })
-          .on('wheel.zoom', null);
-      } else if (typeof d3ZoomHandler !== 'undefined') {
-        d3Selection.on('wheel', null).on('wheel.zoom', d3ZoomHandler);
-      }
+          // increase scroll speed in firefox
+          // firefox: deltaMode === 1; chrome: deltaMode === 0
+          const deltaNormalize = event.deltaMode === 1 ? 20 : 1;
+          const deltaX = panOnScrollMode === PanOnScrollMode.Vertical ? 0 : event.deltaX * deltaNormalize;
+          const deltaY = panOnScrollMode === PanOnScrollMode.Horizontal ? 0 : event.deltaY * deltaNormalize;
+
+          d3Zoom.translateBy(
+            d3Selection,
+            -(deltaX / currentZoom) * panOnScrollSpeed,
+            -(deltaY / currentZoom) * panOnScrollSpeed
+          );
+        })
+        .on('wheel.zoom', null);
+    } else if (typeof d3ZoomHandler !== 'undefined') {
+      d3Selection.on('wheel', null).on('wheel.zoom', d3ZoomHandler);
     }
   }, [panOnScroll, panOnScrollMode, d3Selection, d3Zoom, d3ZoomHandler, zoomActivationKeyPressed, zoomOnPinch]);
 

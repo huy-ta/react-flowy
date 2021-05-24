@@ -20,6 +20,7 @@ export interface WrapEdgeProps<T = any> {
   isHidden?: boolean;
   isSelected?: boolean;
   isInvalid?: boolean;
+  isDragging?: boolean;
   handleEdgeUpdate: boolean;
   onContextMenu?: (event: React.MouseEvent, edge: Edge) => void;
   onMouseEnter?: (event: React.MouseEvent, edge: Edge) => void;
@@ -47,6 +48,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
     isHidden,
     isSelected,
     isInvalid,
+    isDragging,
     onContextMenu,
     onMouseEnter,
     onMouseMove,
@@ -138,6 +140,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
           isForming={isForming}
           isSelected={isSelected}
           isInvalid={isInvalid}
+          isDragging={isDragging}
           data={data}
           style={style}
           arrowHeadType={arrowHeadType}

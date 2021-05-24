@@ -1,42 +1,100 @@
-import isDeepEqual from 'fast-deep-equal';
+import create from 'zustand';
 import { useStore } from '../../../store/state';
-import { Elements } from '../../../types';
+import { Node, Elements, Edge } from '../../../types';
 import { UndoRedo } from './UndoRedo';
+
+export interface UndoRedoStore {
+  isUndoable: boolean;
+  isRedoable: boolean;
+  setIsUndoable: (isUndoable: boolean) => void;
+  setIsRedoable: (isRedoable: boolean) => void;
+}
+
+export const useUndoRedoStore = create<UndoRedoStore>(set => ({
+  isUndoable: false,
+  isRedoable: false,
+  setIsUndoable: (isUndoable: boolean) => set(state => ({ ...state, isUndoable })),
+  setIsRedoable: (isRedoable: boolean) => set(state => ({ ...state, isRedoable })),
+}));
 
 export const initializeUndoRedo = () => {
   let skipSubscription = false;
-  let updateTimeout: number;
+  let isMouseMoving = false;
+  let mouseUpCallback: Function | null;
 
   let previousElements: Elements = [];
 
   const undoRedo = new UndoRedo<Elements>();
 
+  const updateUndoRedoStore = () => {
+    useUndoRedoStore.getState().setIsUndoable(undoRedo.isUndoable());
+    useUndoRedoStore.getState().setIsRedoable(undoRedo.isRedoable());
+  };
+
+  const normalizeUnstablePropertiesFromElements = (elements: Node[] | Edge[] | Elements) => {
+    const elementsWithUnstablePropertiesExcluded = (elements as Node[]).map(({ width, height, ...node }) => node).filter(node => !node.isDragging);
+
+    return (elementsWithUnstablePropertiesExcluded as unknown as Edge[]).filter(edge => !edge.isDragging);
+  };
+
   useStore.subscribe((elements: Elements | undefined) => {
     if (!elements) return;
 
-    if (updateTimeout) clearTimeout(updateTimeout);
-
-    updateTimeout = window.setTimeout(() => {
+    const save = () => {
       undoRedo.save(elements);
-    }, 500);
+
+      return updateUndoRedoStore();
+    }
+
+    if (!isMouseMoving) {
+      save();
+    }
+
+    mouseUpCallback = save;
   }, state => {
     const edges = state.edges.filter(edge => edge.target !== '?' && !edge.isForming);
     const elements = [...state.nodes, ...edges];
 
-    if (isDeepEqual(previousElements, elements)) return;
+    elements.forEach(({ id, isDragging }) => {
+      if (isDragging) previousElements = previousElements.map(previousElement => {
+        if (previousElement.id !== id) return previousElement;
+
+        return { ...previousElement, isDragging };
+      })
+    });
+
+    const previousElementsToCompare = normalizeUnstablePropertiesFromElements(previousElements);
+    const elementsToCompare = normalizeUnstablePropertiesFromElements(elements);
+
+    if (JSON.stringify(previousElementsToCompare) === JSON.stringify(elementsToCompare)) {
+      return;
+    }
 
     if (skipSubscription) {
       window.setTimeout(() => {
         skipSubscription = false;
-      }, 500);
+      });
 
       return;
     }
 
-    previousElements = edges;
+    previousElements = elements;
 
     return elements;
   });
+
+  document.addEventListener('mousemove', () => {
+    isMouseMoving = true;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isMouseMoving) isMouseMoving = false;
+
+    if (typeof mouseUpCallback === 'function') {
+      mouseUpCallback();
+      mouseUpCallback = null;
+    }
+  })
 
   let isCtrlJustPressed = false;
 
@@ -70,6 +128,8 @@ export const initializeUndoRedo = () => {
 
   const undo = () => {
     const undo = undoRedo.undo();
+
+    updateUndoRedoStore();
   
     if (!undo) return;
   
@@ -79,6 +139,8 @@ export const initializeUndoRedo = () => {
   
   const redo = () => {
     const redo = undoRedo.redo();
+
+    updateUndoRedoStore();
   
     if (!redo) return;
   
@@ -89,5 +151,6 @@ export const initializeUndoRedo = () => {
   return {
     undo,
     redo,
+    undoRedoInstance: undoRedo,
   }
 };

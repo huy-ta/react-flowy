@@ -69,6 +69,7 @@ const EdgeWrapper = React.memo(({
       isForming={edge.isForming}
       isSelected={edge.isSelected}
       isInvalid={edge.isInvalid}
+      isDragging={edge.isDragging}
       markerEndId={props.markerEndId}
       isHidden={edge.isHidden}
       onContextMenu={props.onEdgeContextMenu}

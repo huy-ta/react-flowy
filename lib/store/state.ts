@@ -52,6 +52,7 @@ export interface ReactFlowyActions {
   setMinZoom: (minZoom: number) => void;
   setMaxZoom: (maxZoom: number) => void;
   setTranslateExtent: (translateExtent: TranslateExtent) => void;
+  zoomTo: (zoom: number) => void;
   setSnapToGrid: (snapToGrid: boolean) => void;
   setSnapGrid: (snapGrid: SnapGrid) => void;
   setInteractive: (isInteractive: boolean) => void;
@@ -391,6 +392,12 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
     const state = get();
 
     state.d3Zoom?.translateExtent(translateExtent);
+  },
+
+  zoomTo: (zoom: number) => {
+    const state = get();
+
+    state.d3Zoom?.scaleTo(state.d3Selection!, zoom);
   },
 
   setSnapToGrid: (snapToGrid: boolean) => set(state => ({ ...state, snapToGrid })),
