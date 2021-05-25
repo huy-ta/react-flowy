@@ -1,6 +1,6 @@
 :root {
   --selected-color: #3ab6f3;
-  --black: #253134;
+  --black: rgb(0, 0, 52);
 }
 
 .react-flowy {
