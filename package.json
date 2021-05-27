@@ -1,6 +1,6 @@
 {
   "name": "react-flowy",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "main": "dist/ReactFlow.js",
   "module": "dist/ReactFlow.esm.js",
   "types": "dist/index.d.ts",
@@ -40,7 +40,6 @@
     "@types/resize-observer-browser": "^0.1.5",
     "autoprefixer": "^10.2.5",
     "babel-preset-react-app": "^10.0.0",
-    "cypress": "^7.2.0",
     "postcss": "^8.2.13",
     "postcss-cli": "^8.3.1",
     "postcss-nested": "^5.0.5",
@@ -48,7 +47,6 @@
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "release-it": "^14.6.1",
     "rollup": "^2.47.0",
     "rollup-plugin-bundle-size": "^1.0.3",
     "rollup-plugin-livereload": "^2.0.0",

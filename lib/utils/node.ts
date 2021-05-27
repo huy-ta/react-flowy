@@ -19,6 +19,10 @@ export const getRectangleByNodeId = (nodes: Elements | Node[]) => (nodeId: strin
     throw new Error(`There is no node with id = ${nodeId}`);
   }
 
+  return getRectangleFromNode(node);
+}
+
+export const getRectangleFromNode = (node: Node): Rectangle => {
   if (node.width && node.height) {
     return {
       x: node.position.x,
@@ -28,7 +32,7 @@ export const getRectangleByNodeId = (nodes: Elements | Node[]) => (nodeId: strin
     };
   }
 
-  const nodeElement = getNodeElementById(nodeId) as HTMLElement;
+  const nodeElement = getNodeElementById(node.id) as HTMLElement;
 
   return {
     x: node.position.x,

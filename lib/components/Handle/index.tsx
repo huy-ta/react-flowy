@@ -11,10 +11,11 @@ import { edgesSelector, nodesSelector, nodeValidatorsSelector, transformSelector
 
 export interface HandleProps {
   node: Node;
+  edgeType?: string;
   shouldShowHandle: boolean;
 }
 
-const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle }) => {
+const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle, edgeType = 'standardEdge' }) => {
   const nodes = useStore(nodesSelector);
   const edges = useStore(edgesSelector);
   const transform = useStore(transformSelector);
@@ -86,7 +87,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
       id: `e${node.id}-?`,
       source: node.id,
       target: '?',
-      type: 'standardEdge',
+      type: edgeType,
       arrowHeadType: ArrowHeadType.ArrowClosed,
       isForming: true,
     };

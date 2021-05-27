@@ -8,6 +8,7 @@ import { useStore } from '../../../store/state';
 
 export interface NodeContainerWithStandardHandlesProps {
   node: Node;
+  edgeType?: string;
   isHandleDisabled?: boolean;
   TopHandleIndicator?: React.FC;
   RightHandleIndicator?: React.FC;
@@ -18,6 +19,7 @@ export interface NodeContainerWithStandardHandlesProps {
 const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.memo(({
   children,
   node,
+  edgeType = 'standardEdge',
   isHandleDisabled,
   TopHandleIndicator = React.Fragment,
   RightHandleIndicator = React.Fragment,
@@ -130,6 +132,7 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     >
       {!isHandleDisabled && <StandardHandles
         node={node}
+        edgeType={edgeType}
         shouldShowHandles={shouldShowHandles}
         TopHandleIndicator={TopHandleIndicator}
         RightHandleIndicator={RightHandleIndicator}

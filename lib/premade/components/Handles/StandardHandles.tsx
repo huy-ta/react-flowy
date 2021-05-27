@@ -40,6 +40,7 @@ const LeftArrow = () => {
 
 export interface FourSideHandlesProps {
   node: Node;
+  edgeType?: string;
   shouldShowHandles: boolean;
   TopHandleIndicator?: React.FC;
   RightHandleIndicator?: React.FC;
@@ -49,6 +50,7 @@ export interface FourSideHandlesProps {
 
 const StandardHandles: React.FC<FourSideHandlesProps> = React.memo(({
   node,
+  edgeType = 'standardEdge',
   shouldShowHandles,
   TopHandleIndicator = React.Fragment,
   RightHandleIndicator = React.Fragment,
@@ -59,28 +61,28 @@ const StandardHandles: React.FC<FourSideHandlesProps> = React.memo(({
 
   return (
     <>
-      <Handle node={node} shouldShowHandle={shouldShowHandles}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--up'])}>
           <TopHandleIndicator>
             <UpArrow />
           </TopHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--right'])}>
           <RightHandleIndicator>
             <RightArrow />
           </RightHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--down'])}>
           <BottomHandleIndicator>
             <DownArrow />
           </BottomHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--left'])}>
           <LeftHandleIndicator>
             <LeftArrow />
