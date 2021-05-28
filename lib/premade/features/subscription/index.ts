@@ -1,3 +1,4 @@
+import isDeepEqual from 'fast-deep-equal';
 import { useStore } from '../../../store/state';
 import { Node, Edge, Elements } from '../../../types';
 
@@ -43,9 +44,7 @@ useStore.subscribe((elements: Elements | undefined) => {
   const previousElementsToCompare = normalizeUnstablePropertiesFromElements(previousElements);
   const elementsToCompare = normalizeUnstablePropertiesFromElements(elements);
 
-  if (JSON.stringify(previousElementsToCompare) === JSON.stringify(elementsToCompare)) {
-    return;
-  }
+  if (isDeepEqual(previousElementsToCompare, elementsToCompare)) return;
 
   previousElements = elements;
 
