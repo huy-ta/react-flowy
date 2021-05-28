@@ -98,7 +98,7 @@ export interface ReactFlowyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'o
 
 export type ReactFlowRefType = HTMLDivElement;
 
-const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowyProps>(
+const ReactFlowy = forwardRef<ReactFlowRefType, ReactFlowyProps>(
   (
     {
       className,
@@ -218,6 +218,6 @@ const ReactFlow = forwardRef<ReactFlowRefType, ReactFlowyProps>(
   }
 );
 
-ReactFlow.displayName = 'ReactFlow';
+ReactFlowy.displayName = 'ReactFlowy';
 
-export default React.memo(ReactFlow);
+export default React.memo(ReactFlowy);
