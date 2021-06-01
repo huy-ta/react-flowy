@@ -21,6 +21,8 @@ export interface NodeComponentProps<T = any> {
   data: T;
   isConnectable: boolean;
   transform?: Transform;
+  width?: number;
+  height?: number;
   position: Point;
   onClick?: (node: Node) => void;
   onNodeDoubleClick?: (node: Node) => void;
@@ -41,6 +43,8 @@ export interface WrapNodeProps<T = any> {
   type: string;
   data: T;
   scale: number;
+  width?: number;
+  height?: number;
   position: Point;
   isDraggable: boolean;
   isConnectable: boolean;
@@ -70,6 +74,8 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     type,
     data,
     scale,
+    width,
+    height,
     position,
     onClick,
     onMouseEnter,
@@ -283,6 +289,8 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
             id={id}
             data={data}
             type={type}
+            width={width}
+            height={height}
             position={position}
             isConnectable={isConnectable}
             isDragging={isDragging}

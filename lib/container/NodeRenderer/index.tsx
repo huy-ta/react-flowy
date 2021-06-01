@@ -72,6 +72,8 @@ const NodeRenderer = (props: NodeRendererProps) => {
             data={node.data}
             isHidden={node.isHidden}
             isSelected={node.isSelected}
+            width={node.width}
+            height={node.height}
             position={{ x: node.position.x, y: node.position.y }}
             isDragging={node.isDragging}
             isInitialized={!!node.width || !!node.height}
