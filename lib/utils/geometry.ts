@@ -2,7 +2,8 @@ import {
   every,
   isArray
 } from 'min-dash';
-import { Point, Rectangle } from '../types';
+import { isBetween } from '.';
+import { Point, Rectangle, TRBL } from '../types';
 
 /**
  * Computes the distance between two points
@@ -139,4 +140,42 @@ export function getMidPointOfRectangle(rectangle: Rectangle) {
     x: Math.round(rectangle.x + rectangle.width / 2),
     y: Math.round(rectangle.y + rectangle.height / 2),
   };
+}
+
+/**
+ * Convert the given bounds to a { top, left, bottom, right } descriptor.
+ *
+ * @param {Rectangle|Point} bounds
+ *
+ * @return {TRBL}
+ */
+export function boundsAsTRBL(bounds: Rectangle | Point): TRBL {
+  return {
+    top: bounds.y,
+    right: bounds.x + ((bounds as Rectangle).width || 0),
+    bottom: bounds.y + ((bounds as Rectangle).height || 0),
+    left: bounds.x
+  };
+}
+
+/**
+ * Convert a { top, right, bottom, left } to a rectangle.
+ *
+ * @param {TRBL} trbl
+ *
+ * @return {Rectangle}
+ */
+export function trblAsRectangle(trbl: TRBL): Rectangle {
+  return {
+    x: trbl.left,
+    y: trbl.top,
+    width: trbl.right - trbl.left,
+    height: trbl.bottom - trbl.top
+  };
+}
+
+export function isInAxisRange(axis: 'x' | 'y', point: Point, rectangle: Rectangle) {
+  const size: { x: 'width', y: 'height' } = { x: 'width', y: 'height' };
+
+  return isBetween(point[axis], rectangle[axis], rectangle[axis] + rectangle[size[axis]]);
 }

@@ -5,17 +5,17 @@ import { ArrowHeadType, Node, Edge, Point, Rectangle, LayoutType } from '../../t
 import { getCanvas } from '../../utils/graph';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
 import { isPointInRect } from '../../utils/geometry';
-import { connectRectangles, connectRectangleToPoint } from '../../features/layout/manhattanLayout';
+import { connectShapes, connectShapeToPoint } from '../../features/layout/manhattanLayout';
 import { useStore } from '../../store/state';
 import { edgesSelector, nodesSelector, nodeValidatorsSelector, transformSelector } from '../../store/selectors';
 
 export interface HandleProps {
   node: Node;
-  edgeType?: string;
   shouldShowHandle: boolean;
+  additionalEdgeProps: Partial<Edge>;
 }
 
-const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle, edgeType = 'standardEdge' }) => {
+const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle, additionalEdgeProps = { type: 'standardEdge' } }) => {
   const nodes = useStore(nodesSelector);
   const edges = useStore(edgesSelector);
   const transform = useStore(transformSelector);
@@ -53,30 +53,25 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
     e.stopPropagation();
     e.preventDefault();
 
-    const nodeElement = getNodeElementById(node.id)! as HTMLElement;
-
     const sourceRectangle: Rectangle = {
       x: node.position.x,
       y: node.position.y,
-      width: nodeElement.offsetWidth,
-      height: nodeElement.offsetHeight,
+      width: node.width!,
+      height: node.height!,
     };
 
     const canvas = getCanvas(transform);
 
     const cursorPosition = eventPointToCanvasCoordinates(e)(canvas);
 
-    let targetNodeElement: HTMLElement;
     let targetRectangle: Rectangle;
 
-    const targetNode = nodes.find(node => {
-      targetNodeElement = getNodeElementById(node.id)! as HTMLElement;
-
+    const targetNode = nodes.find(whichNode => {
       targetRectangle = {
-        x: node.position.x,
-        y: node.position.y,
-        width: targetNodeElement.offsetWidth,
-        height: targetNodeElement.offsetHeight,
+        x: whichNode.position.x,
+        y: whichNode.position.y,
+        width: whichNode.width!,
+        height: whichNode.height!,
       };
 
       return isPointInRect(cursorPosition, targetRectangle);
@@ -87,13 +82,13 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
       id: `e${node.id}-?`,
       source: node.id,
       target: '?',
-      type: edgeType,
       arrowHeadType: ArrowHeadType.ArrowClosed,
       isForming: true,
+      ...additionalEdgeProps,
     };
 
     if (targetNode) {
-      waypoints = connectRectangles(sourceRectangle, targetRectangle!, undefined, cursorPosition, { preferredLayouts: [LayoutType.VERTICAL_VERTICAL] });
+      waypoints = connectShapes(sourceRectangle, targetRectangle!, node.shapeType, targetNode.shapeType, undefined, cursorPosition, { preferredLayouts: [LayoutType.VERTICAL_VERTICAL] });
       newEdge.target = targetNode.id;
       newEdge.waypoints = waypoints;
 
@@ -106,7 +101,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
         else delete newEdge.isInvalid;
       }
     } else {
-      waypoints = connectRectangleToPoint(sourceRectangle, cursorPosition);
+      waypoints = connectShapeToPoint(sourceRectangle, node.shapeType, cursorPosition);
       newEdge.target = '?';
       newEdge.waypoints = waypoints;
     }

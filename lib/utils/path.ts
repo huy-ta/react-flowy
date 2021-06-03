@@ -17,9 +17,7 @@ export function getRectanglePath(rectangle: Rectangle): Path {
   return componentsToPath(shapePath);
 }
 
-export function getConnectionPath(connection: Omit<Connection, 'source' | 'target'>): Path {
-  const { waypoints } = connection;
-
+export function getPathFromWaypoints(waypoints: Point[]): Path {
   const connectionPath = waypoints.map((waypoint, index) =>
     [index === 0 ? 'M' : 'L', waypoint.x, waypoint.y]
   );

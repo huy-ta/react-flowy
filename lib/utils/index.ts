@@ -25,3 +25,7 @@ export const clampPosition = (position: Point, extent: NodeExtent) => ({
 
 export const getHostForElement = (element: HTMLElement): Document | ShadowRoot =>
   (element.getRootNode?.() as Document | ShadowRoot) || window?.document;
+
+export function isBetween(numberToCheck: number, start: number, end: number) {
+  return numberToCheck >= start && numberToCheck <= end;
+}

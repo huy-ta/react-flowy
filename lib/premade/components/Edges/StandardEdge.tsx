@@ -3,7 +3,7 @@ import cc from 'classcat';
 
 import { getMarkerEnd } from '../../../utils/edge';
 import { ArrowHeadType, EdgeProps } from '../../../types';
-import { getConnectionPath } from '../../../utils/path';
+import { getPathFromWaypoints } from '../../../utils/path';
 import StandardEdgeController from './StandardEdgeController';
 
 export default React.memo(
@@ -33,7 +33,7 @@ export default React.memo(
               'react-flowy__edge-path--invalid': isInvalid,
             }
           ])}
-          d={getConnectionPath({ waypoints }) as string}
+          d={getPathFromWaypoints(waypoints) as string}
           markerEnd={isInvalid ? errorMarkerEnd : markerEnd}
         />
         {!isForming && <StandardEdgeController id={id} source={source} target={target} waypoints={waypoints} />}

@@ -2,13 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import cc from 'classcat';
 
 import StandardHandles, { ARROW_DISTANCE } from '../Handles/StandardHandles';
-import { Node } from '../../../types';
+import { Edge, Node } from '../../../types';
 import { isPointInRect } from '../../../utils/geometry';
 import { useStore } from '../../../store/state';
 
 export interface NodeContainerWithStandardHandlesProps {
   node: Node;
-  edgeType?: string;
+  additionalEdgeProps?: Partial<Edge>
   isHandleDisabled?: boolean;
   TopHandleIndicator?: React.FC;
   RightHandleIndicator?: React.FC;
@@ -19,7 +19,7 @@ export interface NodeContainerWithStandardHandlesProps {
 const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.memo(({
   children,
   node,
-  edgeType = 'standardEdge',
+  additionalEdgeProps = { type: 'standardEdge' },
   isHandleDisabled,
   TopHandleIndicator = React.Fragment,
   RightHandleIndicator = React.Fragment,
@@ -132,7 +132,7 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     >
       {!isHandleDisabled && <StandardHandles
         node={node}
-        edgeType={edgeType}
+        additionalEdgeProps={additionalEdgeProps}
         shouldShowHandles={shouldShowHandles}
         TopHandleIndicator={TopHandleIndicator}
         RightHandleIndicator={RightHandleIndicator}

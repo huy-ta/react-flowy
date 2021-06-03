@@ -1,5 +1,5 @@
 import { arePointsAligned, arePointsOnLine, getMidPointOfRectangle } from '../../utils/geometry';
-import { getOrientation } from '../layout/utils';
+import { getOrientation } from '../layout/orientation';
 import { Rectangle, Point, Axis, Connection, ApproxIntersection, Orientation } from '../../types';
 import { getCroppedWaypoints } from './croppingConnectionDocking';
 
@@ -113,12 +113,12 @@ export const activateBendpointMove = (connection: Connection, intersection: Appr
 function cropConnection(connection: Connection, newWaypoints: Point[]) {
   const oldWaypoints = connection.waypoints;
 
-  // temporary set new waypoints
+  // Temporary set new waypoints
   connection.waypoints = newWaypoints;
 
-  const croppedWaypoints = getCroppedWaypoints(connection);
+  const croppedWaypoints = getCroppedWaypoints(connection.waypoints, connection.source, connection.target, connection.sourceShapeType, connection.targetShapeType);
 
-  // restore old waypoints
+  // Restore old waypoints
   connection.waypoints = oldWaypoints;
 
   return croppedWaypoints;
@@ -238,10 +238,10 @@ export const calculateNewConnectionOnDragging = (movementX: number, movementY: n
   return { newConnection, newContext };
 };
 
-export const handleMouseMoveEndWithContext = (context: Context) => {
+export const handleDragStopWithContext = (context: Context) => {
   let { connection, newWaypoints, newSegmentStartIndex } = context;
 
-  // ensure we have actual pixel values bendpoint
+  // Ensure we have actual pixel values bendpoint
   // coordinates (important when zoom level was > 1 during move)
   newWaypoints = newWaypoints.map(waypoint => {
     return {

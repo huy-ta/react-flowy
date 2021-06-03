@@ -4,10 +4,10 @@ import { Connection, ApproxIntersection, Axis, EdgeProps, Edge } from '../../../
 import { useStore } from '../../../store/state';
 import { getCanvas } from '../../../utils/graph';
 import { isPrimaryButton } from '../../../utils/mouse';
-import { getRectangleByNodeId } from '../../../utils/node';
+import { getNodeById, getRectangleByNodeId, getRectangleFromNode } from '../../../utils/node';
 import { getApproxIntersection } from '../../../utils/intersection';
 import { eventPointToCanvasCoordinates } from '../../../utils/coordinates';
-import { Context, activateBendpointMove, handleMouseMoveEndWithContext, calculateNewConnectionOnDragging } from '../../../features/bendpoints/connectionSegmentMove';
+import { Context, activateBendpointMove, handleDragStopWithContext, calculateNewConnectionOnDragging } from '../../../features/bendpoints/connectionSegmentMove';
 import { edgesSelector, nodesSelector, transformSelector } from '../../../store/selectors';
 
 export interface EdgeWaypoint {
@@ -68,10 +68,14 @@ export default React.memo(
       if (!isPrimaryButton(e.nativeEvent)) return;
 
       const canvas = getCanvas(transform);
+      const sourceNode = getNodeById(nodes)(source)!;
+      const targetNode = getNodeById(nodes)(target)!;
       const connection: Connection = {
         waypoints,
-        source: getRectangleByNodeId(nodes)(source),
-        target: getRectangleByNodeId(nodes)(target),
+        source: getRectangleFromNode(sourceNode),
+        target: getRectangleFromNode(targetNode),
+        sourceShapeType: sourceNode.shapeType,
+        targetShapeType: targetNode.shapeType,
       };
       const intersection = getApproxIntersection(waypoints, eventPointToCanvasCoordinates(e.nativeEvent)(canvas)) as ApproxIntersection;
       const newContext = activateBendpointMove(connection, intersection);
@@ -95,7 +99,7 @@ export default React.memo(
 
       isBendpointMoveActive.current = false;
 
-      const { newConnection, newContext } = handleMouseMoveEndWithContext(context.current!);
+      const { newConnection, newContext } = handleDragStopWithContext(context.current!);
 
       updateEdgeAndContext(newConnection, newContext, false);
     };

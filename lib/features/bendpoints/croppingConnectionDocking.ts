@@ -1,45 +1,43 @@
-import { Connection, Docking, Point, Rectangle } from '../../types';
-import { getConnectionPath, getRectanglePath } from '../../utils/path';
-import { getElementLineIntersection } from '../../utils/intersection';
+import { Point, Shape } from '../../types';
+import { getDockingPointFunctions } from '../docking/store';
 
-const dockingToPoint = (docking: Docking) => {
-  // use the dockings actual point and
-  // retain the original docking
-  return Object.assign({ original: docking.point.original || docking.point }, docking.actual);
-}
+export const getCroppedWaypoints = (waypoints: Point[], sourceShape: Shape, targetShape: Shape, sourceShapeType: string, targetShapeType: string) => {
+  const sourceDocking = getDocking(waypoints, sourceShape, sourceShapeType, true);
+  const targetDocking = getDocking(waypoints, targetShape, targetShapeType);
 
-export const getCroppedWaypoints = function(connection: Connection, source?: Rectangle, target?: Rectangle) {
-  source = source || connection.source;
-  target = target || connection.target;
+  const croppedWaypoints = waypoints.slice(sourceDocking.index + 1, targetDocking.index);
 
-  const sourceDocking = getDocking(connection, source, true);
-  const targetDocking = getDocking(connection, target);
-
-  var croppedWaypoints = connection.waypoints.slice(sourceDocking.idx + 1, targetDocking.idx);
-
-  croppedWaypoints.unshift(dockingToPoint(sourceDocking));
-  croppedWaypoints.push(dockingToPoint(targetDocking));
+  croppedWaypoints.unshift({ original: sourceDocking.point.original || sourceDocking.point, ...sourceDocking.actual });
+  croppedWaypoints.push({ original: targetDocking.point.original || targetDocking.point, ...targetDocking.actual });
 
   return croppedWaypoints;
 };
 
-export const getDocking = function(connection: Connection, shape: Rectangle, dockStart: boolean = false): Docking {
-  const waypoints = connection.waypoints;
-  const dockingIdx = dockStart ? 0 : waypoints.length - 1;
-  const dockingPoint = waypoints[dockingIdx];
+export const getDocking = (waypoints: Point[], shape: Shape, shapeType: string, dockStart: boolean = false) => {
+  const dockingIndex = dockStart ? 0 : waypoints.length - 1;
+  const dockingPoint = waypoints[dockingIndex];
 
-  const croppedPoint = _getIntersection(shape, connection, dockStart);
+  let direction: 't' | 'r' | 'b' | 'l';
+
+  if (dockStart) {
+    if (waypoints[0].y == waypoints[1].y) {
+      direction = waypoints[0].x > waypoints[1].x ? 'r' : 'l';
+    } else {
+      direction = waypoints[0].y > waypoints[1].y ? 'b' : 't';
+    }
+  } else {
+    if (waypoints[waypoints.length - 1].y == waypoints[waypoints.length - 2].y) {
+      direction = waypoints[waypoints.length - 1].x > waypoints[waypoints.length - 2].x ? 'l' : 'r';
+    } else {
+      direction = waypoints[waypoints.length - 1].y > waypoints[waypoints.length - 2].y ? 't' : 'b';
+    }
+  }
+
+  const croppedPoint = getDockingPointFunctions[shapeType](dockingPoint, shape, direction);
 
   return {
     point: dockingPoint,
-    actual: croppedPoint || dockingPoint,
-    idx: dockingIdx
+    actual: croppedPoint.dockingPoint || dockingPoint,
+    index: dockingIndex
   };
-};
-
-function _getIntersection(shape: Rectangle, connection: Connection, shouldCropFromStart: boolean): Point | null {
-  const shapePath = getRectanglePath(shape);
-  const connectionPath = getConnectionPath(connection);
-
-  return getElementLineIntersection(shapePath, connectionPath, shouldCropFromStart);
 };

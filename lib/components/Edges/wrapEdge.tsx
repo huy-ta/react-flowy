@@ -12,6 +12,7 @@ export interface WrapEdgeProps<T = any> {
   onEdgeDoubleClick?: (event: React.MouseEvent, edge: Edge) => void;
   style?: CSSProperties;
   arrowHeadType?: ArrowHeadType;
+  label?: string;
   source: ElementId;
   target: ElementId;
   waypoints: Point[];
@@ -40,6 +41,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
     onEdgeDoubleClick,
     style,
     arrowHeadType,
+    label,
     source,
     target,
     waypoints,
@@ -134,6 +136,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
       >
         <EdgeComponent
           id={id}
+          label={label}
           source={source}
           target={target}
           waypoints={waypoints}

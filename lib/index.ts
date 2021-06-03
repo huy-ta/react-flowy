@@ -17,7 +17,10 @@ export * from './utils/platform';
 export * from './features/bendpoints/connectionSegmentMove';
 export * from './features/bendpoints/croppingConnectionDocking';
 export * from './features/layout/manhattanLayout';
-export * from './features/layout/utils';
+export * from './features/layout/orientation';
+export * from './features/layout/bendpoints';
+export * from './features/layout/directions';
+export * from './features/layout/waypoints';
 
 export { default as useZoomPanHelper } from './hooks/useZoomPanHelper';
 export { default as useUpdateNodeInternals } from './hooks/useUpdateNodeInternals';

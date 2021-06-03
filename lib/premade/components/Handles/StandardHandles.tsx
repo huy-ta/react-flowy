@@ -1,7 +1,7 @@
 import React from 'react';
 import cc from 'classcat';
 
-import { Node } from '../../../types';
+import { Edge, Node } from '../../../types';
 import Handle from '../../../components/Handle';
 
 export const ARROW_DISTANCE = 12 + 24;
@@ -40,7 +40,7 @@ const LeftArrow = () => {
 
 export interface FourSideHandlesProps {
   node: Node;
-  edgeType?: string;
+  additionalEdgeProps?: Partial<Edge>;
   shouldShowHandles: boolean;
   TopHandleIndicator?: React.FC;
   RightHandleIndicator?: React.FC;
@@ -50,7 +50,7 @@ export interface FourSideHandlesProps {
 
 const StandardHandles: React.FC<FourSideHandlesProps> = React.memo(({
   node,
-  edgeType = 'standardEdge',
+  additionalEdgeProps = { type: 'standardEdge' },
   shouldShowHandles,
   TopHandleIndicator = React.Fragment,
   RightHandleIndicator = React.Fragment,
@@ -61,28 +61,28 @@ const StandardHandles: React.FC<FourSideHandlesProps> = React.memo(({
 
   return (
     <>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--up'])}>
           <TopHandleIndicator>
             <UpArrow />
           </TopHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--right'])}>
           <RightHandleIndicator>
             <RightArrow />
           </RightHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--down'])}>
           <BottomHandleIndicator>
             <DownArrow />
           </BottomHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} edgeType={edgeType}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--left'])}>
           <LeftHandleIndicator>
             <LeftArrow />

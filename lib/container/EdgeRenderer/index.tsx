@@ -63,6 +63,7 @@ const EdgeWrapper = React.memo(({
       onClick={props.onElementClick}
       style={edge.style}
       arrowHeadType={edge.arrowHeadType}
+      label={edge.label}
       source={edge.source}
       target={edge.target}
       waypoints={edge.waypoints}

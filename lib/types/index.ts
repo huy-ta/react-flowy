@@ -38,6 +38,14 @@ export interface Rectangle {
   height: number;
 }
 
+export interface Shape {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  [prop: string]: any;
+}
+
 export interface Segment {
   directions: string;
   waypoints: Point[];
@@ -46,8 +54,10 @@ export interface Segment {
 
 export interface Connection {
   waypoints: Point[];
-  source: Rectangle;
-  target: Rectangle;
+  source: Shape;
+  target: Shape;
+  sourceShapeType: string;
+  targetShapeType: string;
 }
 
 
@@ -56,6 +66,7 @@ export type SnapGrid = [number, number];
 export interface Node<T = any> {
   id: ElementId;
   position: Point;
+  shapeType: string;
   width?: number;
   height?: number;
   type?: string;
@@ -80,6 +91,7 @@ export interface Edge<T = any> {
   type?: string;
   source: ElementId;
   target: ElementId;
+  label?: string;
   waypoints: Point[];
   isForming?: boolean;
   style?: CSSProperties;
@@ -105,6 +117,7 @@ export type EdgeTypesType = NodeTypesType;
 
 export interface EdgeProps<T = any> {
   id: ElementId;
+  label?: string;
   source: ElementId;
   target: ElementId;
   waypoints: Point[];
@@ -190,13 +203,6 @@ export interface Hints {
   connectionStart?: Point | boolean;
   connectionEnd?: Point | boolean;
 }
-
-export interface Docking {
-  point: Point;
-  actual: Point;
-  idx: number;
-}
-
 
 export interface ApproxIntersection {
   point: Point;
