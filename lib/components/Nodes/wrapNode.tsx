@@ -25,6 +25,7 @@ export interface NodeComponentProps<T = any> {
   height?: number;
   position: Point;
   shapeType: string;
+  shapeData?: Record<string, unknown>;
   onClick?: (node: Node) => void;
   onNodeDoubleClick?: (node: Node) => void;
   onMouseEnter?: (node: Node) => void;
@@ -48,6 +49,7 @@ export interface WrapNodeProps<T = any> {
   height?: number;
   position: Point;
   shapeType: string;
+  shapeData?: Record<string, unknown>;
   isDraggable: boolean;
   isConnectable: boolean;
   onClick?: (event: React.MouseEvent, node: Node) => void;
@@ -80,6 +82,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     height,
     position,
     shapeType,
+    shapeData,
     onClick,
     onMouseEnter,
     onMouseMove,
@@ -109,7 +112,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
     const nodeElement = useRef<HTMLDivElement>(null);
 
-    const node = useMemo(() => ({ id, type, position, data, shapeType }), [id, type, position, data, shapeType]);
+    const node = useMemo(() => ({ id, type, position, data, shapeType, shapeData }), [id, type, position, data, shapeType, shapeData]);
     const grid = useMemo(() => (snapToGrid ? snapGrid : [1, 1])! as [number, number], [snapToGrid, snapGrid]);
 
     const nodeStyle: CSSProperties = useMemo(
@@ -296,6 +299,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
             height={height}
             position={position}
             shapeType={shapeType}
+            shapeData={shapeData}
             isConnectable={isConnectable}
             isDragging={isDragging}
             isSelected={isSelected}

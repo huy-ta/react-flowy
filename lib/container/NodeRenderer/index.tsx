@@ -76,6 +76,7 @@ const NodeRenderer = (props: NodeRendererProps) => {
             height={node.height}
             position={{ x: node.position.x, y: node.position.y }}
             shapeType={node.shapeType}
+            shapeData={node.shapeData}
             isDragging={node.isDragging}
             isInitialized={!!node.width || !!node.height}
             snapGrid={props.snapGrid}

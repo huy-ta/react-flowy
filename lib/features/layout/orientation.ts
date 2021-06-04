@@ -1,6 +1,6 @@
 import { isObject } from 'min-dash';
-import { Orientation, Point, Rectangle } from '../../types';
-import { boundsAsTRBL } from '../../utils/geometry';
+import { Orientation, Point, Shape } from '../../types';
+import { rectangleOrPointAsTRBL, shapeAsTRBL } from '../../utils/trbl';
 
 // orientation utils //////////////////////
 
@@ -19,27 +19,34 @@ export function invertOrientation(orientation: Orientation): Orientation {
 }
 
 /**
- * Get orientation of the given rectangle or point with respect to
+ * Get orientation of the given shape or point with respect to
  * the reference rectangle or point.
  *
  * A padding (positive or negative) may be passed to influence
  * horizontal / vertical orientation and intersection.
  *
- * @param {Rectangle|Point} source
- * @param {Rectangle|Point} reference
- * @param {Point|number} padding
- *
- * @return {Orientation} the orientation; one of top, top-left, left, ..., bottom, right or intersect.
  */
-export function getOrientation(source: Rectangle | Point, reference: Rectangle | Point, padding: Point | number = 0): Orientation {
+export function getOrientation({
+  source,
+  sourceShapeType = 'rectangle',
+  reference,
+  referenceShapeType = 'rectangle',
+  padding = 0
+}: {
+  source: Shape | Point,
+  sourceShapeType?: string;
+  reference: Shape | Point,
+  referenceShapeType?: string;
+  padding?: Point | number
+}): Orientation {
   // make sure we can use an object, too
   // for individual { x, y } padding
   if (!isObject(padding)) {
     padding = { x: padding, y: padding };
   }
 
-  const sourceTRBL = boundsAsTRBL(source);
-  const referenceTRBL = boundsAsTRBL(reference);
+  const sourceTRBL = (source as Shape).width ? shapeAsTRBL(sourceShapeType)(source as Shape) : rectangleOrPointAsTRBL(source as Point);
+  const referenceTRBL = (reference as Shape).width ? shapeAsTRBL(referenceShapeType)(reference as Shape) : rectangleOrPointAsTRBL(reference as Point);
 
   const top = sourceTRBL.bottom + padding.y <= referenceTRBL.top;
   const right = sourceTRBL.left - padding.x >= referenceTRBL.right;

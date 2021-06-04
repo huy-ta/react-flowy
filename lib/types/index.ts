@@ -67,6 +67,7 @@ export interface Node<T = any> {
   id: ElementId;
   position: Point;
   shapeType: string;
+  shapeData?: Record<string, unknown>;
   width?: number;
   height?: number;
   type?: string;

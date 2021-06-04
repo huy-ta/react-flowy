@@ -21,9 +21,9 @@ export const getDocking = (waypoints: Point[], shape: Shape, shapeType: string, 
 
   if (dockStart) {
     if (waypoints[0].y == waypoints[1].y) {
-      direction = waypoints[0].x > waypoints[1].x ? 'r' : 'l';
+      direction = waypoints[0].x > waypoints[1].x ? 'l' : 'r';
     } else {
-      direction = waypoints[0].y > waypoints[1].y ? 'b' : 't';
+      direction = waypoints[0].y > waypoints[1].y ? 't' : 'b';
     }
   } else {
     if (waypoints[waypoints.length - 1].y == waypoints[waypoints.length - 2].y) {
@@ -32,6 +32,8 @@ export const getDocking = (waypoints: Point[], shape: Shape, shapeType: string, 
       direction = waypoints[waypoints.length - 1].y > waypoints[waypoints.length - 2].y ? 't' : 'b';
     }
   }
+
+  console.log('direction', direction);
 
   const croppedPoint = getDockingPointFunctions[shapeType](dockingPoint, shape, direction);
 

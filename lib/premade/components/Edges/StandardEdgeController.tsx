@@ -72,8 +72,8 @@ export default React.memo(
       const targetNode = getNodeById(nodes)(target)!;
       const connection: Connection = {
         waypoints,
-        source: getRectangleFromNode(sourceNode),
-        target: getRectangleFromNode(targetNode),
+        source: { ...getRectangleFromNode(sourceNode), ...sourceNode.shapeData },
+        target: { ...getRectangleFromNode(targetNode), ...targetNode.shapeData },
         sourceShapeType: sourceNode.shapeType,
         targetShapeType: targetNode.shapeType,
       };

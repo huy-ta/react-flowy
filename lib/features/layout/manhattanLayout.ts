@@ -58,7 +58,7 @@ export function connectShapes(sourceShape: Shape, targetShape: Shape, sourceShap
   const preferredLayouts = hints && hints.preferredLayouts || [];
   const preferredLayout = preferredLayouts.filter(layout => layout !== LayoutType.STRAIGHT)[0] || LayoutType.HORIZONTAL_HORIZONTAL;
   const threshold = ORIENTATION_THRESHOLD[preferredLayout] || 0;
-  const orientation = getOrientation(sourceShape, targetShape, threshold);
+  const orientation = getOrientation({ source: sourceShape, sourceShapeType, reference: targetShape, referenceShapeType: targetShapeType, padding: threshold });
   const directions = getDirections(orientation, preferredLayout);
 
   startPoint = startPoint || getMidPointOfRectangle(sourceShape);
@@ -102,7 +102,7 @@ export function connectShapeToPoint(sourceShape: Shape, sourceShapeType: string,
   const preferredLayouts = hints && hints.preferredLayouts || [];
   const preferredLayout = preferredLayouts.filter(layout => layout !== LayoutType.STRAIGHT)[0] || LayoutType.HORIZONTAL_HORIZONTAL;
   const threshold = ORIENTATION_THRESHOLD[preferredLayout] || 0;
-  const orientation = getOrientation(sourceShape, targetPoint, threshold);
+  const orientation = getOrientation({ source: sourceShape, sourceShapeType, reference: targetPoint, padding: threshold });
   const directions = getDirections(orientation, preferredLayout);
 
   startPoint = startPoint || getMidPointOfRectangle(sourceShape);
@@ -154,7 +154,7 @@ export function repairConnection(sourceShape: Shape, targetShape: Shape, sourceS
   }
 
   // try to layout from end
-  repairedWaypoints = hints.connectionEnd && tryRepairConnectionEnd(targetShape, sourceShape, sourceShapeType, targetShapeType, endPoint!, waypoints);
+  repairedWaypoints = hints.connectionEnd && tryRepairConnectionEnd(targetShape, sourceShape, targetShapeType, sourceShapeType, endPoint!, waypoints);
 
   if (repairedWaypoints) {
     return filterRedundantWaypoints(repairedWaypoints);
@@ -192,7 +192,7 @@ export function tryLayoutStraightBetweenRectangles(sourceRectangle: Rectangle, t
   let primaryAxis: 'x' | 'y';
   let orientation: string;
 
-  orientation = getOrientation(sourceRectangle, targetRectangle);
+  orientation = getOrientation({ source: sourceRectangle, reference: targetRectangle });
 
   // only layout a straight connection if shapes are
   // horizontally or vertically aligned

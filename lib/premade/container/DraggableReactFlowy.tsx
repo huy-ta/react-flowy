@@ -61,10 +61,10 @@ const DraggableReactFlowy = forwardRef<ReactFlowRefType, ReactFlowyProps>(
           x: edge.waypoints[edge.waypoints.length - 1].x + dragDelta.deltaX,
           y: edge.waypoints[edge.waypoints.length - 1].y + dragDelta.deltaY,
         }
-  
+
         upsertEdge({ ...edge, isDragging: true, waypoints: edge.source === node.id ?
-          repairConnection(nodeRectangle, otherNodeRectangle, node.shapeType, otherNode!.shapeType, newStart, undefined, edge.waypoints, { connectionStart: true }) :
-          repairConnection(otherNodeRectangle, nodeRectangle, otherNode!.shapeType, node.shapeType, undefined, newEnd, edge.waypoints, { connectionEnd: true })
+          repairConnection({ ...nodeRectangle, ...node.shapeData }, { ...otherNodeRectangle, ...otherNode!.shapeData }, node.shapeType, otherNode!.shapeType, newStart, undefined, edge.waypoints, { connectionStart: true }) :
+          repairConnection({ ...otherNodeRectangle, ...otherNode!.shapeData }, { ...nodeRectangle, ...node.shapeData }, otherNode!.shapeType, node.shapeType, undefined, newEnd, edge.waypoints, { connectionEnd: true })
         });
       });
 

@@ -3,7 +3,7 @@ import {
   isArray
 } from 'min-dash';
 import { isBetween } from '.';
-import { Point, Rectangle, TRBL } from '../types';
+import { Point, Rectangle, Shape, TRBL } from '../types';
 
 /**
  * Computes the distance between two points
@@ -139,38 +139,6 @@ export function getMidPointOfRectangle(rectangle: Rectangle) {
   return {
     x: Math.round(rectangle.x + rectangle.width / 2),
     y: Math.round(rectangle.y + rectangle.height / 2),
-  };
-}
-
-/**
- * Convert the given bounds to a { top, left, bottom, right } descriptor.
- *
- * @param {Rectangle|Point} bounds
- *
- * @return {TRBL}
- */
-export function boundsAsTRBL(bounds: Rectangle | Point): TRBL {
-  return {
-    top: bounds.y,
-    right: bounds.x + ((bounds as Rectangle).width || 0),
-    bottom: bounds.y + ((bounds as Rectangle).height || 0),
-    left: bounds.x
-  };
-}
-
-/**
- * Convert a { top, right, bottom, left } to a rectangle.
- *
- * @param {TRBL} trbl
- *
- * @return {Rectangle}
- */
-export function trblAsRectangle(trbl: TRBL): Rectangle {
-  return {
-    x: trbl.left,
-    y: trbl.top,
-    width: trbl.right - trbl.left,
-    height: trbl.bottom - trbl.top
   };
 }
 

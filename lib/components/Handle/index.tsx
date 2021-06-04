@@ -8,6 +8,7 @@ import { isPointInRect } from '../../utils/geometry';
 import { connectShapes, connectShapeToPoint } from '../../features/layout/manhattanLayout';
 import { useStore } from '../../store/state';
 import { edgesSelector, nodesSelector, nodeValidatorsSelector, transformSelector } from '../../store/selectors';
+import { isPointInShape } from '../../utils/pointInShape';
 
 export interface HandleProps {
   node: Node;
@@ -74,7 +75,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
         height: whichNode.height!,
       };
 
-      return isPointInRect(cursorPosition, targetRectangle);
+      return isPointInShape(whichNode.shapeType)(cursorPosition, { ...targetRectangle, ...whichNode.shapeData });
     });
 
     let waypoints: Point[];
@@ -88,7 +89,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
     };
 
     if (targetNode) {
-      waypoints = connectShapes(sourceRectangle, targetRectangle!, node.shapeType, targetNode.shapeType, undefined, cursorPosition, { preferredLayouts: [LayoutType.VERTICAL_VERTICAL] });
+      waypoints = connectShapes({ ...sourceRectangle, ...node.shapeData }, { ...targetRectangle!, ...targetNode.shapeData }, node.shapeType, targetNode.shapeType, undefined, cursorPosition, { preferredLayouts: [LayoutType.VERTICAL_VERTICAL] });
       newEdge.target = targetNode.id;
       newEdge.waypoints = waypoints;
 
@@ -101,7 +102,7 @@ const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHa
         else delete newEdge.isInvalid;
       }
     } else {
-      waypoints = connectShapeToPoint(sourceRectangle, node.shapeType, cursorPosition);
+      waypoints = connectShapeToPoint({ ...sourceRectangle, ...node.shapeData }, node.shapeType, cursorPosition);
       newEdge.target = '?';
       newEdge.waypoints = waypoints;
     }

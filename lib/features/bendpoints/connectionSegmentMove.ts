@@ -184,7 +184,7 @@ export const calculateNewConnectionOnDragging = (movementX: number, movementY: n
 
   // handle first segment
   if (segmentStartIndex < 2) {
-    sourceToSegmentOrientation = getOrientation(connection.source, newSegmentStart);
+    sourceToSegmentOrientation = getOrientation({ source: connection.source, sourceShapeType: connection.sourceShapeType, reference: newSegmentStart });
 
     // first bendpoint, remove first segment if intersecting
     if (segmentStartIndex === 1) {
@@ -207,18 +207,17 @@ export const calculateNewConnectionOnDragging = (movementX: number, movementY: n
 
   // handle last segment
   if (segmentEndIndex > waypointCount - 3) {
-    targetToSegmentOrientation = getOrientation(connection.target, newSegmentEnd);
+    targetToSegmentOrientation = getOrientation({ source: connection.target, sourceShapeType: connection.targetShapeType, reference: newSegmentEnd });
 
     // last bendpoint, remove last segment if intersecting
     if (segmentEndIndex === waypointCount - 2) {
-
       if (targetToSegmentOrientation === Orientation.INTERSECT) {
         newWaypoints.pop();
         newWaypoints[newWaypoints.length - 1] = newSegmentEnd;
       }
     }
 
-    // last bendpoint, remove last segment if intersecting
+    // last bendpoint, add segment if not intersecting anymore
     else {
       if (targetToSegmentOrientation !== Orientation.INTERSECT) {
         newWaypoints.push(segmentEnd);

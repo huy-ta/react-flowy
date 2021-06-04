@@ -28,7 +28,7 @@ function canLayoutStraight(direction: string, targetOrientation: Orientation) {
 }
 
 export function getSegmentBendpoints(sourcePoint: Point, targetPoint: Point, directions: Directions) {
-  let orientation = getOrientation(targetPoint, sourcePoint, POINT_ORIENTATION_PADDING);
+  let orientation = getOrientation({ source: targetPoint, reference: sourcePoint, padding: POINT_ORIENTATION_PADDING });
 
   let startDirection = directions.split(':')[0];
 
