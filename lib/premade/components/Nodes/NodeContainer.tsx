@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import cc from 'classcat';
 
-import StandardHandles, { ARROW_DISTANCE } from '../Handles/StandardHandles';
+import StandardHandles, { ARROW_DISTANCE, StandardHandlesProps } from '../Handles/StandardHandles';
 import { Edge, Node } from '../../../types';
 import { isPointInRect } from '../../../utils/geometry';
 import { useStore } from '../../../store/state';
@@ -10,6 +10,8 @@ export interface NodeContainerWithStandardHandlesProps {
   node: Node;
   additionalEdgeProps?: Partial<Edge>
   isHandleDisabled?: boolean;
+  arrowDistance?: number;
+  Handles?: React.FC<StandardHandlesProps>;
   TopHandleIndicator?: React.FC;
   RightHandleIndicator?: React.FC;
   BottomHandleIndicator?: React.FC;
@@ -21,6 +23,8 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
   node,
   additionalEdgeProps = { type: 'standardEdge' },
   isHandleDisabled,
+  arrowDistance = ARROW_DISTANCE,
+  Handles = StandardHandles,
   TopHandleIndicator = React.Fragment,
   RightHandleIndicator = React.Fragment,
   BottomHandleIndicator = React.Fragment,
@@ -35,7 +39,7 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
 
   const handleMouseEnter = () => {
     setShouldShowHandles(true);
-  }
+  };
 
   useEffect(() => {
     if (!shouldShowHandles) return;
@@ -63,10 +67,10 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     const TOLERANCE = 12;
     const containerBoundingRect = containerRef.current!.getBoundingClientRect();
     const virtualBoundingRect = {
-      x: containerBoundingRect.x - (ARROW_DISTANCE + TOLERANCE),
-      y: containerBoundingRect.y - (ARROW_DISTANCE + TOLERANCE),
-      width: containerBoundingRect.width + 2 * (ARROW_DISTANCE + TOLERANCE),
-      height: containerBoundingRect.height + 2 * (ARROW_DISTANCE + TOLERANCE)
+      x: containerBoundingRect.x - (arrowDistance + TOLERANCE),
+      y: containerBoundingRect.y - (arrowDistance + TOLERANCE),
+      width: containerBoundingRect.width + 2 * (arrowDistance + TOLERANCE),
+      height: containerBoundingRect.height + 2 * (arrowDistance + TOLERANCE)
     };
 
     if (!isPointInRect({ x: e.clientX, y: e.clientY }, virtualBoundingRect)) {
@@ -86,13 +90,13 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     }
 
     setIsMouseDowned(false);
-  }
+  };
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
     setSelectedElementById(node.id);
-  }
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     initialTouch.current = e.touches[0];
@@ -100,11 +104,11 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     touchTimeout.current = window.setTimeout(() => {
       setShouldShowHandles(true);
     }, 250);
-  }
+  };
 
   const handleTouchEnd = () => {
     if (touchTimeout.current) clearTimeout(touchTimeout.current);
-  }
+  };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (e.touches[0].clientX - initialTouch.current!.clientX < 20 && e.touches[0].clientY - initialTouch.current!.clientY < 20) {
@@ -112,7 +116,7 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
     }
 
     if (touchTimeout.current) clearTimeout(touchTimeout.current);
-  }
+  };
 
   return (
     <div
@@ -130,7 +134,7 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
       onTouchMove={handleTouchMove}
       onClick={handleClick}
     >
-      {!isHandleDisabled && <StandardHandles
+      {!isHandleDisabled && <Handles
         node={node}
         additionalEdgeProps={additionalEdgeProps}
         shouldShowHandles={shouldShowHandles}

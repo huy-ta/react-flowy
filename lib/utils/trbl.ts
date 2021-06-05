@@ -13,6 +13,7 @@ export const shapeAsTRBL = (shapeType: string) => (shape: Shape): TRBL => {
 }
 
 registerShapeAsTRBLFunction('rectangle')(rectangleOrPointAsTRBL);
+registerShapeAsTRBLFunction('circle')(rectangleOrPointAsTRBL);
 
 /**
  * Convert the given bounds to a { top, left, bottom, right } descriptor.

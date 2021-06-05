@@ -41,8 +41,8 @@ const CHANGED_DOCKING_POINT_THRESHOLD = 16;
 /**
  * Connect two rectangles using a manhattan layouted connection.
  *
- * @param {Rectangle} sourceShape source rectangle
- * @param {Rectangle} targetShape target rectangle
+ * @param {Rectangle} sourceShape source shape
+ * @param {Rectangle} targetShape target shape
  * @param {Point} [startPoint] source docking
  * @param {Point} [endPoint] target docking
  *
@@ -57,7 +57,7 @@ const CHANGED_DOCKING_POINT_THRESHOLD = 16;
 export function connectShapes(sourceShape: Shape, targetShape: Shape, sourceShapeType: string, targetShapeType: string, startPoint?: Point, endPoint?: Point, hints?: Hints) {
   const preferredLayouts = hints && hints.preferredLayouts || [];
   const preferredLayout = preferredLayouts.filter(layout => layout !== LayoutType.STRAIGHT)[0] || LayoutType.HORIZONTAL_HORIZONTAL;
-  const threshold = ORIENTATION_THRESHOLD[preferredLayout] || 0;
+  const threshold = 0;
   const orientation = getOrientation({ source: sourceShape, sourceShapeType, reference: targetShape, referenceShapeType: targetShapeType, padding: threshold });
   const directions = getDirections(orientation, preferredLayout);
 

@@ -33,8 +33,6 @@ export const getDocking = (waypoints: Point[], shape: Shape, shapeType: string, 
     }
   }
 
-  console.log('direction', direction);
-
   const croppedPoint = getDockingPointFunctions[shapeType](dockingPoint, shape, direction);
 
   return {

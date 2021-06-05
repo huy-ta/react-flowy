@@ -4,7 +4,7 @@ import { Connection, ApproxIntersection, Axis, EdgeProps, Edge } from '../../../
 import { useStore } from '../../../store/state';
 import { getCanvas } from '../../../utils/graph';
 import { isPrimaryButton } from '../../../utils/mouse';
-import { getNodeById, getRectangleByNodeId, getRectangleFromNode } from '../../../utils/node';
+import { getNodeById, getRectangleFromNode } from '../../../utils/node';
 import { getApproxIntersection } from '../../../utils/intersection';
 import { eventPointToCanvasCoordinates } from '../../../utils/coordinates';
 import { Context, activateBendpointMove, handleDragStopWithContext, calculateNewConnectionOnDragging } from '../../../features/bendpoints/connectionSegmentMove';

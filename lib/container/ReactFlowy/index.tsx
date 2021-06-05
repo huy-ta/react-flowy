@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, HTMLAttributes, MouseEvent, WheelEvent, forwardRef } from 'react';
+import React, { useMemo, useCallback, HTMLAttributes, MouseEvent, WheelEvent } from 'react';
 import cc from 'classcat';
 
 import ElementRenderer from '../ElementRenderer';
@@ -98,7 +98,7 @@ export interface ReactFlowyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'o
 
 export type ReactFlowRefType = HTMLDivElement;
 
-const ReactFlowy = forwardRef<ReactFlowRefType, ReactFlowyProps>(
+const ReactFlowy = React.forwardRef<ReactFlowRefType, ReactFlowyProps>(
   (
     {
       className,
@@ -149,14 +149,12 @@ const ReactFlowy = forwardRef<ReactFlowRefType, ReactFlowyProps>(
       onEdgeMouseMove,
       onEdgeMouseLeave,
       edgeUpdaterRadius = 10,
-      nodeTypesId = '1',
-      edgeTypesId = '1',
       ...rest
     },
     ref
   ) => {
-    const nodeTypesParsed = useMemo(() => createNodeTypes(nodeTypes), [nodeTypesId]);
-    const edgeTypesParsed = useMemo(() => createEdgeTypes(edgeTypes), [edgeTypesId]);
+    const nodeTypesParsed = useMemo(() => createNodeTypes(nodeTypes), []);
+    const edgeTypesParsed = useMemo(() => createEdgeTypes(edgeTypes), []);
     const reactFlowClasses = cc(['react-flowy', className]);
 
     const handleClick = useCallback((e: MouseEvent) => {

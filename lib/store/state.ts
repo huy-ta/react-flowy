@@ -275,14 +275,14 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
 
     const newNodes = state.nodes.map(node => {
       const update = updates.find(u => u.id === node.id);
-  
+
       if (update) {
         const dimensions = getDimensions(update.nodeElement);
         const doUpdate =
           dimensions.width &&
           dimensions.height &&
           (node.width !== dimensions.width || node.height !== dimensions.height || update.forceUpdate);
-  
+
         if (doUpdate) {
           return {
             ...node,
@@ -290,7 +290,7 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
           };
         }
       }
-  
+
       return node;
     });
 
