@@ -52,8 +52,8 @@ const NodeRenderer = (props: NodeRendererProps) => {
   return (
     <div className="react-flowy__nodes" style={transformStyle}>
       {nodes.map(node => {
-        const nodeType = node.type || 'default';
-        const NodeComponent = (props.nodeTypes[nodeType] || props.nodeTypes.default) as ComponentType<WrapNodeProps>;
+        const nodeType = node.type;
+        const NodeComponent = props.nodeTypes[nodeType] as ComponentType<WrapNodeProps>;
 
         if (!props.nodeTypes[nodeType]) {
           console.warn(`Node type "${nodeType}" not found. Using fallback type "default".`);

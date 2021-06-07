@@ -11,7 +11,7 @@ export interface WrapEdgeProps<T = any> {
   onClick?: (event: React.MouseEvent, edge: Edge) => void;
   onEdgeDoubleClick?: (event: React.MouseEvent, edge: Edge) => void;
   style?: CSSProperties;
-  arrowHeadType?: ArrowHeadType;
+  arrowHeadType?: ArrowHeadType | string;
   label?: string;
   source: ElementId;
   target: ElementId;

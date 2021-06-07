@@ -5,7 +5,7 @@ export const parseNode = (node: Node, nodeExtent: NodeExtent): Node => {
   const parsedNode = {
     ...node,
     id: node.id.toString(),
-    type: node.type || 'default',
+    type: node.type,
     position: clampPosition(node.position, nodeExtent),
     isDragging: false,
   };
@@ -22,7 +22,7 @@ export const parseEdge = (edge: Edge): Edge => {
     source: edge.source.toString(),
     target: edge.target.toString(),
     id: edge.id.toString(),
-    type: edge.type || 'default',
+    type: edge.type || 'standardEdge',
   };
 };
 

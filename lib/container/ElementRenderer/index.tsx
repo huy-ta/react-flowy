@@ -47,7 +47,6 @@ export interface ElementRendererProps extends Omit<ReactFlowyProps, 'elements'> 
   snapGrid: [number, number];
   defaultZoom: number;
   defaultPosition: [number, number];
-  arrowHeadColor: string;
 }
 
 const ElementRenderer = ({
@@ -79,7 +78,6 @@ const ElementRenderer = ({
   defaultPosition,
   translateExtent,
   nodeExtent,
-  arrowHeadColor,
   markerEndId,
   zoomOnScroll,
   zoomOnPinch,
@@ -214,7 +212,6 @@ const ElementRenderer = ({
         edgeTypes={edgeTypes}
         onElementClick={onElementClick}
         onEdgeDoubleClick={onEdgeDoubleClick}
-        arrowHeadColor={arrowHeadColor}
         markerEndId={markerEndId}
         onEdgeContextMenu={onEdgeContextMenu}
         onEdgeMouseEnter={onEdgeMouseEnter}

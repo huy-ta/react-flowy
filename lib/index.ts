@@ -3,6 +3,7 @@ import ReactFlowy from './container/ReactFlowy';
 export default ReactFlowy;
 
 export { default as Handle } from './components/Handle';
+export { addMarkerDefinition } from './container/EdgeRenderer/MarkerDefinitions';
 
 export * from './utils';
 export * from './utils/coordinates';

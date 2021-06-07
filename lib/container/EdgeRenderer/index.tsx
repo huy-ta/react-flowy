@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 
 import MarkerDefinitions from './MarkerDefinitions';
 import { getSourceTargetNodes } from './utils';
@@ -14,7 +14,6 @@ interface EdgeRendererProps {
   edgeTypes: any;
   onElementClick?: (event: React.MouseEvent, element: Node | Edge) => void;
   onEdgeDoubleClick?: (event: React.MouseEvent, edge: Edge) => void;
-  arrowHeadColor: string;
   markerEndId?: string;
   onEdgeContextMenu?: (event: React.MouseEvent, edge: Edge) => void;
   onEdgeMouseEnter?: (event: React.MouseEvent, edge: Edge) => void;
@@ -51,7 +50,7 @@ const EdgeWrapper = React.memo(({
   }
 
   const edgeType = edge.type || 'standardEdge';
-  const EdgeComponent = props.edgeTypes[edgeType] || props.edgeTypes.default;
+  const EdgeComponent = props.edgeTypes[edgeType];
 
   return (
     <EdgeComponent
@@ -94,12 +93,11 @@ const EdgeRenderer = (props: EdgeRendererProps) => {
     return null;
   }
 
-  const { arrowHeadColor } = props;
   const transformStyle = `translate(${transform[0]},${transform[1]}) scale(${transform[2]})`;
 
   return (
     <svg width={width} height={height} className="react-flowy__edges">
-      <MarkerDefinitions color={arrowHeadColor} />
+      <MarkerDefinitions />
       <g transform={transformStyle}>
         {edges.map(edge => (
           <EdgeWrapper
@@ -119,4 +117,4 @@ const EdgeRenderer = (props: EdgeRendererProps) => {
 
 EdgeRenderer.displayName = 'EdgeRenderer';
 
-export default memo(EdgeRenderer);
+export default React.memo(EdgeRenderer);

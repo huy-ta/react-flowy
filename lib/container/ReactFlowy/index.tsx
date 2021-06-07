@@ -78,7 +78,6 @@ export interface ReactFlowyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'o
   defaultPosition?: [number, number];
   translateExtent?: TranslateExtent;
   nodeExtent?: NodeExtent;
-  arrowHeadColor?: string;
   markerEndId?: string;
   zoomOnScroll?: boolean;
   zoomOnPinch?: boolean;
@@ -130,7 +129,6 @@ const ReactFlowy = React.forwardRef<ReactFlowRefType, ReactFlowyProps>(
       defaultPosition = [0, 0],
       translateExtent,
       nodeExtent,
-      arrowHeadColor = '#b1b1b7',
       markerEndId,
       zoomOnScroll = true,
       zoomOnPinch = true,
@@ -191,7 +189,6 @@ const ReactFlowy = React.forwardRef<ReactFlowRefType, ReactFlowyProps>(
           defaultPosition={defaultPosition}
           translateExtent={translateExtent}
           nodeExtent={nodeExtent}
-          arrowHeadColor={arrowHeadColor}
           markerEndId={markerEndId}
           zoomOnScroll={zoomOnScroll}
           zoomOnPinch={zoomOnPinch}

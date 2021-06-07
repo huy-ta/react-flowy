@@ -70,7 +70,7 @@ export interface Node<T = any> {
   shapeData?: Record<string, unknown>;
   width?: number;
   height?: number;
-  type?: string;
+  type: string;
   data?: T;
   style?: CSSProperties;
   className?: string;
@@ -96,7 +96,7 @@ export interface Edge<T = any> {
   waypoints: Point[];
   isForming?: boolean;
   style?: CSSProperties;
-  arrowHeadType?: ArrowHeadType;
+  arrowHeadType?: ArrowHeadType | string;
   isHidden?: boolean;
   isSelected?: boolean;
   isInvalid?: boolean;
@@ -127,7 +127,7 @@ export interface EdgeProps<T = any> {
   isInvalid?: boolean;
   isDragging?: boolean;
   style?: CSSProperties;
-  arrowHeadType?: ArrowHeadType;
+  arrowHeadType?: ArrowHeadType | string;
   markerEndId?: string;
   data?: T;
 }

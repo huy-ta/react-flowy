@@ -6,7 +6,7 @@ export const isEdge = (element: FlowElement): element is Edge =>
 export const getEdgeId = ({ source, target }: Edge): ElementId =>
   `react-flowy__edge-${source}-${target}}`;
 
-export const getMarkerEnd = (arrowHeadType?: ArrowHeadType, markerEndId?: string): string => {
+export const getMarkerEnd = (arrowHeadType?: ArrowHeadType | string, markerEndId?: string): string => {
   if (typeof markerEndId !== 'undefined' && markerEndId) {
     return `url(#${markerEndId})`;
   }

@@ -9,6 +9,16 @@
   fill: var(--black);
 }
 
+.react-flowy__arrow {
+  stroke: var(--black);
+  fill: none;
+}
+
+.react-flowy__arrowclosed--error {
+  stroke: #ef4a3c;
+  fill: #ef4a3c;
+}
+
 .react-flowy__node {
   cursor: grab;
 }
