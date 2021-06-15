@@ -15,7 +15,8 @@ export function filterRedundantWaypoints(waypoints: Point[], accuracy = 5) {
     previousPoint = waypoints[index - 1];
     nextPoint = waypoints[index + 1];
 
-    if (getPointDistance(point, nextPoint) === 0 ||
+    if (point && previousPoint && nextPoint &&
+        getPointDistance(point, nextPoint) === 0 ||
         arePointsOnLine(previousPoint, nextPoint, point, accuracy)) {
       if (Math.abs(previousPoint.x - nextPoint.x) <= accuracy) {
         nextPoint.x = Math.round(nextPoint.x);
