@@ -136,6 +136,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
       >
         <EdgeComponent
           id={id}
+          type={type}
           label={label}
           source={source}
           target={target}

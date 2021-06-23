@@ -77,6 +77,9 @@ export function getDockingPointForCircle(point: Point, shape: Shape, detailedDoc
   const radius = shape.width / 2;
 
   if (detailedDockingDirection === 't') {
+    if (point.x < shape.x) point = { x: shape.x, y: point.y };
+    else if (point.x > shape.x + shape.width) point = { x: shape.x + shape.width, y: point.y };
+
     return {
       dockingPoint: { original: point, ...findCircleLineIntersections(circleCenter, radius)(1, 0, -point.x)[0] },
       direction: 't',
@@ -84,6 +87,9 @@ export function getDockingPointForCircle(point: Point, shape: Shape, detailedDoc
   }
 
   if (detailedDockingDirection === 'r') {
+    if (point.y < shape.y) point = { x: point.x, y: shape.y };
+    else if (point.y > shape.y + shape.height) point = { x: point.x, y: shape.y + shape.height };
+
     return {
       dockingPoint: { original: point, ...findCircleLineIntersections(circleCenter, radius)(0, 1, -point.y)[0] },
       direction: 'r',
@@ -91,15 +97,25 @@ export function getDockingPointForCircle(point: Point, shape: Shape, detailedDoc
   }
 
   if (detailedDockingDirection === 'b') {
+    if (point.x < shape.x) point = { x: shape.x, y: point.y };
+    else if (point.x > shape.x + shape.width) point = { x: shape.x + shape.width, y: point.y };
+
+    const intersections = findCircleLineIntersections(circleCenter, radius)(1, 0, -point.x);
+
     return {
-      dockingPoint: { original: point, ...findCircleLineIntersections(circleCenter, radius)(1, 0, -point.x)[1] },
+      dockingPoint: { original: point, ...(intersections[1] || intersections[0]) },
       direction: 'b',
-    }
+    };
   }
 
   if (detailedDockingDirection === 'l') {
+    if (point.y < shape.y) point = { x: point.x, y: shape.y };
+    else if (point.y > shape.y + shape.height) point = { x: point.x, y: shape.y + shape.height };
+
+    const intersections = findCircleLineIntersections(circleCenter, radius)(0, 1, -point.y);
+
     return {
-      dockingPoint: { original: point, ...findCircleLineIntersections(circleCenter, radius)(0, 1, -point.y)[1] },
+      dockingPoint: { original: point, ...(intersections[1] || intersections[0]) },
       direction: 'l',
     };
   }

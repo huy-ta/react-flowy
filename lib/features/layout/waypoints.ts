@@ -1,7 +1,7 @@
 import { Point } from '../../types';
 import { arePointsOnLine, getPointDistance } from '../../utils/geometry';
 
-export function filterRedundantWaypoints(waypoints: Point[], accuracy = 5) {
+export function filterRedundantWaypoints(waypoints: Point[], accuracy = 2) {
   // alter copy of waypoints, not original
   waypoints = waypoints.slice();
 

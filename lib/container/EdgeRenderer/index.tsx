@@ -98,7 +98,7 @@ const EdgeRenderer = (props: EdgeRendererProps) => {
   return (
     <svg width={width} height={height} className="react-flowy__edges">
       <MarkerDefinitions />
-      <g transform={transformStyle}>
+      <g className="react-flowy__edges__transformer" transform={transformStyle}>
         {edges.map(edge => (
           <EdgeWrapper
             key={edge.id}

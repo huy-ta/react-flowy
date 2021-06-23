@@ -118,6 +118,7 @@ export type EdgeTypesType = NodeTypesType;
 
 export interface EdgeProps<T = any> {
   id: ElementId;
+  type: string;
   label?: string;
   source: ElementId;
   target: ElementId;
