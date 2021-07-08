@@ -1,4 +1,4 @@
-import { Connection, Path, Point, Rectangle } from '../types';
+import { Path, Point, Rectangle } from '../types';
 
 export function componentsToPath(elements: (string | number)[][]): Path {
   return elements.join(',').replace(/,?([A-z]),?/g, '$1');

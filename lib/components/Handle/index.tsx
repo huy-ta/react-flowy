@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import cc from 'classcat';
-import { getNodeElementById } from '../../utils/node';
 import { ArrowHeadType, Node, Edge, Point, Rectangle, LayoutType } from '../../types';
 import { getCanvas } from '../../utils/graph';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
-import { isPointInRect } from '../../utils/geometry';
 import { connectShapes, connectShapeToPoint } from '../../features/layout/manhattanLayout';
 import { useStore } from '../../store/state';
 import { edgesSelector, nodesSelector, nodeValidatorsSelector, transformSelector } from '../../store/selectors';

@@ -3,7 +3,7 @@ import {
   isArray
 } from 'min-dash';
 import { isBetween } from '.';
-import { Point, Rectangle, Shape, TRBL } from '../types';
+import { Point, Rectangle } from '../types';
 
 /**
  * Computes the distance between two points

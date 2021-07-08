@@ -38,7 +38,7 @@ export default React.memo(
     source,
     target,
     waypoints,
-  }: EdgeProps) => {
+  }: Omit<EdgeProps, 'type'>) => {
     const transform = useStore(transformSelector);
     const nodes = useStore(nodesSelector);
     const edges = useStore(edgesSelector);
