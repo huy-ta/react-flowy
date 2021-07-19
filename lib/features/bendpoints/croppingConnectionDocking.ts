@@ -7,8 +7,8 @@ export const getCroppedWaypoints = (waypoints: Point[], sourceShape: Shape, targ
 
   const croppedWaypoints = waypoints.slice(sourceDocking.index + 1, targetDocking.index);
 
-  croppedWaypoints.unshift({ original: sourceDocking.point.original || sourceDocking.point, ...sourceDocking.actual });
-  croppedWaypoints.push({ original: targetDocking.point.original || targetDocking.point, ...targetDocking.actual });
+  croppedWaypoints.unshift({ ...sourceDocking.actual });
+  croppedWaypoints.push({ ...targetDocking.actual });
 
   return croppedWaypoints;
 };

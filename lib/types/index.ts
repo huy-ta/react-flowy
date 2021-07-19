@@ -11,7 +11,6 @@ export type Transform = [number, number, number];
 export interface Point {
   x: number;
   y: number;
-  original?: Point;
 }
 
 export interface Dimensions {

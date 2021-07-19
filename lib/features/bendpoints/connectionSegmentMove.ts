@@ -169,6 +169,7 @@ export const calculateNewConnectionOnDragging = (movementX: number, movementY: n
   const newWaypoints = originalWaypoints.slice();
   const newSegmentStart = axisAdd(segmentStart, axis, getMovement(axis));
   const newSegmentEnd = axisAdd(segmentEnd, axis, getMovement(axis));
+
   // original waypoint count and added / removed
   // from start waypoint delta. We use the later
   // to retrieve the updated segmentStartIndex / segmentEndIndex
@@ -240,17 +241,6 @@ export const calculateNewConnectionOnDragging = (movementX: number, movementY: n
 export const handleDragStopWithContext = (context: Context) => {
   let { connection, newWaypoints, newSegmentStartIndex } = context;
 
-  // Ensure we have actual pixel values bendpoint
-  // coordinates (important when zoom level was > 1 during move)
-  newWaypoints = newWaypoints.map(waypoint => {
-    return {
-      original: waypoint.original,
-      x: Math.round(waypoint.x),
-      y: Math.round(waypoint.y)
-    };
-  });
-
-  // apply filter redunant waypoints
   const { waypoints: filteredWaypoints, newSegmentOffset } = filterRedundantWaypoints(newWaypoints, newSegmentStartIndex);
 
   const croppedWaypoints = cropConnection(connection, filteredWaypoints);

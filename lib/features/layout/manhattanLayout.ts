@@ -213,10 +213,6 @@ export function tryLayoutStraightBetweenRectangles(sourceRectangle: Rectangle, t
       {
         x: axis.x !== undefined ? axis.x : startPoint.x,
         y: axis.y !== undefined ? axis.y : startPoint.y,
-        original: {
-          x: axis.x !== undefined ? axis.x : startPoint.x,
-          y: axis.y !== undefined ? axis.y : startPoint.y
-        }
       },
       {
         x: endPoint.x,
@@ -239,10 +235,6 @@ export function tryLayoutStraightBetweenRectangles(sourceRectangle: Rectangle, t
     {
       x: axis.x !== undefined ? axis.x : endPoint.x,
       y: axis.y !== undefined ? axis.y : endPoint.y,
-      original: {
-        x: axis.x !== undefined ? axis.x : endPoint.x,
-        y: axis.y !== undefined ? axis.y : endPoint.y
-      }
     }
   ];
 }

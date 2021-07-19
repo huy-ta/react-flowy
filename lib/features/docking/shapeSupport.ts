@@ -2,12 +2,14 @@ import { Point, Shape } from '../../types';
 import { findCircleLineIntersections } from '../../utils/intersection';
 
 export function getDockingPointForRectangle(point: Point, shape: Shape, detailedDockingDirection: 't' | 'r' | 'b' | 'l') {
+  point = { ...point, x: Math.round(point.x), y: Math.round(point.y) };
+
   const relativeXPosToRectangleRatio = Math.abs(point.x - shape.x) / shape.width;
   const relativeYPosToRectangleRatio = Math.abs(point.y - shape.y) / shape.height;
 
   if (detailedDockingDirection === 't') {
     return {
-      dockingPoint: { original: point, x: point.x, y: shape.y },
+      dockingPoint: { x: point.x, y: shape.y },
       direction: 't',
     };
   }
@@ -16,30 +18,30 @@ export function getDockingPointForRectangle(point: Point, shape: Shape, detailed
     if (relativeXPosToRectangleRatio <= 0.9) {
       if (relativeYPosToRectangleRatio >= 2/3) {
         return {
-          dockingPoint: { original: point, x: shape.x + shape.width, y: point.y },
-          changedDockingPoint: { original: point, x: point.x, y: shape.y + shape.height },
+          dockingPoint: { x: shape.x + shape.width, y: point.y },
+          changedDockingPoint: { x: point.x, y: shape.y + shape.height },
           direction: 'b'
         };
       }
 
       if (relativeYPosToRectangleRatio <= 1/3) {
         return {
-          dockingPoint: { original: point, x: shape.x + shape.width, y: point.y },
-          changedDockingPoint: { original: point, x: point.x, y: shape.y },
+          dockingPoint: { x: shape.x + shape.width, y: point.y },
+          changedDockingPoint: { x: point.x, y: shape.y },
           direction: 't'
         };
       }
     }
 
     return {
-      dockingPoint: { original: point, x: shape.x + shape.width, y: point.y },
+      dockingPoint: { x: shape.x + shape.width, y: point.y },
       direction: 'r',
     };
   }
 
   if (detailedDockingDirection === 'b') {
     return {
-      dockingPoint: { original: point, x: point.x, y: shape.y + shape.height },
+      dockingPoint: { x: point.x, y: shape.y + shape.height },
       direction: 'b',
     }
   }
@@ -48,23 +50,23 @@ export function getDockingPointForRectangle(point: Point, shape: Shape, detailed
     if (relativeXPosToRectangleRatio >= 0.1) {
       if (relativeYPosToRectangleRatio >= 2/3) {
         return {
-          dockingPoint: { original: point, x: shape.x, y: point.y },
-          changedDockingPoint: { original: point, x: point.x, y: shape.y + shape.height },
+          dockingPoint: { x: shape.x, y: point.y },
+          changedDockingPoint: { x: point.x, y: shape.y + shape.height },
           direction: 'b'
         };
       }
 
       if (relativeYPosToRectangleRatio <= 1/3) {
         return {
-          dockingPoint: { original: point, x: shape.x, y: point.y },
-          changedDockingPoint: { original: point, x: point.x, y: shape.y },
+          dockingPoint: { x: shape.x, y: point.y },
+          changedDockingPoint: { x: point.x, y: shape.y },
           direction: 't'
         };
       }
     }
 
     return {
-      dockingPoint: { original: point, x: shape.x, y: point.y },
+      dockingPoint: { x: shape.x, y: point.y },
       direction: 'l',
     };
   }
@@ -73,6 +75,8 @@ export function getDockingPointForRectangle(point: Point, shape: Shape, detailed
 }
 
 export function getDockingPointForCircle(point: Point, shape: Shape, detailedDockingDirection: 't' | 'r' | 'b' | 'l') {
+  point = { ...point, x: Math.round(point.x), y: Math.round(point.y) };
+
   const circleCenter = { x: shape.x + shape.width / 2, y: shape.y + shape.height / 2 };
   const radius = shape.width / 2;
 
@@ -81,7 +85,7 @@ export function getDockingPointForCircle(point: Point, shape: Shape, detailedDoc
     else if (point.x > shape.x + shape.width) point = { x: shape.x + shape.width, y: point.y };
 
     return {
-      dockingPoint: { original: point, ...findCircleLineIntersections(circleCenter, radius)(1, 0, -point.x)[0] },
+      dockingPoint: { ...findCircleLineIntersections(circleCenter, radius)(1, 0, -point.x)[0] },
       direction: 't',
     };
   }
@@ -91,7 +95,7 @@ export function getDockingPointForCircle(point: Point, shape: Shape, detailedDoc
     else if (point.y > shape.y + shape.height) point = { x: point.x, y: shape.y + shape.height };
 
     return {
-      dockingPoint: { original: point, ...findCircleLineIntersections(circleCenter, radius)(0, 1, -point.y)[0] },
+      dockingPoint: { ...findCircleLineIntersections(circleCenter, radius)(0, 1, -point.y)[0] },
       direction: 'r',
     };
   }
@@ -103,7 +107,7 @@ export function getDockingPointForCircle(point: Point, shape: Shape, detailedDoc
     const intersections = findCircleLineIntersections(circleCenter, radius)(1, 0, -point.x);
 
     return {
-      dockingPoint: { original: point, ...(intersections[1] || intersections[0]) },
+      dockingPoint: { ...(intersections[1] || intersections[0]) },
       direction: 'b',
     };
   }
@@ -115,7 +119,7 @@ export function getDockingPointForCircle(point: Point, shape: Shape, detailedDoc
     const intersections = findCircleLineIntersections(circleCenter, radius)(0, 1, -point.y);
 
     return {
-      dockingPoint: { original: point, ...(intersections[1] || intersections[0]) },
+      dockingPoint: { ...(intersections[1] || intersections[0]) },
       direction: 'l',
     };
   }

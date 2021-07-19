@@ -26,7 +26,6 @@ useStore.subscribe((elements: Elements | undefined) => {
 
   elements.forEach(({ id, isDragging, isSelected }) => {
     previousElements = previousElements.map(previousElement => {
-
       if (previousElement.id !== id) return previousElement;
 
       const element = { ...previousElement };
