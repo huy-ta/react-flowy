@@ -11,21 +11,13 @@ import React, {
 import { DraggableCore, DraggableData, DraggableEvent } from 'react-draggable';
 import cc from 'classcat';
 
-import { Axis, DragDelta, ElementId, Node, Point, SnapGrid, Transform } from '../../types';
+import { Axis, DragDelta, Node, SnapGrid, Transform } from '../../types';
 import useKeyPress from '../../hooks/useKeyPress';
 import { useStore } from '../../store/state';
 
 export interface NodeComponentProps<T = any> {
-  id: ElementId;
-  type: string;
-  data: T;
-  isConnectable: boolean;
+  node: Node<T>;
   transform?: Transform;
-  width?: number;
-  height?: number;
-  position: Point;
-  shapeType: string;
-  shapeData?: Record<string, unknown>;
   onClick?: (node: Node) => void;
   onNodeDoubleClick?: (node: Node) => void;
   onMouseEnter?: (node: Node) => void;
@@ -36,20 +28,11 @@ export interface NodeComponentProps<T = any> {
   onNodeDrag?: (node: Node) => void;
   onNodeDragStop?: (node: Node) => void;
   style?: CSSProperties;
-  isDragging?: boolean;
-  isSelected?: boolean;
 }
 
 export interface WrapNodeProps<T = any> {
-  id: ElementId;
-  type: string;
-  data: T;
+  node: Node<T>;
   scale: number;
-  width?: number;
-  height?: number;
-  position: Point;
-  shapeType: string;
-  shapeData?: Record<string, unknown>;
   isDraggable: boolean;
   isConnectable: boolean;
   onClick?: (event: React.MouseEvent, node: Node) => void;
@@ -63,26 +46,16 @@ export interface WrapNodeProps<T = any> {
   onNodeDragStop?: (event: React.MouseEvent, node: Node) => void;
   style?: CSSProperties;
   className?: string;
-  isHidden?: boolean;
-  isSelected?: boolean;
   isInitialized?: boolean;
   snapToGrid?: boolean;
   snapGrid?: SnapGrid;
-  isDragging?: boolean;
   resizeObserver: ResizeObserver | null;
 }
 
 export default (NodeComponent: ComponentType<NodeComponentProps>) => {
   const NodeWrapper = ({
-    id,
-    type,
-    data,
+    node,
     scale,
-    width,
-    height,
-    position,
-    shapeType,
-    shapeData,
     onClick,
     onMouseEnter,
     onMouseMove,
@@ -95,13 +68,9 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     style,
     className,
     isDraggable,
-    isConnectable,
-    isHidden,
-    isSelected,
     isInitialized,
     snapToGrid,
     snapGrid,
-    isDragging,
     resizeObserver,
   }: WrapNodeProps) => {
     const updateNodeDimensions = useStore(state => state.updateNodeDimensions);
@@ -112,13 +81,12 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
     const nodeElement = useRef<HTMLDivElement>(null);
 
-    const node = useMemo(() => ({ id, type, position, data, shapeType, shapeData }), [id, type, position, data, shapeType, shapeData]);
     const grid = useMemo(() => (snapToGrid ? snapGrid : [1, 1])! as [number, number], [snapToGrid, snapGrid]);
 
     const nodeStyle: CSSProperties = useMemo(
       () => ({
         zIndex: 3,
-        transform: `translate(${position.x}px,${position.y}px)`,
+        transform: `translate(${node.position.x}px,${node.position.y}px)`,
         pointerEvents:
           isDraggable || onClick || onMouseEnter || onMouseMove || onMouseLeave ? 'all' : 'none',
         // prevents jumping of nodes on start
@@ -126,7 +94,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
         ...style,
       }),
       [
-        position,
+        node.position,
         isDraggable,
         onClick,
         isInitialized,
@@ -137,28 +105,28 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
       ]
     );
     const onMouseEnterHandler = useMemo(() => {
-      if (!onMouseEnter || isDragging) {
+      if (!onMouseEnter || node.isDragging) {
         return;
       }
 
       return (event: MouseEvent) => onMouseEnter(event, node);
-    }, [onMouseEnter, isDragging, node]);
+    }, [onMouseEnter, node.isDragging, node]);
 
     const onMouseMoveHandler = useMemo(() => {
-      if (!onMouseMove || isDragging) {
+      if (!onMouseMove || node.isDragging) {
         return;
       }
 
       return (event: MouseEvent) => onMouseMove(event, node);
-    }, [onMouseMove, isDragging, node]);
+    }, [onMouseMove, node.isDragging, node]);
 
     const onMouseLeaveHandler = useMemo(() => {
-      if (!onMouseLeave || isDragging) {
+      if (!onMouseLeave || node.isDragging) {
         return;
       }
 
       return (event: MouseEvent) => onMouseLeave(event, node);
-    }, [onMouseLeave, isDragging, node]);
+    }, [onMouseLeave, node.isDragging, node]);
 
     const onContextMenuHandler = useMemo(() => {
       if (!onContextMenu) {
@@ -196,29 +164,27 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
           if (deltaY === 0) return;
         }
 
-        if (onNodeDrag) {
-          node.position.x += deltaX;
-          node.position.y += deltaY;
-          onNodeDrag(event as MouseEvent, node, { deltaX, deltaY });
-        }
-
         updateNodePosDiff({
-          id,
+          id: node.id,
           diff: {
             x: deltaX,
             y: deltaY,
           },
           isDragging: true,
         });
+
+        if (typeof onNodeDrag === 'function') {
+          onNodeDrag(event as MouseEvent, node, { deltaX, deltaY });
+        }
       },
-      [id, node, onNodeDrag]
+      [node, node.id, node.position.x, node.position.y, onNodeDrag]
     );
 
     const onDragStop = useCallback(
       (event: DraggableEvent) => {
         // onDragStop also gets called when user just clicks on a node.
         // Because of that we set dragging to true inside the onDrag handler and handle the click here
-        if (!isDragging) {
+        if (!node.isDragging) {
           onClick?.(event as MouseEvent, node);
 
           return;
@@ -231,7 +197,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
 
         onNodeDragStop?.(event as MouseEvent, node);
       },
-      [node, onClick, onNodeDragStop, isDragging]
+      [node, node.id, node.isDragging, onClick, onNodeDragStop]
     );
 
     const onNodeDoubleClickHandler = useCallback(
@@ -244,10 +210,10 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     useLayoutEffect(() => {
       // the resize observer calls an updateNodeDimensions initially.
       // We don't need to force another dimension update if it hasn't happened yet
-      if (nodeElement.current && !isHidden && observerInitialized.current) {
-        updateNodeDimensions([{ id, nodeElement: nodeElement.current, forceUpdate: true }]);
+      if (nodeElement.current && !node.isHidden && observerInitialized.current) {
+        updateNodeDimensions([{ id: node.id, nodeElement: nodeElement.current, forceUpdate: true }]);
       }
-    }, [id, isHidden]);
+    }, [node.id, node.isHidden]);
 
     useEffect(() => {
       if (!nodeElement.current) return;
@@ -259,13 +225,13 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
       return () => resizeObserver?.unobserve(currNode);
     }, []);
 
-    if (isHidden) {
+    if (node.isHidden) {
       return null;
     }
 
     const nodeClasses = cc([
       'react-flowy__node',
-      `react-flowy__node-${type}`,
+      `react-flowy__node-${node.type}`,
       className,
     ]);
 
@@ -289,21 +255,9 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
           onMouseLeave={onMouseLeaveHandler}
           onContextMenu={onContextMenuHandler}
           onDoubleClick={onNodeDoubleClickHandler}
-          data-id={id}
+          data-id={node.id}
         >
-          <NodeComponent
-            id={id}
-            data={data}
-            type={type}
-            width={width}
-            height={height}
-            position={position}
-            shapeType={shapeType}
-            shapeData={shapeData}
-            isConnectable={isConnectable}
-            isDragging={isDragging}
-            isSelected={isSelected}
-          />
+          <NodeComponent node={node} />
         </div>
       </DraggableCore>
     );

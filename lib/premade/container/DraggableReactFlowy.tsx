@@ -47,8 +47,6 @@ const DraggableReactFlowy = forwardRef<ReactFlowRefType, ReactFlowyProps>(
           getNodeById(elements)(edge.target);
   
         const nodeRectangle = getRectangleByNodeId(elements)(node.id);
-        nodeRectangle.x += dragDelta.deltaX;
-        nodeRectangle.y += dragDelta.deltaY;
   
         const otherNodeRectangle = getRectangleByNodeId(elements)(otherNode!.id);
   

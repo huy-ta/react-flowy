@@ -1,4 +1,4 @@
-import React, { useMemo, ComponentType, MouseEvent, CSSProperties } from 'react';
+import React, { useMemo, ComponentType, MouseEvent } from 'react';
 
 import { Node, NodeTypesType, Edge, DragDelta } from '../../types';
 import { useStore } from '../../store/state';
@@ -65,19 +65,7 @@ const NodeRenderer = (props: NodeRendererProps) => {
         return (
           <NodeComponent
             key={node.id}
-            id={node.id}
-            className={node.className}
-            style={node.style as CSSProperties}
-            type={nodeType}
-            data={node.data}
-            isHidden={node.isHidden}
-            isSelected={node.isSelected}
-            width={node.width}
-            height={node.height}
-            position={{ x: node.position.x, y: node.position.y }}
-            shapeType={node.shapeType}
-            shapeData={node.shapeData}
-            isDragging={node.isDragging}
+            node={node}
             isInitialized={!!node.width || !!node.height}
             snapGrid={props.snapGrid}
             snapToGrid={props.snapToGrid}
