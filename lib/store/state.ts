@@ -221,32 +221,26 @@ export const useStore = create<ReactFlowyState & ReactFlowyActions>((set, get) =
 
     const newNodes = state.nodes.map(node => {
       if (node.id !== id) {
-        if (node.isSelected) {
-          node.isSelected = false;
-          isAnElementUnselected = true;
-        }
-  
-        return node;
+        if (!node.isSelected) return node;
+
+        isAnElementUnselected = true;
+
+        return { ...node, isSelected: false };
       }
-  
-      node.isSelected = true;
-  
-      return node;
+
+      return { ...node, isSelected: true };
     });
   
     const newEdges = state.edges.map(edge => {
       if (edge.id !== id) {
-        if (edge.isSelected) {
-          edge.isSelected = false;
-          isAnElementUnselected = true;
-        }
-  
-        return edge;
+        if (!edge.isSelected) return edge;
+
+        isAnElementUnselected = true;
+
+        return { ...edge, isSelected: false };
       }
   
-      edge.isSelected = true;
-  
-      return edge;
+      return { ...edge, isSelected: true };
     })
 
     if (id === '' && !isAnElementUnselected) return;
