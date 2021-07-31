@@ -4,7 +4,7 @@ import cc from 'classcat';
 import { getRectOfNodes, getBoundsOfRects } from '../../../utils/node';
 import { Node, Rectangle } from '../../../types';
 import MiniMapNode from './MiniMapNode';
-import { useStore } from '../../../store/state';
+import { useStoreById } from '../../../store/state';
 import { heightSelector, nodesSelector, transformSelector, widthSelector } from '../../../store/selectors';
 
 type StringFunc = (node: Node) => string;
@@ -16,6 +16,7 @@ export interface MiniMapProps extends HTMLAttributes<SVGSVGElement> {
   nodeBorderRadius?: number;
   nodeStrokeWidth?: number;
   maskColor?: string;
+  storeId: string;
 }
 
 declare const window: any;
@@ -32,7 +33,9 @@ const MiniMap = ({
   nodeBorderRadius = 5,
   nodeStrokeWidth = 2,
   maskColor = 'rgb(240, 242, 243, 0.7)',
+  storeId,
 }: MiniMapProps) => {
+  const useStore = useStoreById(storeId)!;
   const containerWidth = useStore(widthSelector);
   const containerHeight = useStore(heightSelector);
   const [tX, tY, tScale] = useStore(transformSelector);

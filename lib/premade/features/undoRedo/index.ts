@@ -1,18 +1,17 @@
-import { useStore } from '../../../store/state';
+import { useStoreById } from '../../../store/state';
 import { Elements } from '../../../types';
 import { subscribeToFinalElementChanges } from '../subscription';
 import { registerUndoRedoKeyboardShortcuts } from './keyboardShortcuts';
 import { updateUndoRedoStore } from './store';
 import { UndoRedo } from './UndoRedo';
 
-export const initializeUndoRedo = () => {
+export const initializeUndoRedo = (storeId: string) => {
   let skipSubscription = false;
-
+  let batchUpdateTimeout: number;
+  const useStore = useStoreById(storeId)!;
   const undoRedo = new UndoRedo<Elements>();
 
-  let batchUpdateTimeout: number;
-
-  subscribeToFinalElementChanges(elements => {
+  subscribeToFinalElementChanges(storeId)(elements => {
     if (batchUpdateTimeout) clearTimeout(batchUpdateTimeout);
 
     if (skipSubscription) {

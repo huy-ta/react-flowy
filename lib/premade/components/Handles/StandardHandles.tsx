@@ -46,6 +46,7 @@ export interface StandardHandlesProps {
   RightHandleIndicator?: React.FC;
   BottomHandleIndicator?: React.FC;
   LeftHandleIndicator?: React.FC;
+  storeId: string;
 }
 
 const StandardHandles: React.FC<StandardHandlesProps> = React.memo(({
@@ -56,33 +57,34 @@ const StandardHandles: React.FC<StandardHandlesProps> = React.memo(({
   RightHandleIndicator = React.Fragment,
   BottomHandleIndicator = React.Fragment,
   LeftHandleIndicator = React.Fragment,
+  storeId,
 }) => {
   const className = cc(['react-flowy__standard-handles__arrow', { 'react-flowy__standard-handles__arrow--hidden': !shouldShowHandles }]);
 
   return (
     <>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps} storeId={storeId}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--up'])}>
           <TopHandleIndicator>
             <UpArrow />
           </TopHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps} storeId={storeId}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--right'])}>
           <RightHandleIndicator>
             <RightArrow />
           </RightHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps} storeId={storeId}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--down'])}>
           <BottomHandleIndicator>
             <DownArrow />
           </BottomHandleIndicator>
         </div>
       </Handle>
-      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps}>
+      <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps} storeId={storeId}>
         <div className={cc([className, 'react-flowy__standard-handles__arrow--left'])}>
           <LeftHandleIndicator>
             <LeftArrow />

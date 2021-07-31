@@ -32,7 +32,8 @@ export * from './features/docking/store';
 export { default as useZoomPanHelper } from './hooks/useZoomPanHelper';
 export { default as useUpdateNodeInternals } from './hooks/useUpdateNodeInternals';
 
-export { useStore as useReactFlowyStore } from './store/state';
+export { initializeStore as initializeReactFlowyStore } from './store/state';
+export { useStoreById as useReactFlowyStoreById } from './store/state';
 export * from './store/getters';
 export * from './store/selectors';
 export * from './premade';

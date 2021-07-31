@@ -1,9 +1,10 @@
 import { useEffect, MutableRefObject } from 'react';
-import { useStore } from '../store/state';
+import { useStoreById } from '../store/state';
 
 import { getDimensions } from '../utils';
 
-export default (rendererNode: MutableRefObject<HTMLDivElement | null>) => {
+export default (rendererNode: MutableRefObject<HTMLDivElement | null>, storeId: string) => {
+  const useStore = useStoreById(storeId)!;
   const updateSize = useStore(state => state.updateSize);
 
   useEffect(() => {

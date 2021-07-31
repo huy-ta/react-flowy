@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { zoomIdentity } from 'd3-zoom';
 
 
-import { useStore } from '../store/state';
+import { useStoreById } from '../store/state';
 import { getTransformForBounds } from '../utils/graph';
 import { getRectOfNodes } from '../utils/node';
 import { FlowTransform, Rectangle, Point } from '../types';
@@ -42,9 +42,8 @@ const initialZoomPanHelper: ZoomPanHelperFunctions = {
   initialized: false,
 };
 
-
-
-const useZoomPanHelper = (): ZoomPanHelperFunctions => {
+const useZoomPanHelper = (storeId: string): ZoomPanHelperFunctions => {
+  const useStore = useStoreById(storeId)!;
   const d3Zoom = useStore(d3ZoomSelector);
   const d3Selection = useStore(d3SelectionSelector);
   const width = useStore(widthSelector);

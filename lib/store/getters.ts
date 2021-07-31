@@ -1,29 +1,26 @@
 import { getSourceTargetNodes } from '../container/EdgeRenderer/utils';
 import { Edge, Node } from '../types';
-import { useStore } from './state'
 
-export const getSelectedElement = (): Node | Edge | undefined => {
-  const state = useStore.getState();
-
-  return [...state.nodes, ...state.edges].find(element => element.isSelected);
+export const getSelectedElement = (elements: (Node & Edge)[]): Node | Edge | undefined => {
+  return elements.find(element => element.isSelected);
 }
 
-export const getOutEdges = (node: Node): Edge[] => {
-  return useStore.getState().edges.filter(edge => edge.source === node.id);
+export const getOutgoingEdges = (edges: Edge[]) => (node: Node): Edge[] => {
+  return edges.filter(edge => edge.source === node.id);
 }
 
-export const getInEdges = (node: Node): Edge[] => {
-  return useStore.getState().edges.filter(edge => edge.target === node.id);
+export const getIncomingEdges = (edges: Edge[]) => (node: Node): Edge[] => {
+  return edges.filter(edge => edge.target === node.id);
 }
 
-export const getSourceNode = (edge: Edge): Node | undefined => {
-  return useStore.getState().nodes.find(node => node.id === edge.source);
+export const getSourceNode = (nodes: Node[]) => (edge: Edge): Node | undefined => {
+  return nodes.find(node => node.id === edge.source);
 }
 
-export const getTargetNode = (edge: Edge): Node | undefined => {
-  return useStore.getState().nodes.find(node => node.id === edge.target);
+export const getTargetNode = (nodes: Node[]) => (edge: Edge): Node | undefined => {
+  return nodes.find(node => node.id === edge.target);
 }
 
-export const getSourceAndTargetNodes = (edge: Edge) => {
-  return getSourceTargetNodes(edge, useStore.getState().nodes);
+export const getSourceAndTargetNodes = (nodes: Node[]) => (edge: Edge) => {
+  return getSourceTargetNodes(edge, nodes);
 }

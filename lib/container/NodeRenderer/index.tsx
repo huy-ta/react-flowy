@@ -1,7 +1,7 @@
 import React, { useMemo, ComponentType, MouseEvent } from 'react';
 
 import { Node, NodeTypesType, Edge, DragDelta } from '../../types';
-import { useStore } from '../../store/state';
+import { useStoreById } from '../../store/state';
 import { WrapNodeProps } from '../../components/Nodes/wrapNode';
 import { nodesConnectableSelector, nodesDraggableSelector, nodesSelector, transformSelector } from '../../store/selectors';
 
@@ -18,9 +18,11 @@ interface NodeRendererProps {
   onNodeDragStop?: (event: MouseEvent, node: Node) => void;
   snapToGrid: boolean;
   snapGrid: [number, number];
+  storeId: string;
 }
 
 const NodeRenderer = (props: NodeRendererProps) => {
+  const useStore = useStoreById(props.storeId)!;
   const transform = useStore(transformSelector);
   const nodes = useStore(nodesSelector);
   const nodesDraggable = useStore(nodesDraggableSelector);
@@ -82,6 +84,7 @@ const NodeRenderer = (props: NodeRendererProps) => {
             isDraggable={isDraggable}
             isConnectable={isConnectable}
             resizeObserver={resizeObserver}
+            storeId={props.storeId}
           />
         );
       })}

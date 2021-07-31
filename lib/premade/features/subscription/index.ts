@@ -1,5 +1,5 @@
 import isDeepEqual from 'fast-deep-equal';
-import { useStore } from '../../../store/state';
+import { useStoreById } from '../../../store/state';
 import { Node, Edge, Elements } from '../../../types';
 
 const normalizeUnstablePropertiesFromElements = (elements: Node[] | Edge[] | Elements) => {
@@ -13,47 +13,63 @@ const normalizeUnstablePropertiesFromElements = (elements: Node[] | Edge[] | Ele
 
 export type ElementChangeListener = (elements: Elements) => void;
 
-let listeners: ElementChangeListener[] = []; 
-let previousElements: Elements = [];
+const listenerMapping: Record<string, undefined | ElementChangeListener[]> = {};
 
-useStore.subscribe((elements: Elements | undefined) => {
-  if (!elements) return;
+const activateStoreSubscription = (storeId: string) => {
+  let previousElements: Elements = [];
+  const useStore = useStoreById(storeId)!;
 
-  listeners.forEach(listener => listener(elements));
-}, state => {
-  const edges = state.edges.filter(edge => edge.target !== '?' && !edge.isForming);
-  const elements = [...state.nodes, ...edges];
+  if (listenerMapping[storeId]) return;
 
-  elements.forEach(({ id, isDragging, isSelected }) => {
-    previousElements = previousElements.map(previousElement => {
-      if (previousElement.id !== id) return previousElement;
+  listenerMapping[storeId] = [];
 
-      const element = { ...previousElement };
+  const listeners = listenerMapping[storeId]!;
 
-      if (isDragging !== undefined) element.isDragging = isDragging;
-      else delete element.isDragging;
+  useStore.subscribe((elements: Elements | undefined) => {
+    if (!elements) return;
 
-      if (isSelected !== undefined) element.isSelected = isSelected;
-      else delete element.isSelected;
+    listeners.forEach(listener => listener(elements));
+  }, state => {
+    const edges = state.edges.filter(edge => edge.target !== '?' && !edge.isForming);
+    const elements = [...state.nodes, ...edges];
 
-      return element;
+    elements.forEach(({ id, isDragging, isSelected }) => {
+      previousElements = previousElements.map(previousElement => {
+        if (previousElement.id !== id) return previousElement;
+
+        const element = { ...previousElement };
+
+        if (isDragging !== undefined) element.isDragging = isDragging;
+        else delete element.isDragging;
+
+        if (isSelected !== undefined) element.isSelected = isSelected;
+        else delete element.isSelected;
+
+        return element;
+      });
     });
+
+    const previousElementsToCompare = normalizeUnstablePropertiesFromElements(previousElements);
+    const elementsToCompare = normalizeUnstablePropertiesFromElements(elements);
+
+    if (isDeepEqual(previousElementsToCompare, elementsToCompare)) return;
+
+    previousElements = elements;
+
+    return elements;
   });
+}
 
-  const previousElementsToCompare = normalizeUnstablePropertiesFromElements(previousElements);
-  const elementsToCompare = normalizeUnstablePropertiesFromElements(elements);
+export const subscribeToFinalElementChanges = (storeId: string) => (listener: ElementChangeListener) => {
+  if (!listenerMapping[storeId]) {
+    activateStoreSubscription(storeId);
+  }
 
-  if (isDeepEqual(previousElementsToCompare, elementsToCompare)) return;
+  const listeners = listenerMapping[storeId]!;
 
-  previousElements = elements;
-
-  return elements;
-});
-
-export const subscribeToFinalElementChanges = (listener: ElementChangeListener) => {
   listeners.push(listener);
 
   return function unsubscribe() {
-    listeners = listeners.filter(l => l !== listener);
+    listenerMapping[storeId] = listenerMapping[storeId]!.filter(l => l !== listener);
   };
 };

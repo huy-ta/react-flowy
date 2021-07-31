@@ -3,7 +3,7 @@ import cc from 'classcat';
 
 import { BackgroundVariant } from '../../../types';
 import { createGridLinesPath, createGridDotsPath } from './utils';
-import { useStore } from '../../../store/state';
+import { useStoreById } from '../../../store/state';
 import { transformSelector } from '../../../store/selectors';
 
 export interface BackgroundProps extends HTMLAttributes<SVGElement> {
@@ -11,6 +11,7 @@ export interface BackgroundProps extends HTMLAttributes<SVGElement> {
   gap?: number;
   color?: string;
   size?: number;
+  storeId: string;
 }
 
 const defaultColors = {
@@ -25,7 +26,9 @@ const Background: FC<BackgroundProps> = ({
   color,
   style,
   className,
+  storeId,
 }) => {
+  const useStore = useStoreById(storeId)!;
   const [x, y, scale] = useStore(transformSelector);
   // when there are multiple flows on a page we need to make sure that every background gets its own pattern.
   const patternId = useMemo(() => `pattern-${Math.floor(Math.random() * 100000)}`, []);

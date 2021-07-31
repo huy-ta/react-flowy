@@ -6,7 +6,7 @@ import {
 } from '../../types';
 
 import ReactFlowy, { ReactFlowyProps } from '../../container/ReactFlowy';
-import { useStore } from '../../store/state';
+import { useStoreById } from '../../store/state';
 import { edgesSelector, nodesSelector } from '../../store/selectors';
 import { getNodeById, getRectangleByNodeId } from '../../utils/node';
 import { repairConnection } from '../../features/layout/manhattanLayout';
@@ -18,12 +18,14 @@ const DraggableReactFlowy = forwardRef<ReactFlowRefType, ReactFlowyProps>(
     {
       onNodeDrag,
       onNodeDragStop,
+      storeId,
       ...rest
     },
     ref
   ) => {
     const nodes = useRef<Node[]>([]);
     const edges = useRef<Edge[]>([]);
+    const useStore = useStoreById(storeId)!;
     const upsertEdge = useStore(state => state.upsertEdge);
 
     useEffect(() => {
@@ -84,6 +86,7 @@ const DraggableReactFlowy = forwardRef<ReactFlowRefType, ReactFlowyProps>(
         ref={ref}
         onNodeDrag={handleNodeDrag}
         onNodeDragStop={handleNodeDragStop}
+        storeId={storeId}
         {...rest}
       />
     );

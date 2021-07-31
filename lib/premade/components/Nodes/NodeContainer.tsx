@@ -4,7 +4,7 @@ import cc from 'classcat';
 import StandardHandles, { ARROW_DISTANCE, StandardHandlesProps } from '../Handles/StandardHandles';
 import { Edge, Node } from '../../../types';
 import { isPointInRect } from '../../../utils/geometry';
-import { useStore } from '../../../store/state';
+import { useStoreById } from '../../../store/state';
 
 export interface NodeContainerWithStandardHandlesProps {
   node: Node;
@@ -16,6 +16,7 @@ export interface NodeContainerWithStandardHandlesProps {
   RightHandleIndicator?: React.FC;
   BottomHandleIndicator?: React.FC;
   LeftHandleIndicator?: React.FC;
+  storeId: string;
 }
 
 const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.memo(({
@@ -29,7 +30,9 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
   RightHandleIndicator = React.Fragment,
   BottomHandleIndicator = React.Fragment,
   LeftHandleIndicator = React.Fragment,
+  storeId,
 }) => {
+  const useStore = useStoreById(storeId)!;
   const setSelectedElementById = useStore(state => state.setSelectedElementById);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isMouseDowned, setIsMouseDowned] = useState(false);
@@ -142,6 +145,7 @@ const NodeContainer: React.FC<NodeContainerWithStandardHandlesProps> = React.mem
         RightHandleIndicator={RightHandleIndicator}
         BottomHandleIndicator={BottomHandleIndicator}
         LeftHandleIndicator={LeftHandleIndicator}
+        storeId={storeId}
       />}
       {children}
     </div>

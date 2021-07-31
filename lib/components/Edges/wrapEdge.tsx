@@ -29,6 +29,7 @@ export interface WrapEdgeProps<T = any> {
   onMouseLeave?: (event: React.MouseEvent, edge: Edge) => void;
   edgeUpdaterRadius?: number;
   onEdgeUpdateStart?: (event: React.MouseEvent, edge: Edge) => void;
+  storeId: string;
 }
 
 export default (EdgeComponent: ComponentType<EdgeProps>) => {
@@ -55,6 +56,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
     onMouseEnter,
     onMouseMove,
     onMouseLeave,
+    storeId,
   }: WrapEdgeProps): JSX.Element | null => {
     const edgeClasses = cc([
       'react-flowy__edge',
@@ -149,6 +151,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
           style={style}
           arrowHeadType={arrowHeadType}
           markerEndId={markerEndId}
+          storeId={storeId}
         />
       </g>
     );

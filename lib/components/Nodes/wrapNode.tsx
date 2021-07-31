@@ -13,7 +13,7 @@ import cc from 'classcat';
 
 import { Axis, DragDelta, Node, SnapGrid, Transform } from '../../types';
 import useKeyPress from '../../hooks/useKeyPress';
-import { useStore } from '../../store/state';
+import { useStoreById } from '../../store/state';
 
 export interface NodeComponentProps<T = any> {
   node: Node<T>;
@@ -28,6 +28,7 @@ export interface NodeComponentProps<T = any> {
   onNodeDrag?: (node: Node) => void;
   onNodeDragStop?: (node: Node) => void;
   style?: CSSProperties;
+  storeId: string;
 }
 
 export interface WrapNodeProps<T = any> {
@@ -50,6 +51,7 @@ export interface WrapNodeProps<T = any> {
   snapToGrid?: boolean;
   snapGrid?: SnapGrid;
   resizeObserver: ResizeObserver | null;
+  storeId: string;
 }
 
 export default (NodeComponent: ComponentType<NodeComponentProps>) => {
@@ -72,7 +74,9 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
     snapToGrid,
     snapGrid,
     resizeObserver,
+    storeId,
   }: WrapNodeProps) => {
+    const useStore = useStoreById(storeId)!;
     const updateNodeDimensions = useStore(state => state.updateNodeDimensions);
     const updateNodePosDiff = useStore(state => state.updateNodePosDiff);
     const observerInitialized = useRef<boolean>(false);
@@ -257,7 +261,7 @@ export default (NodeComponent: ComponentType<NodeComponentProps>) => {
           onDoubleClick={onNodeDoubleClickHandler}
           data-id={node.id}
         >
-          <NodeComponent node={node} />
+          <NodeComponent node={node} storeId={storeId} />
         </div>
       </DraggableCore>
     );

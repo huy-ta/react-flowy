@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
-import { useStore } from '../store/state';
+import { useStoreById } from '../store/state';
 
 import { ElementId } from '../types';
 
 export type UpdateNodeInternals = (nodeId: ElementId) => void;
 
-function useUpdateNodeInternals(): UpdateNodeInternals {
+function useUpdateNodeInternals(storeId: string): UpdateNodeInternals {
+  const useStore = useStoreById(storeId)!;
   const updateNodeDimensions = useStore(state => state.updateNodeDimensions);
 
   return useCallback<UpdateNodeInternals>((id: ElementId) => {

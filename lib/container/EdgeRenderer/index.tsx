@@ -7,7 +7,7 @@ import {
   Node,
   Transform,
 } from '../../types';
-import { useStore } from '../../store/state';
+import { useStoreById } from '../../store/state';
 import { heightSelector, nodesSelector, transformSelector, widthSelector, edgesSelector } from '../../store/selectors';
 
 interface EdgeRendererProps {
@@ -20,6 +20,7 @@ interface EdgeRendererProps {
   onEdgeMouseMove?: (event: React.MouseEvent, edge: Edge) => void;
   onEdgeMouseLeave?: (event: React.MouseEvent, edge: Edge) => void;
   edgeUpdaterRadius?: number;
+  storeId: string;
 }
 
 interface EdgeWrapperProps {
@@ -78,11 +79,13 @@ const EdgeWrapper = React.memo(({
       onMouseLeave={props.onEdgeMouseLeave}
       edgeUpdaterRadius={props.edgeUpdaterRadius}
       onEdgeDoubleClick={props.onEdgeDoubleClick}
+      storeId={props.storeId}
     />
   );
 });
 
 const EdgeRenderer = (props: EdgeRendererProps) => {
+  const useStore = useStoreById(props.storeId)!;
   const width = useStore(widthSelector);
   const height = useStore(heightSelector);
   const transform = useStore(transformSelector);

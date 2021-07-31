@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
 import { Connection, ApproxIntersection, Axis, EdgeProps, Edge } from '../../../types';
-import { useStore } from '../../../store/state';
+import { useStoreById } from '../../../store/state';
 import { getCanvas } from '../../../utils/graph';
 import { isPrimaryButton } from '../../../utils/mouse';
 import { getNodeById, getRectangleFromNode } from '../../../utils/node';
@@ -38,7 +38,9 @@ export default React.memo(
     source,
     target,
     waypoints,
+    storeId,
   }: Omit<EdgeProps, 'type'>) => {
+    const useStore = useStoreById(storeId)!;
     const transform = useStore(transformSelector);
     const nodes = useStore(nodesSelector);
     const edges = useStore(edgesSelector);

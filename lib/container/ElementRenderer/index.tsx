@@ -8,7 +8,7 @@ import useZoomPanHelper from '../../hooks/useZoomPanHelper';
 import { FlowyExportObject, ReactFlowyProps } from '../ReactFlowy';
 
 import { NodeTypesType, EdgeTypesType, Elements, Point } from '../../types';
-import { ReactFlowyState, useStore } from '../../store/state';
+import { ReactFlowyState, useStoreById } from '../../store/state';
 import { pointToCanvasCoordinates } from '../../utils/coordinates';
 import { parseElements } from '../../utils/parse';
 
@@ -47,6 +47,7 @@ export interface ElementRendererProps extends Omit<ReactFlowyProps, 'elements'> 
   snapGrid: [number, number];
   defaultZoom: number;
   defaultPosition: [number, number];
+  storeId: string;
 }
 
 const ElementRenderer = ({
@@ -94,7 +95,9 @@ const ElementRenderer = ({
   onEdgeMouseMove,
   onEdgeMouseLeave,
   edgeUpdaterRadius,
+  storeId,
 }: ElementRendererProps) => {
+  const useStore = useStoreById(storeId)!;
   const setMaxZoom = useStore(state => state.setMaxZoom);
   const setMinZoom = useStore(state => state.setMinZoom);
   const setNodeExtent = useStore(state => state.setNodeExtent);
@@ -104,7 +107,7 @@ const ElementRenderer = ({
   const setSnapToGrid = useStore(state => state.setSnapToGrid);
   const setTranslateExtent = useStore(state => state.setTranslateExtent);
   const isInitialized = useRef<boolean>(false);
-  const { zoomIn, zoomOut, zoomTo, transform, fitView, initialized } = useZoomPanHelper();
+  const { zoomIn, zoomOut, zoomTo, transform, fitView, initialized } = useZoomPanHelper(storeId);
 
   useEffect(() => {
     if (!isInitialized.current && initialized) {
@@ -193,6 +196,7 @@ const ElementRenderer = ({
       defaultPosition={defaultPosition}
       defaultZoom={defaultZoom}
       translateExtent={translateExtent}
+      storeId={storeId}
     >
       <NodeRenderer
         nodeTypes={nodeTypes}
@@ -207,6 +211,7 @@ const ElementRenderer = ({
         onNodeDragStart={onNodeDragStart}
         snapToGrid={snapToGrid}
         snapGrid={snapGrid}
+        storeId={storeId}
       />
       <EdgeRenderer
         edgeTypes={edgeTypes}
@@ -218,6 +223,7 @@ const ElementRenderer = ({
         onEdgeMouseMove={onEdgeMouseMove}
         onEdgeMouseLeave={onEdgeMouseLeave}
         edgeUpdaterRadius={edgeUpdaterRadius}
+        storeId={storeId}
       />
     </ZoomPaneRenderer>
   );

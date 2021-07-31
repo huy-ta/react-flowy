@@ -130,6 +130,7 @@ export interface EdgeProps<T = any> {
   arrowHeadType?: ArrowHeadType | string;
   markerEndId?: string;
   data?: T;
+  storeId: string;
 }
 
 export type FlowTransform = {

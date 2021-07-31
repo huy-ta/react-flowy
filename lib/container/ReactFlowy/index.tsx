@@ -93,6 +93,7 @@ export interface ReactFlowyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'o
   edgeUpdaterRadius?: number;
   nodeTypesId?: string;
   edgeTypesId?: string;
+  storeId: string;
 }
 
 export type ReactFlowRefType = HTMLDivElement;
@@ -147,6 +148,7 @@ const ReactFlowy = React.forwardRef<ReactFlowRefType, ReactFlowyProps>(
       onEdgeMouseMove,
       onEdgeMouseLeave,
       edgeUpdaterRadius = 10,
+      storeId,
       ...rest
     },
     ref
@@ -206,6 +208,7 @@ const ReactFlowy = React.forwardRef<ReactFlowRefType, ReactFlowyProps>(
           onEdgeMouseMove={onEdgeMouseMove}
           onEdgeMouseLeave={onEdgeMouseLeave}
           edgeUpdaterRadius={edgeUpdaterRadius}
+          storeId={storeId}
         />
         {children}
       </div>

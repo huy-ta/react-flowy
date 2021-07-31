@@ -4,7 +4,7 @@ import { ArrowHeadType, Node, Edge, Point, Rectangle, LayoutType } from '../../t
 import { getCanvas } from '../../utils/graph';
 import { eventPointToCanvasCoordinates } from '../../utils/coordinates';
 import { connectShapes, connectShapeToPoint } from '../../features/layout/manhattanLayout';
-import { useStore } from '../../store/state';
+import { useStoreById } from '../../store/state';
 import { edgesSelector, nodesSelector, nodeValidatorsSelector, transformSelector } from '../../store/selectors';
 import { isPointInShape } from '../../utils/pointInShape';
 
@@ -12,9 +12,17 @@ export interface HandleProps {
   node: Node;
   shouldShowHandle: boolean;
   additionalEdgeProps: Partial<Edge>;
+  storeId: string;
 }
 
-const Handle: React.FC<HandleProps> = React.memo(({ children, node, shouldShowHandle, additionalEdgeProps = { type: 'standardEdge' } }) => {
+const Handle: React.FC<HandleProps> = React.memo(({
+  children,
+  node,
+  shouldShowHandle,
+  additionalEdgeProps = { type: 'standardEdge' },
+  storeId
+}) => {
+  const useStore = useStoreById(storeId)!;
   const nodes = useStore(nodesSelector);
   const edges = useStore(edgesSelector);
   const transform = useStore(transformSelector);

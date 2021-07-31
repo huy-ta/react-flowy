@@ -6,7 +6,7 @@ import { clamp } from '../../utils';
 import useKeyPress from '../../hooks/useKeyPress';
 import useResizeHandler from '../../hooks/useResizeHandler';
 import { FlowTransform, TranslateExtent, PanOnScrollMode, KeyCode } from '../../types';
-import { useStore } from '../../store/state';
+import { useStoreById } from '../../store/state';
 import { d3SelectionSelector, d3ZoomHandlerSelector, d3ZoomSelector, maxZoomSelector, minZoomSelector, translateExtentSelector } from '../../store/selectors';
 
 interface ZoomPaneProps {
@@ -25,6 +25,7 @@ interface ZoomPaneProps {
   onMoveEnd?: (flowTransform?: FlowTransform) => void;
   zoomActivationKeyCode?: KeyCode;
   children: ReactNode;
+  storeId: string;
 }
 
 const viewChanged = (prevTransform: FlowTransform, eventTransform: any): boolean =>
@@ -54,7 +55,9 @@ const ZoomPane = ({
   translateExtent,
   zoomActivationKeyCode,
   children,
+  storeId,
 }: ZoomPaneProps) => {
+  const useStore = useStoreById(storeId)!;
   const minZoom = useStore(minZoomSelector);
   const maxZoom = useStore(maxZoomSelector);
   const d3Selection = useStore(d3SelectionSelector);
@@ -70,7 +73,7 @@ const ZoomPane = ({
 
   const zoomActivationKeyPressed = useKeyPress(zoomActivationKeyCode);
 
-  useResizeHandler(zoomPane);
+  useResizeHandler(zoomPane, storeId);
 
   useEffect(() => {
     if (!zoomPane.current) return;

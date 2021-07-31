@@ -36,6 +36,7 @@ const ZoomPaneRenderer = ({
   defaultPosition,
   defaultZoom,
   translateExtent,
+  storeId,
 }: FlowRendererProps) => {
   const onClick = useCallback(
     (event: MouseEvent) => {
@@ -74,6 +75,7 @@ const ZoomPaneRenderer = ({
       defaultZoom={defaultZoom}
       translateExtent={translateExtent}
       zoomActivationKeyCode={zoomActivationKeyCode}
+      storeId={storeId}
     >
       {children}
       <div className="react-flowy__pane" onClick={onClick} onContextMenu={onContextMenu} onWheel={onWheel} />

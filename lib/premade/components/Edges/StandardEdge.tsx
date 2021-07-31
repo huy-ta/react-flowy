@@ -17,6 +17,7 @@ export default React.memo(
     isForming,
     isSelected,
     isInvalid,
+    storeId
   }: EdgeProps) => {
     const markerEnd = getMarkerEnd(arrowHeadType);
     const errorMarkerEnd = getMarkerEnd(`${arrowHeadType}--error` as ArrowHeadType);
@@ -36,7 +37,7 @@ export default React.memo(
           d={getPathFromWaypoints(waypoints) as string}
           markerEnd={isInvalid ? errorMarkerEnd : markerEnd}
         />
-        {!isForming && <StandardEdgeController id={id} source={source} target={target} waypoints={waypoints} />}
+        {!isForming && <StandardEdgeController id={id} source={source} target={target} waypoints={waypoints} storeId={storeId} />}
       </>
     );
   }
