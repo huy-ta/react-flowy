@@ -113,7 +113,7 @@ export const initializeStore = (id: string) => {
     d3Zoom: null,
     d3Selection: null,
     d3ZoomHandler: undefined,
-    minZoom: 0.5,
+    minZoom: 0.05,
     maxZoom: 2,
     translateExtent: [
       [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
