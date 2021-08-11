@@ -116,20 +116,8 @@ export type NodeTypesType = { [key: string]: ReactNode };
 export type EdgeTypesType = NodeTypesType;
 
 export interface EdgeProps<T = any> {
-  id: ElementId;
-  type: string;
-  label?: string;
-  source: ElementId;
-  target: ElementId;
-  waypoints: Point[];
-  isForming?: boolean;
-  isSelected?: boolean;
-  isInvalid?: boolean;
-  isDragging?: boolean;
-  style?: CSSProperties;
-  arrowHeadType?: ArrowHeadType | string;
+  edge: Edge<T>;
   markerEndId?: string;
-  data?: T;
   storeId: string;
 }
 

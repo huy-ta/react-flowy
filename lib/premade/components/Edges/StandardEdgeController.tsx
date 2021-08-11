@@ -34,12 +34,15 @@ let eventDelta = { x: 0, y: 0 };
 
 export default React.memo(
   ({
-    id,
-    source,
-    target,
-    waypoints,
+    edge,
     storeId,
-  }: Omit<EdgeProps, 'type'>) => {
+  }: Omit<EdgeProps, 'markerEndId'>) => {
+    const {
+      id,
+      source,
+      target,
+      waypoints,
+    } = edge;
     const useStore = useStoreById(storeId)!;
     const transform = useStore(transformSelector);
     const nodes = useStore(nodesSelector);

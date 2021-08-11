@@ -1,27 +1,13 @@
-import React, { memo, ComponentType, useCallback, useMemo, CSSProperties } from 'react';
+import React, { memo, ComponentType, useCallback, useMemo } from 'react';
 import cc from 'classcat';
 
-import { ArrowHeadType, Edge, EdgeProps, ElementId, Point } from '../../types';
+import { Edge, EdgeProps } from '../../types';
 
 export interface WrapEdgeProps<T = any> {
-  id: ElementId;
-  className?: string;
-  type: string;
-  data?: T;
+  edge: Edge<T>;
   onClick?: (event: React.MouseEvent, edge: Edge) => void;
   onEdgeDoubleClick?: (event: React.MouseEvent, edge: Edge) => void;
-  style?: CSSProperties;
-  arrowHeadType?: ArrowHeadType | string;
-  label?: string;
-  source: ElementId;
-  target: ElementId;
-  waypoints: Point[];
-  isForming?: boolean;
   markerEndId?: string;
-  isHidden?: boolean;
-  isSelected?: boolean;
-  isInvalid?: boolean;
-  isDragging?: boolean;
   handleEdgeUpdate: boolean;
   onContextMenu?: (event: React.MouseEvent, edge: Edge) => void;
   onMouseEnter?: (event: React.MouseEvent, edge: Edge) => void;
@@ -34,24 +20,10 @@ export interface WrapEdgeProps<T = any> {
 
 export default (EdgeComponent: ComponentType<EdgeProps>) => {
   const EdgeWrapper = ({
-    id,
-    className,
-    type,
-    data,
+    edge,
     onClick,
     onEdgeDoubleClick,
-    style,
-    arrowHeadType,
-    label,
-    source,
-    target,
-    waypoints,
-    isForming,
     markerEndId,
-    isHidden,
-    isSelected,
-    isInvalid,
-    isDragging,
     onContextMenu,
     onMouseEnter,
     onMouseMove,
@@ -60,25 +32,25 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
   }: WrapEdgeProps): JSX.Element | null => {
     const edgeClasses = cc([
       'react-flowy__edge',
-      `react-flowy__edge-${type}`,
-      className,
+      `react-flowy__edge-${edge.type}`,
+      edge.className,
     ]);
 
     const edgeElement = useMemo<Edge>(() => {
       const el: Edge = {
-        id,
-        source,
-        target,
-        waypoints,
-        type,
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        waypoints: edge.waypoints,
+        type: edge.type,
       };
 
-      if (typeof data !== 'undefined') {
-        el.data = data;
+      if (typeof edge.data !== 'undefined') {
+        el.data = edge.data;
       }
 
       return el;
-    }, [id, source, target, type, data]);
+    }, [edge]);
 
     const onEdgeClick = useCallback(
       (event: React.MouseEvent<SVGGElement, MouseEvent>): void => {
@@ -122,7 +94,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
       [edgeElement, onContextMenu]
     );
 
-    if (isHidden) {
+    if (edge.isHidden) {
       return null;
     }
 
@@ -137,19 +109,7 @@ export default (EdgeComponent: ComponentType<EdgeProps>) => {
         onMouseLeave={onEdgeMouseLeave}
       >
         <EdgeComponent
-          id={id}
-          type={type}
-          label={label}
-          source={source}
-          target={target}
-          waypoints={waypoints}
-          isForming={isForming}
-          isSelected={isSelected}
-          isInvalid={isInvalid}
-          isDragging={isDragging}
-          data={data}
-          style={style}
-          arrowHeadType={arrowHeadType}
+          edge={edge}
           markerEndId={markerEndId}
           storeId={storeId}
         />

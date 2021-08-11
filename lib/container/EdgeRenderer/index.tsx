@@ -56,23 +56,9 @@ const EdgeWrapper = React.memo(({
   return (
     <EdgeComponent
       key={edge.id}
-      id={edge.id}
-      className={edge.className}
-      type={edge.type}
-      data={edge.data}
+      edge={edge}
       onClick={props.onElementClick}
-      style={edge.style}
-      arrowHeadType={edge.arrowHeadType}
-      label={edge.label}
-      source={edge.source}
-      target={edge.target}
-      waypoints={edge.waypoints}
-      isForming={edge.isForming}
-      isSelected={edge.isSelected}
-      isInvalid={edge.isInvalid}
-      isDragging={edge.isDragging}
       markerEndId={props.markerEndId}
-      isHidden={edge.isHidden}
       onContextMenu={props.onEdgeContextMenu}
       onMouseEnter={props.onEdgeMouseEnter}
       onMouseMove={props.onEdgeMouseMove}
