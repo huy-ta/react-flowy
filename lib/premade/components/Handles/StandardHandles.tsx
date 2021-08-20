@@ -61,6 +61,8 @@ const StandardHandles: React.FC<StandardHandlesProps> = React.memo(({
 }) => {
   const className = cc(['react-flowy__standard-handles__arrow', { 'react-flowy__standard-handles__arrow--hidden': !shouldShowHandles }]);
 
+  if (!shouldShowHandles) return null;
+
   return (
     <>
       <Handle node={node} shouldShowHandle={shouldShowHandles} additionalEdgeProps={additionalEdgeProps} storeId={storeId}>
