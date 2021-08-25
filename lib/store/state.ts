@@ -54,6 +54,7 @@ export interface ReactFlowyActions {
   setMinZoom: (minZoom: number) => void;
   setMaxZoom: (maxZoom: number) => void;
   setTranslateExtent: (translateExtent: TranslateExtent) => void;
+  translateTo: (translate: [number, number]) => void;
   zoomTo: (zoom: number) => void;
   setSnapToGrid: (snapToGrid: boolean) => void;
   setSnapGrid: (snapGrid: SnapGrid) => void;
@@ -395,8 +396,14 @@ export const initializeStore = (id: string) => {
       set(state => ({ ...state, translateExtent }));
   
       const state = get();
-  
+
       state.d3Zoom?.translateExtent(translateExtent);
+    },
+
+    translateTo: (translateTo: [number, number]) => {
+      const state = get();
+
+      state.d3Zoom?.translateTo(state.d3Selection!, translateTo[0], translateTo[1]);
     },
   
     zoomTo: (zoom: number) => {
