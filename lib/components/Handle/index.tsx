@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cc from 'classcat';
 import { ArrowHeadType, Node, Edge, Point, Rectangle, LayoutType } from '../../types';
 import { getCanvas } from '../../utils/graph';
@@ -31,6 +31,7 @@ const Handle: React.FC<HandleProps> = React.memo(({
   const setEdges = useStore(state => state.setEdges);
   const [isPressed, setIsPressed] = useState(false);
   const [isAddingEdge, setIsAddingEdge] = useState(false);
+  const previousTargetNode = useRef<Node | undefined>();
 
   useEffect(() => {
     if (!isPressed) return;
@@ -101,7 +102,7 @@ const Handle: React.FC<HandleProps> = React.memo(({
 
       const nodeValidator = nodeValidators[node.type || 'standardNode'];
 
-      if (typeof nodeValidator === 'function') {
+      if (typeof nodeValidator === 'function' && previousTargetNode.current !== targetNode) {
         const { isValid } = nodeValidator(node, targetNode, newEdge as Edge);
 
         if (!isValid) newEdge.isInvalid = true;
@@ -112,6 +113,8 @@ const Handle: React.FC<HandleProps> = React.memo(({
       newEdge.target = '?';
       newEdge.waypoints = waypoints;
     }
+
+    previousTargetNode.current = targetNode;
 
     upsertEdge(newEdge as Edge);
 
@@ -138,6 +141,7 @@ const Handle: React.FC<HandleProps> = React.memo(({
 
     setIsPressed(false);
     setIsAddingEdge(false);
+    previousTargetNode.current = undefined;
   }
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
