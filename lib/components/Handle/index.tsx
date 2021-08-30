@@ -32,6 +32,7 @@ const Handle: React.FC<HandleProps> = React.memo(({
   const [isPressed, setIsPressed] = useState(false);
   const [isAddingEdge, setIsAddingEdge] = useState(false);
   const previousTargetNode = useRef<Node | undefined>();
+  const previousValid = useRef<boolean | undefined>();
 
   useEffect(() => {
     if (!isPressed) return;
@@ -102,11 +103,18 @@ const Handle: React.FC<HandleProps> = React.memo(({
 
       const nodeValidator = nodeValidators[node.type || 'standardNode'];
 
-      if (typeof nodeValidator === 'function' && previousTargetNode.current !== targetNode) {
-        const { isValid } = nodeValidator(node, targetNode, newEdge as Edge);
+      if (typeof nodeValidator === 'function') {
+        if (previousTargetNode.current !== targetNode) {
+          const { isValid } = nodeValidator(node, targetNode, newEdge as Edge);
 
-        if (!isValid) newEdge.isInvalid = true;
-        else delete newEdge.isInvalid;
+          previousValid.current = isValid;
+
+          if (!isValid) newEdge.isInvalid = true;
+          else delete newEdge.isInvalid;
+        } else {
+          if (!previousValid.current) newEdge.isInvalid = true;
+          else delete newEdge.isInvalid;
+        }
       }
     } else {
       waypoints = connectShapeToPoint({ ...sourceRectangle, ...node.shapeData }, node.shapeType, cursorPosition);
@@ -142,6 +150,7 @@ const Handle: React.FC<HandleProps> = React.memo(({
     setIsPressed(false);
     setIsAddingEdge(false);
     previousTargetNode.current = undefined;
+    previousValid.current = undefined;
   }
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
